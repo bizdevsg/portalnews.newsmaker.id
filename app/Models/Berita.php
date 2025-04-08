@@ -22,14 +22,14 @@ class Berita extends Model
         'category_id',
     ];
 
-    protected $appends = ['images']; // Otomatis menambahkan "images" ke JSON
+    protected $appends = ['images'];
 
     /**
      * Relasi ke kategori (Setiap berita punya satu kategori).
      */
-    public function kategori()
+    public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id'); // Ubah Category ke Kategori
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**
@@ -38,11 +38,11 @@ class Berita extends Model
     public function getImagesAttribute()
     {
         return array_values(array_filter([
-            $this->image1,
-            $this->image2,
-            $this->image3,
-            $this->image4,
-            $this->image5,
-        ]));
+            $this->image1 ?: null,
+            $this->image2 ?: null,
+            $this->image3 ?: null,
+            $this->image4 ?: null,
+            $this->image5 ?: null,
+        ], fn($value) => !is_null($value))); // Pastikan hanya menyimpan data yang tidak null
     }
 }

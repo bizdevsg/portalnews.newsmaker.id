@@ -12,7 +12,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10); // Menggunakan paginasi untuk efisiensi
+        $users = User::orderBy('role', 'asc')->get(); // Ambil semua user dengan urutan role ASC
 
         return view('user.index', compact('users'));
     }

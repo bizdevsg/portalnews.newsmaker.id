@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Berita;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\DataFeed;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $dataFeed = new DataFeed();
+        $superadminCount = User::where('role', 'Superadmin')->count();
+        $adminCount = User::where('role', 'Admin')->count();
+        $Berita = Berita::count();
+        $category = Category::count();
 
-        return view('pages/dashboard/dashboard', compact('dataFeed'));
+        $widget = [
+            'superadmin' => $superadminCount,
+            'admin' => $adminCount,
+            'berita' => $Berita,
+            'category' => $category,
+        ];
+
+        return view('dashboard', compact('widget'));
     }
 
     /**

@@ -6,7 +6,7 @@
                     {{-- Tombol Kembali --}}
                     <div class="text-left">
                         <button type="button" onclick="toggleModal('modalKembali')"
-                            class="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 py-2 px-6 rounded-lg text-gray-600 dark:text-gray-200 hover:text-gray-800 dark:hover:text-gray-100">
+                            class="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 py-2 px-6 rounded-lg text-gray-600 dark:text-gray-200 hover:text-gray-800 dark:hover:text-gray-100 cursor-pointer">
                             <i class="fa-solid fa-chevron-left"></i>
                             <span class="hidden md:block">Kembali</span>
                         </button>
@@ -19,7 +19,7 @@
                     {{-- Tombol Tambah --}}
                     <div class="text-right">
                         <button type="button" onclick="toggleModal('modalSubmit')"
-                            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-semibold transition">
+                            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-semibold transition cursor-pointer">
                             <i class="fa-solid fa-plus"></i>
                             <span class="hidden md:block">Tambah</span>
                         </button>

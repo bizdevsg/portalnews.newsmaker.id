@@ -5,7 +5,7 @@ use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataFeedController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\EconomicCalendarController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -32,13 +32,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Route untuk Berita (Kategori)
-    Route::prefix('berita')->group(function () {
+    Route::prefix('kategori')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('kategori.index');
-        Route::post('/kategori/store', [CategoryController::class, 'store'])->name('kategori.store');
-        Route::get('/kategori/tambah', [CategoryController::class, 'create'])->name('kategori.create');
-        Route::put('/kategori/{id}/update', [CategoryController::class, 'update'])->name('kategori.update');
-        Route::get('/kategori/{id}/edit', [CategoryController::class, 'edit'])->name('kategori.edit');
-        Route::delete('/kategori/{id}/delete', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+        Route::post('/store', [CategoryController::class, 'store'])->name('kategori.store');
+        Route::get('/tambah', [CategoryController::class, 'create'])->name('kategori.create');
+        Route::put('/{id}/update', [CategoryController::class, 'update'])->name('kategori.update');
+        Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('kategori.edit');
+        Route::delete('/{id}/delete', [CategoryController::class, 'destroy'])->name('kategori.destroy');
 
         Route::get('/{slug}', [BeritaController::class, 'index'])->name('berita.index'); // Menampilkan berita berdasarkan kategori
         Route::get('/{slug}/tambah', [BeritaController::class, 'create'])->name('berita.create'); // Form tambah berita
@@ -49,6 +49,18 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/{slug}/{id}/hapus', [BeritaController::class, 'destroy'])->name('berita.destroy'); // Hapus berita
     });
 
+    // Kalender Route
+    Route::prefix('kalender')->group(function () {
+        Route::get('/', [EconomicCalendarController::class, 'index'])->name('calendar.index');
+        Route::post('/store', [EconomicCalendarController::class, 'store'])->name('calendar.store');
+        Route::get('/tambah', [EconomicCalendarController::class, 'create'])->name('calendar.create');
+        Route::put('/{id}/update', [EconomicCalendarController::class, 'update'])->name('calendar.update');
+        Route::get('/{id}/edit', [EconomicCalendarController::class, 'edit'])->name('calendar.edit');
+        Route::delete('/{id}/delete', [EconomicCalendarController::class, 'destroy'])->name('calendar.delete');
+        Route::get('/{id}/show', [EconomicCalendarController::class, 'show'])->name('calendar.show');
+    });
+
+    // User Management Route
     Route::prefix('user')->middleware(['role:Superadmin'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
         Route::post('/store', [UserController::class, 'store'])->name('user.store');

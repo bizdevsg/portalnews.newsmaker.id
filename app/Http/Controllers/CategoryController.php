@@ -78,8 +78,13 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = Category::findOrFail($id);
+
+        // Hapus semua berita yang memiliki kategori ini
+        $category->berita()->delete();
+
+        // Hapus kategori
         $category->delete();
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus.');
+        return redirect()->route('kategori.index')->with('success', 'Kategori dan berita terkait berhasil dihapus.');
     }
 }

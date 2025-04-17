@@ -72,7 +72,7 @@
 
         <!-- Modal Konfirmasi Hapus -->
         <div id="deleteModal"
-            class="mx-4 fixed inset-0 bg-black/50 flex justify-center items-center hidden z-100 dark:bg-gray-900/75">
+            class="fixed inset-0 bg-black/50 flex justify-center items-center hidden z-100 dark:bg-gray-900/75">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Konfirmasi Hapus</h2>
                 <p class="text-gray-600 dark:text-gray-200">Apakah Anda yakin ingin menghapus kategori <b

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BeritaController;
+use App\Http\Controllers\Api\KalenderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/berita', [BeritaController::class, 'index']);
+ROute::get('/berita/{id}', [BeritaController::class, 'show']);
+
+Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);

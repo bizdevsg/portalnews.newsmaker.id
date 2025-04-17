@@ -57,6 +57,13 @@
                         <span class="text-sm font-medium">Berita</span>
                     </a>
 
+                    <!-- Berita -->
+                    <a href="{{ route('calendar.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
+                        {{ request()->routeIs('calendar.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span class="text-sm font-medium">Kalender Ekonomi</span>
+                    </a>
+
                     <!-- User Manage -->
                     @if(auth()->user()->role === 'Superadmin')
                     <a href="{{ route('user.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900

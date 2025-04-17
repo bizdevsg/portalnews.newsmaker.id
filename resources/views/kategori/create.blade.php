@@ -1,23 +1,20 @@
 <x-app-layout>
-    <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-        <!-- Dashboard actions -->
-        <div class="flex justify-between items-center">
-            <!-- Title -->
-            <h1 class="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Kategori Berita</h1>
-        </div>
-    </div>
-
-    <div class="mx-4 sm:mx-6 lg:mx-8 py-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+    <div class="mx-4 sm:mx-6 lg:mx-8 my-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         {{-- Form Tambah Kategori --}}
         <form action="{{route('kategori.store')}}" method="POST" enctype="multipart/form-data">
             <div class="inline-flex items-center justify-between w-full mb-7">
                 {{-- Tombol Kembali --}}
                 <div class="text-left">
                     <button type="button" onclick="toggleModal('modalKembali')"
-                        class="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 py-2 px-6 rounded-lg text-gray-600 hover:text-gray-800 dark:text-white">
+                        class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 py-2 px-6 rounded-lg text-gray-600 hover:text-gray-800 dark:text-white">
                         <i class="fa-solid fa-chevron-left"></i>
                         <span>Kembali</span>
                     </button>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <!-- Title -->
+                    <h1 class="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Kategori Berita</h1>
                 </div>
 
                 {{-- Tombol Tambah --}}

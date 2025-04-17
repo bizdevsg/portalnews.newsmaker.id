@@ -35,4 +35,37 @@ class BeritaController extends Controller
             'data' => $beritas
         ], 200);
     }
+
+    public function show($id)
+    {
+        // Cari berita berdasarkan ID dengan relasi kategori
+        $berita = Berita::select('id', 'title', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
+            ->with(['category:id,name'])
+            ->find($id);
+
+        // Jika tidak ditemukan
+        if (!$berita) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Berita tidak ditemukan.'
+            ], 404);
+        }
+
+        // Format data seperti pada index()
+        $data = [
+            'id' => $berita->id,
+            'title' => $berita->title,
+            'content' => $berita->content,
+            'category_id' => $berita->category_id,
+            'kategori' => $berita->category,
+            'images' => $berita->images, // dari accessor
+            'created_at' => $berita->created_at,
+            'updated_at' => $berita->updated_at,
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
+    }
 }

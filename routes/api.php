@@ -17,6 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/berita', [BeritaController::class, 'index']);
-ROute::get('/berita/{id}', [BeritaController::class, 'show']);
+ROute::get('/berita/{slug}', [BeritaController::class, 'show']);
 
 Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);

@@ -13,18 +13,19 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        // Ambil semua berita beserta nama kategorinya, tanpa field image1 - image5 secara langsung
-        $beritas = Berita::select('id', 'title', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
+        // Ambil semua berita beserta nama kategorinya, tanpa mengambil kolom gambar secara langsung
+        $beritas = Berita::select('id', 'title', 'slug', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
             ->with(['category:id,name'])
             ->get()
-            ->map(function ($berita) {
+            ->transform(function ($berita) {
                 return [
                     'id' => $berita->id,
                     'title' => $berita->title,
+                    'slug' => $berita->slug, // Menambahkan slug
                     'content' => $berita->content,
                     'category_id' => $berita->category_id,
                     'kategori' => $berita->category,
-                    'images' => $berita->images, // Ambil dari accessor
+                    'images' => $berita->images, // Mengambil dari accessor images
                     'created_at' => $berita->created_at,
                     'updated_at' => $berita->updated_at,
                 ];
@@ -36,12 +37,13 @@ class BeritaController extends Controller
         ], 200);
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        // Cari berita berdasarkan ID dengan relasi kategori
-        $berita = Berita::select('id', 'title', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
+        // Cari berita berdasarkan slug
+        $berita = Berita::select('id', 'title', 'slug', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
             ->with(['category:id,name'])
-            ->find($id);
+            ->where('slug', $slug)
+            ->first();
 
         // Jika tidak ditemukan
         if (!$berita) {
@@ -51,14 +53,15 @@ class BeritaController extends Controller
             ], 404);
         }
 
-        // Format data seperti pada index()
+        // Format data
         $data = [
             'id' => $berita->id,
             'title' => $berita->title,
+            'slug' => $berita->slug,
             'content' => $berita->content,
             'category_id' => $berita->category_id,
             'kategori' => $berita->category,
-            'images' => $berita->images, // dari accessor
+            'images' => $berita->images,
             'created_at' => $berita->created_at,
             'updated_at' => $berita->updated_at,
         ];

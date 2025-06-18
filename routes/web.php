@@ -3,9 +3,10 @@
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DataFeedController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EbookController;
 use App\Http\Controllers\EconomicCalendarController;
+use App\Http\Controllers\PivotController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -23,11 +24,6 @@ use App\Http\Controllers\UserController;
 Route::redirect('/', 'login');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-
-    // Route untuk mendapatkan data feed JSON
-    Route::get('/json-data-feed', [DataFeedController::class, 'getDataFeed'])
-        ->name('json_data_feed');
-
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -58,6 +54,27 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/{id}/edit', [EconomicCalendarController::class, 'edit'])->name('calendar.edit');
         Route::delete('/{id}/delete', [EconomicCalendarController::class, 'destroy'])->name('calendar.delete');
         Route::get('/{id}/show', [EconomicCalendarController::class, 'show'])->name('calendar.show');
+    });
+
+    // Pivot & Fibonacci
+    Route::prefix('pivot-fibonacci')->group(function () {
+        Route::get('/', [PivotController::class, 'index'])->name('pivot.index');
+        Route::post('/store', [PivotController::class, 'store'])->name('pivot.store');
+        Route::get('/tambah', [PivotController::class, 'create'])->name('pivot.create');
+        Route::put('/{id}/update', [PivotController::class, 'update'])->name('pivot.update');
+        Route::get('/{id}/edit', [PivotController::class, 'edit'])->name('pivot.edit');
+        Route::delete('/{id}/delete', [PivotController::class, 'destroy'])->name('pivot.destroy');
+    });
+
+    // e-Book
+    Route::prefix('e-book')->group(function () {
+        Route::get('/', [EbookController::class, 'index'])->name('ebook.index');
+        Route::post('/store', [EbookController::class, 'store'])->name('ebook.store');
+        Route::get('/tambah', [EbookController::class, 'create'])->name('ebook.create');
+        Route::put('/{id}/update', [EbookController::class, 'update'])->name('ebook.update');
+        Route::get('/{id}/edit', [EbookController::class, 'edit'])->name('ebook.edit');
+        Route::delete('/{id}/delete', [EbookController::class, 'destroy'])->name('ebook.destroy');
+        Route::get('/{id}/show', [EbookController::class, 'show'])->name('ebook.show');
     });
 
     // User Management Route

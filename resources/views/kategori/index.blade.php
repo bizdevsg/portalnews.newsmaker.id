@@ -39,7 +39,7 @@
             <p class="text-gray-600 text-xl">Belum ada kategori berita.</p>
         </div>
         @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($categories as $kategori)
             <div
                 class="border-blue-500 border-l-4 flex flex-col justify-between items-center p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md gap-4 transition">

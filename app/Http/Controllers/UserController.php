@@ -36,7 +36,7 @@ class UserController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:50|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required|string|in:Superadmin,Admin',
+            'role' => 'required|string|in:Superadmin,Admin,Trainer (Internal),Trainer (External)',
         ]);
 
         try {
@@ -86,7 +86,7 @@ class UserController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
-            'role' => 'required|string|in:Superadmin,Admin',
+            'role' => 'required|string|in:Superadmin,Admin,Trainer (Internal),Trainer (External)',
         ]);
 
         // Update user

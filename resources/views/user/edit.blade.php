@@ -64,15 +64,31 @@
                     @enderror
                 </div>
 
+                {{--
+                <pre>{{ dd($user->role) }}</pre> --}}
+
                 <!-- Role -->
                 <div class="mb-4">
                     <label for="role" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Role</label>
                     <select id="role" name="role" required
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('role') border-red-500 @enderror">
-                        <option value="">-- Pilih Role --</option>
-                        <option value="Superadmin" {{ old('role', $user->role) == 'Superadmin' ? 'selected' : ''
-                            }}>Superadmin</option>
-                        <option value="Admin" {{ old('role', $user->role) == 'Admin' ? 'selected' : '' }}>Admin</option>
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer @error('role') is-invalid @enderror">
+                        <option class="cursor-pointer" value="">-- Pilih Role --</option>
+                        <option class="cursor-pointer" value="Superadmin" {{ old('role', $user->role)=='Superadmin' ?
+                            'selected' : '' }}>
+                            Superadmin
+                        </option>
+                        <option class="cursor-pointer" value="Admin" {{ old('role', $user->role)=='Admin' ? 'selected' :
+                            '' }}>
+                            Admin
+                        </option>
+                        <option class="cursor-pointer" value="Trainer (Internal)" {{ old('role', $user->role) ==
+                            'Trainer (Internal)' ? 'selected' : '' }}>
+                            Trainer (Internal)
+                        </option>
+                        <option class="cursor-pointer" value="Trainer (External)" {{ old('role', $user->role) ==
+                            'Trainer (External)' ? 'selected' : '' }}>
+                            Trainer (External)
+                        </option>
                     </select>
                     @error('role')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

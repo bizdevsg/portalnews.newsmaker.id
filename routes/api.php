@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\KalenderController;
+use App\Http\Controllers\Api\PivotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::get('/berita', [BeritaController::class, 'index']);
 ROute::get('/berita/{slug}', [BeritaController::class, 'show']);
 
 Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);
+
+Route::get('/pivot-history', [PivotController::class, 'index']);

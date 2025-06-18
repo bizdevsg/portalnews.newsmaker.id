@@ -72,8 +72,19 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer @error('role') is-invalid @enderror">
                         <option class="cursor-pointer" value="">-- Pilih Role --</option>
                         <option class="cursor-pointer" value="Superadmin" {{ old('role')=='Superadmin' ? 'selected' : ''
-                            }}>Superadmin</option>
-                        <option class="cursor-pointer" value="Admin" {{ old('role')=='Admin' ? 'selected' : '' }}>Admin
+                            }}>
+                            Superadmin
+                        </option>
+                        <option class="cursor-pointer" value="Admin" {{ old('role')=='Admin' ? 'selected' : '' }}>
+                            Admin
+                        </option>
+                        <option class="cursor-pointer" value="Trainer (Internal)" {{ old('role')=='Trainer (Internal)'
+                            ? 'selected' : '' }}>
+                            Trainer (Internal)
+                        </option>
+                        <option class="cursor-pointer" value="Trainer (External)" {{ old('role')=='Trainer (External)'
+                            ? 'selected' : '' }}>
+                            Trainer (External)
                         </option>
                     </select>
                     @error('role')

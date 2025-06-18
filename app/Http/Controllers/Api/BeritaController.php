@@ -15,7 +15,7 @@ class BeritaController extends Controller
     {
         // Ambil semua berita beserta nama kategorinya, tanpa mengambil kolom gambar secara langsung
         $beritas = Berita::select('id', 'title', 'slug', 'content', 'image1', 'image2', 'image3', 'image4', 'image5', 'category_id', 'created_at', 'updated_at')
-            ->with(['category:id,name'])
+            ->with(['category:id,name,slug'])
             ->get()
             ->transform(function ($berita) {
                 return [

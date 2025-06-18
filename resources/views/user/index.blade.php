@@ -50,7 +50,29 @@
                         <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->username }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->name }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->email }}</td>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->role }}</td>
+                        <td class="px-4 py-2 text-center border border-gray-200 dark:border-gray-700">
+                            @if ($item->role == 'Superadmin')
+                            <span class="bg-red-600 text-white py-2 px-4 text-sm rounded-full">
+                                Superadmin
+                            </span>
+                            @elseif ($item->role == 'Admin')
+                            <span class="bg-blue-600 text-white py-2 px-4 text-sm rounded-full">
+                                Admin
+                            </span>
+                            @elseif ($item->role == 'Trainer (Internal)')
+                            <span class="bg-green-600 text-white py-2 px-4 text-sm rounded-full">
+                                Trainer (Internal)
+                            </span>
+                            @elseif ($item->role == 'Trainer (External)')
+                            <span class="bg-yellow-600 text-white py-2 px-4 text-sm rounded-full">
+                                Trainer (External)
+                            </span>
+                            @else
+                            <span class="bg-gray-400 text-white py-2 px-4 text-sm rounded-full">
+                                Tidak Diketahui
+                            </span>
+                            @endif
+                        </td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center">
                             @if (auth()->user()->id === $item->id)
                             <div class="flex">

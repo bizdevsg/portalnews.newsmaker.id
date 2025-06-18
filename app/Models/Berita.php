@@ -20,6 +20,7 @@ class Berita extends Model
         'image3',
         'image4',
         'image5',
+        'image6',
         'category_id',
         'slug', // tambahkan agar slug bisa diisi saat disimpan otomatis
     ];

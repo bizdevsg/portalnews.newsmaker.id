@@ -36,11 +36,12 @@ class BeritaController extends Controller
         $request->validate([
             'title' => 'required|max:100',
             'content' => 'required',
-            'image1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image5' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image2' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image3' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image4' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image5' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image6' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -49,7 +50,7 @@ class BeritaController extends Controller
 
         // Proses upload gambar
         $images = [];
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             if ($request->hasFile("image$i")) {
                 $namaFile = time() . '_' . $request->file("image$i")->getClientOriginalName();
                 $request->file("image$i")->move(public_path('uploads'), $namaFile);
@@ -69,6 +70,7 @@ class BeritaController extends Controller
             'image3' => $images['image3'],
             'image4' => $images['image4'],
             'image5' => $images['image5'],
+            'image6' => $images['image6'],
         ]);
 
         return redirect()->route('berita.index', $slug)
@@ -111,13 +113,14 @@ class BeritaController extends Controller
             'image3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image5' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image6' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // Ambil berita berdasarkan ID
         $berita = Berita::findOrFail($id);
 
         // Proses upload gambar jika ada
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             if ($request->hasFile("image$i")) {
                 $namaFile = time() . '_' . $request->file("image$i")->getClientOriginalName();
                 $request->file("image$i")->move(public_path('uploads'), $namaFile);
@@ -142,7 +145,7 @@ class BeritaController extends Controller
         $berita = Berita::findOrFail($id);
 
         // Hapus file gambar dari server
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             if ($berita->{"image$i"}) {
                 $filePath = public_path($berita->{"image$i"});
                 if (file_exists($filePath)) {

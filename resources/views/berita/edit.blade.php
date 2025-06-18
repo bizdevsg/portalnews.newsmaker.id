@@ -41,34 +41,37 @@
                         placeholder="Masukkan judul berita..." value="{{ old('title', $berita->title) }}" required>
 
                     @error('title')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 {{-- Foto untuk 5 website berbeda --}}
                 @php
-                $images = collect(range(1, 5))->mapWithKeys(fn($i) => ["image{$i}" =>
-                $berita->{"image{$i}"}])->filter();
+                    $images = collect(range(1, 6))
+                        ->mapWithKeys(fn($i) => ["image{$i}" => $berita->{"image{$i}"}])
+                        ->filter();
                 @endphp
 
                 {{-- Input Gambar --}}
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    @foreach($images as $key => $image)
-                    <div class="mb-4">
-                        <label for="{{ $key }}" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Gambar
-                        </label>
-                        <input type="file" id="{{ $key }}" name="{{ $key }}"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error($key) is-invalid @enderror">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+                    @foreach ($images as $key => $image)
+                        <div class="mb-4">
+                            <label for="{{ $key }}"
+                                class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Gambar
+                            </label>
+                            <input type="file" id="{{ $key }}" name="{{ $key }}"
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error($key) is-invalid @enderror">
 
-                        {{-- Tampilkan gambar yang sudah ada --}}
-                        @if($image)
-                        <img src="{{ asset($image) }}" alt="Gambar" class="mt-2 h-30 w-full rounded-lg object-cover">
-                        @endif
+                            {{-- Tampilkan gambar yang sudah ada --}}
+                            @if ($image)
+                                <img src="{{ asset($image) }}" alt="Gambar"
+                                    class="mt-2 h-30 w-full rounded-lg object-cover">
+                            @endif
 
-                        @error($key)
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                            @error($key)
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                     @endforeach
                 </div>
 
@@ -76,11 +79,10 @@
                 <div class="mb-4">
                     <label for="content" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Isi
                         Berita</label>
-                    <textarea id="content" name="content"
-                        class="w-full h-48 dark:bg-gray-800">{{ old('content', $berita->content) }}</textarea>
+                    <textarea id="content" name="content" class="w-full h-48 dark:bg-gray-800">{{ old('content', $berita->content) }}</textarea>
 
                     @error('content')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 

@@ -22,12 +22,34 @@
 
             <!-- Logo -->
             <a class="flex justify-center dark:hidden" href="{{ route('dashboard') }}">
-                <img src="{{asset('assets/NewsMaker-23-logo.png')}}" alt="Logo NewsMaker" class="h-20">
+                <img src="{{ asset('assets/NewsMaker-23-logo.png') }}" alt="Logo NewsMaker" class="h-20">
             </a>
 
             <a class="hidden dark:flex justify-center " href="{{ route('dashboard') }}">
-                <img src="{{asset('assets/NewsMaker-23-logo-white.png')}}" alt="Logo NewsMaker" class="h-20">
+                <img src="{{ asset('assets/NewsMaker-23-logo-white.png') }}" alt="Logo NewsMaker" class="h-20">
             </a>
+        </div>
+
+        <hr>
+
+        <div class="space-y-8 mt-4">
+            <!-- Pages group -->
+            <div>
+                <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
+                    <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+                        aria-hidden="true">•••</span>
+                    <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Dashboard</span>
+                </h3>
+                <nav class="flex flex-col gap-3 my-4">
+                    <!-- Dashboard -->
+                    <a href="{{ route('dashboard') }}"
+                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
+                        {{ request()->routeIs('dashboard') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span class="text-sm font-medium">Beranda</span>
+                    </a>
+                </nav>
+            </div>
         </div>
 
         <hr>
@@ -42,13 +64,6 @@
                     <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Fitur</span>
                 </h3>
                 <nav class="flex flex-col gap-3 my-4">
-                    <!-- Dashboard -->
-                    <a href="{{ route('dashboard') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('dashboard') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-gauge-high"></i>
-                        <span class="text-sm font-medium">Beranda</span>
-                    </a>
-
                     <!-- Berita -->
                     <a href="{{ route('kategori.index') }}"
                         class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
@@ -58,14 +73,16 @@
                     </a>
 
                     <!-- Berita -->
-                    <a href="{{ route('calendar.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
+                    <a href="{{ route('calendar.index') }}"
+                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
                         {{ request()->routeIs('calendar.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
                         <i class="fa-solid fa-calendar-days"></i>
                         <span class="text-sm font-medium">Kalender Ekonomi</span>
                     </a>
 
                     <!-- Berita -->
-                    <a href="{{ route('pivot.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
+                    <a href="{{ route('pivot.index') }}"
+                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
                         {{ request()->routeIs('pivot.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
                         <i class="fa-solid fa-chart-line"></i>
                         <span class="text-sm font-medium">Pivot & Fibonacci </span>
@@ -76,51 +93,28 @@
 
         <hr>
 
-        <div class="space-y-8 my-4">
-            <!-- Pages group -->
-            <div>
-                <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                    <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                        aria-hidden="true">•••</span>
-                    <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Edukasi</span>
-                </h3>
-                <nav class="flex flex-col gap-3 my-4">
-                    <a href="{{ route('ebook.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('ebook.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-book"></i>
-                        <span class="text-sm font-medium">eBook</span>
-                    </a>
+        @if (auth()->user()->role === 'Superadmin')
+            <hr>
 
-                    <a href="" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('kuis .*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-question"></i>
-                        <span class="text-sm font-medium">Kuis</span>
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-        @if(auth()->user()->role === 'Superadmin')
-        <hr>
-
-        <div class="space-y-8 my-4">
-            <!-- Pages group -->
-            <div>
-                <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                    <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                        aria-hidden="true">•••</span>
-                    <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Manajemen</span>
-                </h3>
-                <nav class="flex flex-col gap-3 my-4">
-                    <!-- User Manage -->
-                    <a href="{{ route('user.index') }}" class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
+            <div class="space-y-8 my-4">
+                <!-- Pages group -->
+                <div>
+                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
+                        <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+                            aria-hidden="true">•••</span>
+                        <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Manajemen</span>
+                    </h3>
+                    <nav class="flex flex-col gap-3 my-4">
+                        <!-- User Manage -->
+                        <a href="{{ route('user.index') }}"
+                            class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
                         {{ request()->routeIs('user.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-users"></i>
-                        <span class="text-sm font-medium">Manajemen Pengguna</span>
-                    </a>
-                </nav>
+                            <i class="fa-solid fa-users"></i>
+                            <span class="text-sm font-medium">Manajemen Pengguna</span>
+                        </a>
+                    </nav>
+                </div>
             </div>
-        </div>
         @endif
 
         <!-- Expand / collapse button -->

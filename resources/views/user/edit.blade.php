@@ -1,3 +1,5 @@
+@section('namePage', 'Edit ' . $user->name)
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <div class="mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -37,7 +39,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('username') border-red-500 @enderror"
                         value="{{ old('username', $user->username) }}">
                     @error('username')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -49,7 +51,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('name') border-red-500 @enderror"
                         value="{{ old('name', $user->name) }}">
                     @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -60,7 +62,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('email') border-red-500 @enderror"
                         value="{{ old('email', $user->email) }}">
                     @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -73,25 +75,25 @@
                     <select id="role" name="role" required
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer @error('role') is-invalid @enderror">
                         <option class="cursor-pointer" value="">-- Pilih Role --</option>
-                        <option class="cursor-pointer" value="Superadmin" {{ old('role', $user->role)=='Superadmin' ?
-                            'selected' : '' }}>
+                        <option class="cursor-pointer" value="Superadmin"
+                            {{ old('role', $user->role) == 'Superadmin' ? 'selected' : '' }}>
                             Superadmin
                         </option>
-                        <option class="cursor-pointer" value="Admin" {{ old('role', $user->role)=='Admin' ? 'selected' :
-                            '' }}>
+                        <option class="cursor-pointer" value="Admin"
+                            {{ old('role', $user->role) == 'Admin' ? 'selected' : '' }}>
                             Admin
                         </option>
-                        <option class="cursor-pointer" value="Trainer (Internal)" {{ old('role', $user->role) ==
-                            'Trainer (Internal)' ? 'selected' : '' }}>
+                        <option class="cursor-pointer" value="Trainer (Internal)"
+                            {{ old('role', $user->role) == 'Trainer (Internal)' ? 'selected' : '' }}>
                             Trainer (Internal)
                         </option>
-                        <option class="cursor-pointer" value="Trainer (External)" {{ old('role', $user->role) ==
-                            'Trainer (External)' ? 'selected' : '' }}>
+                        <option class="cursor-pointer" value="Trainer (External)"
+                            {{ old('role', $user->role) == 'Trainer (External)' ? 'selected' : '' }}>
                             Trainer (External)
                         </option>
                     </select>
                     @error('role')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -109,7 +111,7 @@
                         </button>
                     </div>
                     @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -124,7 +126,8 @@
                                 class="mr-2 bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 rounded-lg">
                                 Batal
                             </button>
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">
                                 Ya, Simpan
                             </button>
                         </div>

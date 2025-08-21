@@ -1,3 +1,5 @@
+@section('namePage', 'Tambah Kalende Ekonomi')
+
 <x-app-layout>
     <div class="mx-4 sm:mx-6 lg:mx-8 my-8">
         <form action="{{ route('calendar.store') }}" method="POST"
@@ -35,7 +37,7 @@
                     <input type="text" name="sources" id="sources"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('sources')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -45,7 +47,7 @@
                     <input type="text" name="measures" id="measures"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('measures')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -134,33 +136,33 @@
                             class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-md hidden max-h-60 overflow-y-auto"
                             role="listbox">
                             @php
-                            $countries = [
-                            ['codeCountry' => 'AUD', 'code' => 'AU', 'name' => 'Australia'],
-                            ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
-                            ['codeCountry' => 'CHF', 'code' => 'CH', 'name' => 'Switzerland'],
-                            ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
-                            ['codeCountry' => 'EUR', 'code' => 'EU', 'name' => 'European Union'],
-                            ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
-                            ['codeCountry' => 'IDN', 'code' => 'ID', 'name' => 'Indonesia'],
-                            ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
-                            ['codeCountry' => 'US', 'code' => 'US', 'name' => 'United States'],
-                            ];
+                                $countries = [
+                                    ['codeCountry' => 'AUD', 'code' => 'AU', 'name' => 'Australia'],
+                                    ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
+                                    ['codeCountry' => 'CHF', 'code' => 'CH', 'name' => 'Switzerland'],
+                                    ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
+                                    ['codeCountry' => 'EUR', 'code' => 'EU', 'name' => 'European Union'],
+                                    ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
+                                    ['codeCountry' => 'IDN', 'code' => 'ID', 'name' => 'Indonesia'],
+                                    ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
+                                    ['codeCountry' => 'US', 'code' => 'US', 'name' => 'United States'],
+                                ];
                             @endphp
                             @foreach ($countries as $country)
-                            @if ($country['code'] == 'EU')
-                            <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                <img src="https://flagcdn.com/w40/{{ strtolower($country['code']) }}.png"
-                                    class="w-5 h-4" alt="{{ $country['name'] }}">
-                                {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                            </li>
-                            @else
-                            <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                <img src="https://flagsapi.com/{{ $country['code'] }}/shiny/24.png">
-                                {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                            </li>
-                            @endif
+                                @if ($country['code'] == 'EU')
+                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
+                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
+                                        <img src="https://flagcdn.com/w40/{{ strtolower($country['code']) }}.png"
+                                            class="w-5 h-4" alt="{{ $country['name'] }}">
+                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
+                                    </li>
+                                @else
+                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
+                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
+                                        <img src="https://flagsapi.com/{{ $country['code'] }}/shiny/24.png">
+                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>

@@ -1,3 +1,5 @@
+@section('namePage', 'Edit Pivot & Fibonnaci')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         <div class="card p-6 bg-white rounded shadow">
@@ -12,33 +14,36 @@
                     <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', $pivot->tanggal) }}"
                         class="w-full border rounded p-2 @error('tanggal') border-red-500 @enderror" required>
                     @error('tanggal')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label for="open" class="block font-medium">Open</label>
-                        <input type="number" name="open" id="open" step="0.01" value="{{ old('open', $pivot->open) }}"
+                        <input type="number" name="open" id="open" step="0.01"
+                            value="{{ old('open', $pivot->open) }}"
                             class="w-full border rounded p-2 @error('open') border-red-500 @enderror" required>
                         @error('open')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label for="high" class="block font-medium">High</label>
-                        <input type="number" name="high" id="high" step="0.01" value="{{ old('high', $pivot->high) }}"
+                        <input type="number" name="high" id="high" step="0.01"
+                            value="{{ old('high', $pivot->high) }}"
                             class="w-full border rounded p-2 @error('high') border-red-500 @enderror" required>
                         @error('high')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label for="low" class="block font-medium">Low</label>
-                        <input type="number" name="low" id="low" step="0.01" value="{{ old('low', $pivot->low) }}"
+                        <input type="number" name="low" id="low" step="0.01"
+                            value="{{ old('low', $pivot->low) }}"
                             class="w-full border rounded p-2 @error('low') border-red-500 @enderror" required>
                         @error('low')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
@@ -47,7 +52,7 @@
                             value="{{ old('close', $pivot->close) }}"
                             class="w-full border rounded p-2 @error('close') border-red-500 @enderror" required>
                         @error('close')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -57,16 +62,15 @@
                     <select name="category" id="category"
                         class="w-full border rounded p-2 @error('category') border-red-500 @enderror" required>
                         <option value="">-- Pilih Kategori --</option>
-                        @foreach (['LGD Daily', 'LSI', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD',
-                        'USD/CHF', 'USD/JPY'] as $kategori)
-                        <option value="{{ $kategori }}" {{ old('category', $pivot->category) == $kategori ? 'selected' :
-                            '' }}>
-                            {{ $kategori }}
-                        </option>
+                        @foreach (['LGD Daily', 'LSI', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
+                            <option value="{{ $kategori }}"
+                                {{ old('category', $pivot->category) == $kategori ? 'selected' : '' }}>
+                                {{ $kategori }}
+                            </option>
                         @endforeach
                     </select>
                     @error('category')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 

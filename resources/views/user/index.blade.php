@@ -1,3 +1,5 @@
+@section('namePage', 'Manajemen Pengguna')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto flex flex-col gap-6 h-full">
         <!-- Dashboard actions -->
@@ -14,19 +16,19 @@
 
         {{-- Alert --}}
         @if (session('success'))
-        <div id="successAlert" class="w-full">
-            <div
-                class="border-l-4 border-green-600 p-4 rounded-lg bg-green-100 dark:bg-green-800 flex items-center justify-between shadow-md transition-opacity duration-300">
-                <div class="flex items-center gap-2 text-green-800 dark:text-green-300 text-sm sm:text-base">
-                    <i class="fa-solid fa-circle-check text-lg"></i>
-                    <span>{{ session('success') }}</span>
+            <div id="successAlert" class="w-full">
+                <div
+                    class="border-l-4 border-green-600 p-4 rounded-lg bg-green-100 dark:bg-green-800 flex items-center justify-between shadow-md transition-opacity duration-300">
+                    <div class="flex items-center gap-2 text-green-800 dark:text-green-300 text-sm sm:text-base">
+                        <i class="fa-solid fa-circle-check text-lg"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                    <button onclick="closeAlert()"
+                        class="p-1 text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-400 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
                 </div>
-                <button onclick="closeAlert()"
-                    class="p-1 text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-400 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
             </div>
-        </div>
         @endif
 
         <div class="overflow-x-auto bg-white dark:bg-gray-700 shadow-md rounded-lg">
@@ -43,60 +45,60 @@
                 </thead>
                 <tbody class="text-gray-700 dark:text-gray-300">
                     @foreach ($users as $index => $item)
-                    <tr>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center">
-                            {{ $loop->iteration }}
-                        </td>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->username }}</td>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->name }}</td>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->email }}</td>
-                        <td class="px-4 py-2 text-center border border-gray-200 dark:border-gray-700">
-                            @if ($item->role == 'Superadmin')
-                            <span class="bg-red-600 text-white py-2 px-4 text-sm rounded-full">
-                                Superadmin
-                            </span>
-                            @elseif ($item->role == 'Admin')
-                            <span class="bg-blue-600 text-white py-2 px-4 text-sm rounded-full">
-                                Admin
-                            </span>
-                            @elseif ($item->role == 'Trainer (Internal)')
-                            <span class="bg-green-600 text-white py-2 px-4 text-sm rounded-full">
-                                Trainer (Internal)
-                            </span>
-                            @elseif ($item->role == 'Trainer (External)')
-                            <span class="bg-yellow-600 text-white py-2 px-4 text-sm rounded-full">
-                                Trainer (External)
-                            </span>
-                            @else
-                            <span class="bg-gray-400 text-white py-2 px-4 text-sm rounded-full">
-                                Tidak Diketahui
-                            </span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center">
-                            @if (auth()->user()->id === $item->id)
-                            <div class="flex">
-                                <a href="{{ route('profile.show') }}"
-                                    class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
-                                    Edit Profil
-                                </a>
-                            </div>
-                            @else
-                            <div class="flex gap-2">
-                                <a href="{{ route('user.edit', $item->id) }}"
-                                    class="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                                    Edit
-                                </a>
+                        <tr>
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->username }}</td>
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->name }}</td>
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">{{ $item->email }}</td>
+                            <td class="px-4 py-2 text-center border border-gray-200 dark:border-gray-700">
+                                @if ($item->role == 'Superadmin')
+                                    <span class="bg-red-600 text-white py-2 px-4 text-sm rounded-full">
+                                        Superadmin
+                                    </span>
+                                @elseif ($item->role == 'Admin')
+                                    <span class="bg-blue-600 text-white py-2 px-4 text-sm rounded-full">
+                                        Admin
+                                    </span>
+                                @elseif ($item->role == 'Trainer (Internal)')
+                                    <span class="bg-green-600 text-white py-2 px-4 text-sm rounded-full">
+                                        Trainer (Internal)
+                                    </span>
+                                @elseif ($item->role == 'Trainer (External)')
+                                    <span class="bg-yellow-600 text-white py-2 px-4 text-sm rounded-full">
+                                        Trainer (External)
+                                    </span>
+                                @else
+                                    <span class="bg-gray-400 text-white py-2 px-4 text-sm rounded-full">
+                                        Tidak Diketahui
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center">
+                                @if (auth()->user()->id === $item->id)
+                                    <div class="flex">
+                                        <a href="{{ route('profile.show') }}"
+                                            class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+                                            Edit Profil
+                                        </a>
+                                    </div>
+                                @else
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('user.edit', $item->id) }}"
+                                            class="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                                            Edit
+                                        </a>
 
-                                <!-- Tombol untuk membuka modal -->
-                                <button onclick="showDeleteModal({{ $item->id }}, '{{ $item->name }}')"
-                                    class="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer">
-                                    Hapus
-                                </button>
-                            </div>
-                            @endif
-                        </td>
-                    </tr>
+                                        <!-- Tombol untuk membuka modal -->
+                                        <button onclick="showDeleteModal({{ $item->id }}, '{{ $item->name }}')"
+                                            class="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer">
+                                            Hapus
+                                        </button>
+                                    </div>
+                                @endif
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -135,17 +137,17 @@
             const modal = document.getElementById("deleteModal");
             const form = document.getElementById("deleteForm");
             const userName = document.getElementById("userName");
-    
+
             // Update action form dengan mengganti placeholder ":id" dengan ID pengguna yang dipilih
             form.action = `{{ route('user.destroy', ':id') }}`.replace(':id', id);
-            
+
             // Tampilkan nama pengguna di modal
             userName.textContent = name;
-    
+
             // Tampilkan modal
             modal.classList.remove("hidden");
         }
-    
+
         function hideDeleteModal() {
             document.getElementById("deleteModal").classList.add("hidden");
         }

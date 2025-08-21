@@ -1,3 +1,5 @@
+@section('namePage', 'Edit Kalender Ekonomi')
+
 <x-app-layout>
     <div class="mx-4 sm:mx-6 lg:mx-8 my-8">
         <form action="{{ route('calendar.update', $calendar->id) }}" method="POST"
@@ -32,7 +34,7 @@
                         value="{{ old('figures', $calendar->figures) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('figures')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -42,17 +44,18 @@
                     <input type="text" name="sources" id="sources" value="{{ old('sources', $calendar->sources) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('sources')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
                 {{-- Measures --}}
                 <div class="form-group flex flex-col gap-2">
                     <label for="measures" class="font-medium text-gray-700 dark:text-gray-100">Measures</label>
-                    <input type="text" name="measures" id="measures" value="{{ old('measures', $calendar->measures) }}"
+                    <input type="text" name="measures" id="measures"
+                        value="{{ old('measures', $calendar->measures) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('measures')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -63,7 +66,7 @@
                         value="{{ old('usual_effect', $calendar->usual_effect) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('usual_effect')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -74,7 +77,7 @@
                         value="{{ old('frequency', $calendar->frequency) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('frequency')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -86,7 +89,7 @@
                         value="{{ old('next_released', $calendar->next_released) }}"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     @error('next_released')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -96,7 +99,7 @@
                     <textarea name="notes" id="notes" rows="3"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">{{ old('notes', $calendar->notes) }}</textarea>
                     @error('notes')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -107,7 +110,7 @@
                     <textarea name="why_traders_care" id="why_traders_care" rows="3"
                         class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">{{ old('why_traders_care', $calendar->why_traders_care) }}</textarea>
                     @error('why_traders_care')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -119,7 +122,7 @@
                             value="{{ old('date', \Carbon\Carbon::parse($calendar->date)->format('Y-m-d')) }}"
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                         @error('date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -129,7 +132,7 @@
                             value="{{ old('time', $calendar->time) }}"
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                         @error('time')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -142,13 +145,13 @@
                         <option value="">Pilih Impact</option>
                         <option value="Low" {{ old('impact', $calendar->impact) == 'Low' ? 'selected' : '' }}>Low
                         </option>
-                        <option value="Medium" {{ old('impact', $calendar->impact) == 'Medium' ? 'selected' : ''
-                            }}>Medium</option>
+                        <option value="Medium" {{ old('impact', $calendar->impact) == 'Medium' ? 'selected' : '' }}>
+                            Medium</option>
                         <option value="High" {{ old('impact', $calendar->impact) == 'High' ? 'selected' : '' }}>High
                         </option>
                     </select>
                     @error('impact')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -159,20 +162,22 @@
                             class="w-full flex justify-between items-center px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 rounded-md shadow-sm focus:outline-none transition-all cursor-pointer">
                             <span class="flex items-center gap-2">
                                 @php
-                                $countries = [
-                                ['codeCountry' => 'AUD', 'code' => 'AU' , 'name' => 'Australia'],
-                                ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
-                                ['codeCountry' => 'CHF', 'code' => 'CH' , 'name' => 'Switzerland'],
-                                ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
-                                ['codeCountry' => 'EUR', 'code' => 'EU' , 'name' => 'European Union'],
-                                ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
-                                ['codeCountry' => 'IDN', 'code' => 'ID' , 'name' => 'Indonesia'],
-                                ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
-                                ['codeCountry' => 'US', 'code' => 'US' , 'name' => 'United States'],
-                                ];
+                                    $countries = [
+                                        ['codeCountry' => 'AUD', 'code' => 'AU', 'name' => 'Australia'],
+                                        ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
+                                        ['codeCountry' => 'CHF', 'code' => 'CH', 'name' => 'Switzerland'],
+                                        ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
+                                        ['codeCountry' => 'EUR', 'code' => 'EU', 'name' => 'European Union'],
+                                        ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
+                                        ['codeCountry' => 'IDN', 'code' => 'ID', 'name' => 'Indonesia'],
+                                        ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
+                                        ['codeCountry' => 'US', 'code' => 'US', 'name' => 'United States'],
+                                    ];
 
-                                $selected = collect($countries)->firstWhere('codeCountry', old('country',
-                                $calendar->country));
+                                    $selected = collect($countries)->firstWhere(
+                                        'codeCountry',
+                                        old('country', $calendar->country),
+                                    );
                                 @endphp
                                 <img src="https://flagsapi.com/{{ $selected['code'] }}/shiny/24.png">
                                 {{ $selected['codeCountry'] }} - {{ $selected['name'] }}
@@ -190,38 +195,38 @@
                             class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-md hidden max-h-60 overflow-y-auto"
                             role="listbox">
                             @php
-                            $countries = [
-                            ['codeCountry' => 'AUD', 'code' => 'AU' , 'name' => 'Australia'],
-                            ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
-                            ['codeCountry' => 'CHF', 'code' => 'CH' , 'name' => 'Switzerland'],
-                            ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
-                            ['codeCountry' => 'EUR', 'code' => 'EU' , 'name' => 'European Union'],
-                            ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
-                            ['codeCountry' => 'IDN', 'code' => 'ID' , 'name' => 'Indonesia'],
-                            ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
-                            ['codeCountry' => 'US', 'code' => 'US' , 'name' => 'United States'],
-                            ];
+                                $countries = [
+                                    ['codeCountry' => 'AUD', 'code' => 'AU', 'name' => 'Australia'],
+                                    ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
+                                    ['codeCountry' => 'CHF', 'code' => 'CH', 'name' => 'Switzerland'],
+                                    ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
+                                    ['codeCountry' => 'EUR', 'code' => 'EU', 'name' => 'European Union'],
+                                    ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
+                                    ['codeCountry' => 'IDN', 'code' => 'ID', 'name' => 'Indonesia'],
+                                    ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
+                                    ['codeCountry' => 'US', 'code' => 'US', 'name' => 'United States'],
+                                ];
                             @endphp
                             @foreach ($countries as $country)
-                            @if ($country['code'] == 'EU')
-                            <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                <img src="https://flagcdn.com/w40/{{ strtolower($country['code']) }}.png"
-                                    class="w-5 h-4" alt="{{ $country['name'] }}">
-                                {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                            </li>
-                            @else
-                            <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                <img src="https://flagsapi.com/{{ $country['code'] }}/shiny/24.png">
-                                {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                            </li>
-                            @endif
+                                @if ($country['code'] == 'EU')
+                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
+                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
+                                        <img src="https://flagcdn.com/w40/{{ strtolower($country['code']) }}.png"
+                                            class="w-5 h-4" alt="{{ $country['name'] }}">
+                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
+                                    </li>
+                                @else
+                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
+                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
+                                        <img src="https://flagsapi.com/{{ $country['code'] }}/shiny/24.png">
+                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>
                     @error('country')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -232,7 +237,7 @@
                             value="{{ old('previous', $calendar->previous) }}"
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2">
                         @error('previous')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -242,16 +247,17 @@
                             value="{{ old('forecast', $calendar->forecast) }}"
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2">
                         @error('forecast')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="w-full flex flex-col gap-2">
                         <label for="actual" class="font-medium text-gray-700 dark:text-gray-100">Actual</label>
-                        <input type="text" name="actual" id="actual" value="{{ old('actual', $calendar->actual) }}"
+                        <input type="text" name="actual" id="actual"
+                            value="{{ old('actual', $calendar->actual) }}"
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2">
                         @error('actual')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>

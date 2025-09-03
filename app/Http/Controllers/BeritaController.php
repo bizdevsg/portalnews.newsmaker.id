@@ -35,6 +35,11 @@ class BeritaController extends Controller
         // Validasi input
         $request->validate([
             'title' => 'required|max:100',
+            'title_sg' => 'nullable|max:100',
+            'title_rfb' => 'nullable|max:100',
+            'title_kpf' => 'nullable|max:100',
+            'title_ewf' => 'nullable|max:100',
+            'title_bpf' => 'nullable|max:100',
             'content' => 'required',
             'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'image2' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -63,6 +68,11 @@ class BeritaController extends Controller
         // Simpan berita ke database
         Berita::create([
             'title' => $request->title,
+            'title_sg' => $request->title_sg,
+            'title_rfb' => $request->title_rfb,
+            'title_kpf' => $request->title_kpf,
+            'title_ewf' => $request->title_ewf,
+            'title_bpf' => $request->title_bpf,
             'content' => $request->content,
             'category_id' => $kategori->id,
             'image1' => $images['image1'],
@@ -107,6 +117,11 @@ class BeritaController extends Controller
         // Validasi input
         $request->validate([
             'title' => 'required|max:100',
+            'title_sg' => 'nullable|max:100',
+            'title_rfb' => 'nullable|max:100',
+            'title_kpf' => 'nullable|max:100',
+            'title_ewf' => 'nullable|max:100',
+            'title_bpf' => 'nullable|max:100',
             'content' => 'required',
             'image1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -131,6 +146,11 @@ class BeritaController extends Controller
         // Update berita di database
         $berita->update([
             'title' => $request->title,
+            'title_sg' => $request->title_sg,
+            'title_rfb' => $request->title_rfb,
+            'title_kpf' => $request->title_kpf,
+            'title_ewf' => $request->title_ewf,
+            'title_bpf' => $request->title_bpf,
             'content' => $request->content,
         ]);
 

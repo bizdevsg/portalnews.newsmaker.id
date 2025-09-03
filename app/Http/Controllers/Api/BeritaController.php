@@ -10,9 +10,14 @@ class BeritaController extends Controller
 {
     public function index()
     {
-        $beritas = Berita::select(
+        $beritas = Berita::select([
             'id',
             'title',
+            'title_sg',
+            'title_rfb',
+            'title_kpf',
+            'title_ewf',
+            'title_bpf',
             'slug',
             'content',
             'image1',
@@ -24,13 +29,21 @@ class BeritaController extends Controller
             'category_id',
             'created_at',
             'updated_at'
-        )
+        ])
             ->with(['category:id,name,slug'])
             ->get()
             ->transform(function ($berita) {
                 return [
                     'id'         => $berita->id,
                     'title'      => $berita->title,
+                    'titles'     => [
+                        'default' => $berita->title,
+                        'sg'      => $berita->title_sg ?? $berita->title,
+                        'rfb'     => $berita->title_rfb ?? $berita->title,
+                        'kpf'     => $berita->title_kpf ?? $berita->title,
+                        'ewf'     => $berita->title_ewf ?? $berita->title,
+                        'bpf'     => $berita->title_bpf ?? $berita->title,
+                    ],
                     'slug'       => $berita->slug,
                     'content'    => $berita->content, // HTML asli
                     'category_id' => $berita->category_id,
@@ -54,9 +67,14 @@ class BeritaController extends Controller
 
     public function show($slug)
     {
-        $berita = Berita::select(
+        $berita = Berita::select([
             'id',
             'title',
+            'title_sg',
+            'title_rfb',
+            'title_kpf',
+            'title_ewf',
+            'title_bpf',
             'slug',
             'content',
             'image1',
@@ -68,7 +86,7 @@ class BeritaController extends Controller
             'category_id',
             'created_at',
             'updated_at'
-        )
+        ])
             ->with(['category:id,name'])
             ->where('slug', $slug)
             ->first();
@@ -88,6 +106,15 @@ class BeritaController extends Controller
         $data = [
             'id'         => $berita->id,
             'title'      => $berita->title,
+            'titles'     => [
+                'default' => $berita->title,
+                'sg'      => $berita->title_sg ?? $berita->title,
+                'rfb'     => $berita->title_rfb ?? $berita->title,
+                'kpf'     => $berita->title_kpf ?? $berita->title,
+                'ewf'     => $berita->title_ewf ?? $berita->title,
+                'bpf'     => $berita->title_bpf ?? $berita->title,
+                'backup'  => $berita->title_backup ?? $berita->title,
+            ],
             'slug'       => $berita->slug,
             'content'    => $berita->content, // HTML asli
             'category_id' => $berita->category_id,

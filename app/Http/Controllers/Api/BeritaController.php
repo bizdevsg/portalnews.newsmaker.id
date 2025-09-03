@@ -20,6 +20,7 @@ class BeritaController extends Controller
             'image3',
             'image4',
             'image5',
+            'image6',
             'category_id',
             'created_at',
             'updated_at'
@@ -63,6 +64,7 @@ class BeritaController extends Controller
             'image3',
             'image4',
             'image5',
+            'image6',
             'category_id',
             'created_at',
             'updated_at'

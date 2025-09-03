@@ -82,6 +82,7 @@ class Berita extends Model
             $this->image3 ?: null,
             $this->image4 ?: null,
             $this->image5 ?: null,
+            $this->image6 ?: null,
         ], fn($value) => !is_null($value)));
     }
 }

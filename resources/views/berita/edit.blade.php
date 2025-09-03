@@ -47,24 +47,41 @@
 
                 {{-- Foto untuk 5 website berbeda --}}
                 @php
+                    $imageLabels = [
+                        1 => 'Gambar SG:',
+                        2 => 'Gambar RFB:',
+                        3 => 'Gambar KPF:',
+                        4 => 'Gambar EWF:',
+                        5 => 'Gambar BPF:',
+                        6 => 'Gambar Backup:'
+                    ];
+
                     $images = collect(range(1, 6))
-                        ->mapWithKeys(fn($i) => ["image{$i}" => $berita->{"image{$i}"}])
-                        ->filter();
+                        ->mapWithKeys(function($i) use ($berita, $imageLabels) {
+                            return [
+                                "image{$i}" => [
+                                    'path' => $berita->{"image{$i}"},
+                                    'label' => $imageLabels[$i] ?? 'Gambar ' . $i
+                                ]
+                            ];
+                        })
+                        ->filter(fn($item) => !empty($item['path']));
                 @endphp
 
                 {{-- Input Gambar --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
-                    @foreach ($images as $key => $image)
+                    @foreach ($images as $key => $imageData)
                         <div class="mb-4">
                             <label for="{{ $key }}"
-                                class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Gambar
+                                class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                                {{ $imageData['label'] }}
                             </label>
                             <input type="file" id="{{ $key }}" name="{{ $key }}"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error($key) is-invalid @enderror">
 
                             {{-- Tampilkan gambar yang sudah ada --}}
-                            @if ($image)
-                                <img src="{{ asset($image) }}" alt="Gambar"
+                            @if ($imageData['path'])
+                                <img src="{{ asset($imageData['path']) }}" alt="{{ $imageData['label'] }}"
                                     class="mt-2 h-30 w-full rounded-lg object-cover">
                             @endif
 

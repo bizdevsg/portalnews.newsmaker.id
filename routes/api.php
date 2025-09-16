@@ -17,9 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/berita', [BeritaController::class, 'index']);
-ROute::get('/berita/{slug}', [BeritaController::class, 'show']);
+Route::prefix('v1')->middleware('bearer')->group(
+    function () {
+        Route::get('/berita', [BeritaController::class, 'index']);
+        ROute::get('/berita/{slug}', [BeritaController::class, 'show']);
 
-Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);
+        Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);
 
-Route::get('/pivot-history', [PivotController::class, 'index']);
+        Route::get('/pivot-history', [PivotController::class, 'index']);
+    }
+);

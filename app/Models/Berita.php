@@ -14,6 +14,11 @@ class Berita extends Model
 
     protected $fillable = [
         'title',
+        'title_sg',
+        'title_rfb',
+        'title_kpf',
+        'title_ewf',
+        'title_bpf',
         'content',
         'image1',
         'image2',
@@ -22,10 +27,24 @@ class Berita extends Model
         'image5',
         'image6',
         'category_id',
-        'slug', // tambahkan agar slug bisa diisi saat disimpan otomatis
+        'slug',
     ];
-
+    
     protected $appends = ['images'];
+    
+    // Method untuk mendapatkan judul berdasarkan PT
+    public function getTitleForPt($ptCode)
+    {
+        $ptTitles = [
+            'sg' => $this->title_sg,
+            'rfb' => $this->title_rfb,
+            'kpf' => $this->title_kpf,
+            'ewf' => $this->title_ewf,
+            'bpf' => $this->title_bpf,
+        ];
+        
+        return $ptTitles[strtolower($ptCode)] ?? $this->title;
+    }
 
     /**
      * Boot method untuk membuat slug otomatis dari title.
@@ -82,6 +101,7 @@ class Berita extends Model
             $this->image3 ?: null,
             $this->image4 ?: null,
             $this->image5 ?: null,
+            $this->image6 ?: null,
         ], fn($value) => !is_null($value)));
     }
 }

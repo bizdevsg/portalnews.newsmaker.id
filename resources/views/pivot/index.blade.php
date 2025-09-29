@@ -1,3 +1,5 @@
+@section('namePage', 'Pivot & Fibonnaci')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         <!-- Header -->
@@ -9,35 +11,44 @@
             </a>
         </div>
 
-        @if(session('success'))
-        <div
-            class="mt-4 rounded-lg border-l-2 border-green-600 bg-green-100 dark:bg-green-900/50 p-4 text-green-800 dark:text-green-200">
-            <div class="flex items-center space-x-2 font-semibold">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>{{ session('success') }}</span>
+        @if (session('success'))
+            <div
+                class="mt-4 rounded-lg border-l-2 border-green-600 bg-green-100 dark:bg-green-900/50 p-4 text-green-800 dark:text-green-200">
+                <div class="flex items-center space-x-2 font-semibold">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
             </div>
-        </div>
         @endif
 
         <!-- Card -->
         <div class="bg-white dark:bg-gray-800 mt-5 rounded shadow-lg">
             <!-- Kategori -->
             @php
-            // Hapus "Semua"
-            $categories = ['LGD Daily', 'LSI', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF',
-            'USD/JPY'];
+                // Hapus "Semua"
+                $categories = [
+                    'LGD Daily',
+                    'LSI',
+                    'HSI Daily',
+                    'SNI Daily',
+                    'AUD/USD',
+                    'EUR/USD',
+                    'GBP/USD',
+                    'USD/CHF',
+                    'USD/JPY',
+                ];
 
-            // Ambil kategori dari query param, default ke 'LGD Daily'
-            $selectedCategory = request('category', 'LGD Daily');
+                // Ambil kategori dari query param, default ke 'LGD Daily'
+                $selectedCategory = request('category', 'LGD Daily');
             @endphp
 
             <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex gap-2 overflow-x-auto">
                 @foreach ($categories as $cat)
-                <button data-category="{{ $cat }}"
-                    class="category-button cursor-pointer font-semibold py-1 px-3 rounded
+                    <button data-category="{{ $cat }}"
+                        class="category-button cursor-pointer font-semibold py-1 px-3 rounded
                 {{ $selectedCategory == $cat ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
-                    {{ $cat }}
-                </button>
+                        {{ $cat }}
+                    </button>
                 @endforeach
             </div>
 
@@ -71,6 +82,7 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($pivots as $index => $pivot)
+
                         <tr
                             class="{{ $index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800' }}">
                             <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
@@ -102,11 +114,13 @@
                                 </div>
                             </td>
                         </tr>
+
                         @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data belum
-                                tersedia.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="7" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
+                                    belum
+                                    tersedia.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>

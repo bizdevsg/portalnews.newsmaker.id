@@ -29,26 +29,97 @@
                 @csrf
                 <input type="hidden" name="category_id" value="{{ $kategori->id }}">
 
-                {{-- Input Judul Berita --}}
+                {{-- Input Judul Berita Default --}}
                 <div class="mb-4">
-                    <label for="title" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
-                        Berita</label>
+                    <label for="title" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul Default
+                        <span class="text-red-500">*</span></label>
                     <input type="text" id="title" name="title"
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title') is-invalid @enderror"
-                        placeholder="Masukkan judul berita..." value="{{ old('title') }}" required>
+                        placeholder="Masukkan judul default..." value="{{ old('title') }}" required>
 
                     @error('title')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- Input Judul untuk Setiap PT --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- SG -->
+                    <div class="mb-4">
+                        <label for="title_sg" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul SG</label>
+                        <input type="text" id="title_sg" name="title_sg"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_sg') is-invalid @enderror"
+                            placeholder="Judul untuk SG..." value="{{ old('title_sg') }}">
+                        @error('title_sg')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- RFB -->
+                    <div class="mb-4">
+                        <label for="title_rfb" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul RFB</label>
+                        <input type="text" id="title_rfb" name="title_rfb"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_rfb') is-invalid @enderror"
+                            placeholder="Judul untuk RFB..." value="{{ old('title_rfb') }}">
+                        @error('title_rfb')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- KPF -->
+                    <div class="mb-4">
+                        <label for="title_kpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul KPF</label>
+                        <input type="text" id="title_kpf" name="title_kpf"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_kpf') is-invalid @enderror"
+                            placeholder="Judul untuk KPF..." value="{{ old('title_kpf') }}">
+                        @error('title_kpf')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- EWF -->
+                    <div class="mb-4">
+                        <label for="title_ewf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul EWF</label>
+                        <input type="text" id="title_ewf" name="title_ewf"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_ewf') is-invalid @enderror"
+                            placeholder="Judul untuk EWF..." value="{{ old('title_ewf') }}">
+                        @error('title_ewf')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- BPF -->
+                    <div class="mb-4">
+                        <label for="title_bpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul BPF</label>
+                        <input type="text" id="title_bpf" name="title_bpf"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_bpf') is-invalid @enderror"
+                            placeholder="Judul untuk BPF..." value="{{ old('title_bpf') }}">
+                        @error('title_bpf')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                </div>
+
+                @php
+                    $imageLabels = [
+                        1 => 'Gambar SG:',
+                        2 => 'Gambar RFB:',
+                        3 => 'Gambar KPF:',
+                        4 => 'Gambar EWF:',
+                        5 => 'Gambar BPF:',
+                        6 => 'Gambar Backup:'
+                    ];
+                @endphp
+
                 {{-- Input Gambar --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
                     @foreach (range(1, 6) as $i)
                         <div class="mb-4">
                             <label for="image{{ $i }}"
-                                class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Gambar
-                                {{ $i }}</label>
+                                class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                                {{ $imageLabels[$i] ?? 'Gambar ' . $i }}
+                            </label>
                             <input type="file" id="image{{ $i }}" name="image{{ $i }}"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('image' . $i) is-invalid @enderror">
                             @error('image' . $i)

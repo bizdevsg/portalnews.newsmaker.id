@@ -1,3 +1,6 @@
+@section('namePage', 'Tambah Pengguna')
+
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <div class="mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -33,7 +36,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('username') is-invalid @enderror"
                         value="{{ old('username') }}">
                     @error('username')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -46,7 +49,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('name  ') is-invalid @enderror"
                         value="{{ old('name') }}">
                     @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -59,7 +62,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('email') is-invalid @enderror"
                         value="{{ old('email') }}">
                     @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -71,24 +74,24 @@
                     <select id="role" name="role" required
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer @error('role') is-invalid @enderror">
                         <option class="cursor-pointer" value="">-- Pilih Role --</option>
-                        <option class="cursor-pointer" value="Superadmin" {{ old('role')=='Superadmin' ? 'selected' : ''
-                            }}>
+                        <option class="cursor-pointer" value="Superadmin"
+                            {{ old('role') == 'Superadmin' ? 'selected' : '' }}>
                             Superadmin
                         </option>
-                        <option class="cursor-pointer" value="Admin" {{ old('role')=='Admin' ? 'selected' : '' }}>
+                        <option class="cursor-pointer" value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>
                             Admin
                         </option>
-                        <option class="cursor-pointer" value="Trainer (Internal)" {{ old('role')=='Trainer (Internal)'
-                            ? 'selected' : '' }}>
+                        <option class="cursor-pointer" value="Trainer (Internal)"
+                            {{ old('role') == 'Trainer (Internal)' ? 'selected' : '' }}>
                             Trainer (Internal)
                         </option>
-                        <option class="cursor-pointer" value="Trainer (External)" {{ old('role')=='Trainer (External)'
-                            ? 'selected' : '' }}>
+                        <option class="cursor-pointer" value="Trainer (External)"
+                            {{ old('role') == 'Trainer (External)' ? 'selected' : '' }}>
                             Trainer (External)
                         </option>
                     </select>
                     @error('role')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -107,7 +110,7 @@
                         </button>
                     </div>
                     @error('password')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -147,7 +150,7 @@
                     class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg cursor-pointer">
                     Batal
                 </button>
-                <a href="{{route('user.index')}}"
+                <a href="{{ route('user.index') }}"
                     class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg cursor-pointer">
                     Ya, Kembali
                 </a>

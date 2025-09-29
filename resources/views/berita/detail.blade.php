@@ -8,7 +8,7 @@
             </a>
         </div>
 
-        <div class="p-4 rounded-lg shadow">
+        <div>
             {{-- Judul --}}
             <h1 class="text-xl text-center text-blue-500 dark:text-blue-400 font-bold">
                 {{ $berita->title }}

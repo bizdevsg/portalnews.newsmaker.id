@@ -28,10 +28,10 @@ class PivotController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'open'    => 'required|numeric',
-            'high'    => 'required|numeric',
-            'low'     => 'required|numeric',
-            'close'   => 'required|numeric',
+            'open'    => 'required|string|max:20',
+            'high'    => 'required|string|max:20',
+            'low'     => 'required|string|max:20',
+            'close'   => 'required|string|max:20',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ]);
 
@@ -51,10 +51,10 @@ class PivotController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'open'    => 'required|numeric',
-            'high'    => 'required|numeric',
-            'low'     => 'required|numeric',
-            'close'   => 'required|numeric',
+            'open'    => 'required|string|max:20',
+            'high'    => 'required|string|max:20',
+            'low'     => 'required|string|max:20',
+            'close'   => 'required|string|max:20',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ]);
 

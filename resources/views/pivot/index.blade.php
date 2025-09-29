@@ -82,35 +82,39 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($pivots as $index => $pivot)
-                            <tr
-                                class="{{ $index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800' }}">
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ \Carbon\Carbon::parse($pivot->tanggal)->translatedFormat('d F Y') }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->open, 2, '.', '') }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->high, 2, '.', '') }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->low, 2, '.', '') }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->close, 2, '.', '') }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->category }}
-                                </td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('pivot.edit', $pivot->id) }}"
-                                            class="w-1/2 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 text-sm font-semibold text-center">Edit</a>
-                                        <a href="{{ route('pivot.destroy', $pivot->id) }}"
-                                            class="w-1/2 bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm font-semibold text-center">Hapus</a>
-                                    </div>
-                                </td>
-                            </tr>
+
+                        <tr
+                            class="{{ $index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800' }}">
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                {{ \Carbon\Carbon::parse($pivot->tanggal)->translatedFormat('d F Y') }}
+                            </td>
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                {{ $pivot->open }}
+                            </td>
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                {{ $pivot->high }}
+                            </td>
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                {{ $pivot->low }}
+                            </td>
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                {{ $pivot->close }}
+                            </td>
+                            <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">{{ $pivot->category }}
+                            </td>
+                            <td class="px-4 py-2 text-center">
+                                <div class="flex gap-2">
+                                    <a href="{{route('pivot.edit', $pivot->id)}}"
+                                        class="w-1/2 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 text-sm font-semibold text-center">Edit</a>
+                                    <form action="{{ route('pivot.destroy', $pivot->id) }}" method="POST" class="inline w-1/2" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm font-semibold text-center">Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
                         @empty
                             <tr>
                                 <td colspan="7" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data

@@ -17,6 +17,9 @@ class Pivot extends Model
         'high',
         'low',
         'close',
+        'chg',
         'category',
+        'volume',
+        'open_interest',
     ];
 }

@@ -4,7 +4,7 @@
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Pivot & Fibonacci</h1>
+            <h1 class="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Historical Data</h1>
             <a href="{{ route('pivot.create') }}"
                 class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition">
                 Tambah History
@@ -72,6 +72,19 @@
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                 Close</th>
+                            @if($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                            <th
+                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                Chg.</th>
+                            <th
+                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                Volume</th>
+                            @if($selectedCategory === 'HSI Daily')
+                            <th
+                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                Open Interest</th>
+                            @endif
+                            @endif
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                 Kategori</th>
@@ -99,6 +112,19 @@
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->close }}
                                 </td>
+                                @if($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                    {{ $pivot->chg }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                    {{ $pivot->volume }}
+                                </td>
+                                @if($selectedCategory === 'HSI Daily')
+                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                    {{ $pivot->open_interest }}
+                                </td>
+                                @endif
+                                @endif
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->category }}
                                 </td>
@@ -113,7 +139,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
+                                <td colspan="{{ $selectedCategory === 'HSI Daily' ? '10' : ($selectedCategory === 'SNI Daily' ? '9' : '7') }}" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
                                     belum
                                     tersedia.</td>
                             </tr>

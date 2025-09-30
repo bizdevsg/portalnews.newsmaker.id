@@ -52,6 +52,33 @@
                     </div>
                 </div>
 
+                <div id="hsiFields" class="grid grid-cols-2 md:grid-cols-3 gap-4" style="display: none;">
+                    <div>
+                        <label for="chg" class="block font-medium">Chg.</label>
+                        <input type="text" name="chg" id="chg" value="{{ old('chg') }}"
+                            class="w-full border rounded p-2 @error('chg') border-red-500 @enderror">
+                        @error('chg')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="volume" class="block font-medium">Volume</label>
+                        <input type="text" name="volume" id="volume" value="{{ old('volume') }}"
+                            class="w-full border rounded p-2 @error('volume') border-red-500 @enderror">
+                        @error('volume')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div id="openInterestField">
+                        <label for="open_interest" class="block font-medium">Open Interest</label>
+                        <input type="text" name="open_interest" id="open_interest" value="{{ old('open_interest') }}"
+                            class="w-full border rounded p-2 @error('open_interest') border-red-500 @enderror">
+                        @error('open_interest')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <div>
                     <label for="category" class="block font-medium">Kategori</label>
                     <select name="category" id="category"
@@ -131,5 +158,33 @@
         function closeBackModal() {
             document.getElementById('backModal').classList.add('hidden');
         }
+
+        // Toggle HSI/SNI fields based on category selection
+        document.getElementById('category').addEventListener('change', function() {
+            const hsiFields = document.getElementById('hsiFields');
+            const openInterestField = document.getElementById('openInterestField');
+            const chgInput = document.getElementById('chg');
+            const volumeInput = document.getElementById('volume');
+            const openInterestInput = document.getElementById('open_interest');
+
+            if (this.value === 'HSI Daily' || this.value === 'SNI Daily') {
+                hsiFields.style.display = 'grid';
+                chgInput.required = true;
+                volumeInput.required = true;
+
+                if (this.value === 'HSI Daily') {
+                    openInterestField.style.display = 'block';
+                    openInterestInput.required = true;
+                } else {
+                    openInterestField.style.display = 'none';
+                    openInterestInput.required = false;
+                }
+            } else {
+                hsiFields.style.display = 'none';
+                chgInput.required = false;
+                volumeInput.required = false;
+                openInterestInput.required = false;
+            }
+        });
     </script>
 </x-app-layout>

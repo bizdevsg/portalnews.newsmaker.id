@@ -26,14 +26,27 @@ class PivotController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'tanggal' => 'required|date',
             'open'    => 'required',
             'high'    => 'required',
             'low'     => 'required',
             'close'   => 'required',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
-        ]);
+        ];
+
+        if ($request->category === 'HSI Daily') {
+            $rules['chg'] = 'required';
+            $rules['volume'] = 'required';
+            $rules['open_interest'] = 'required';
+        }
+
+        if ($request->category === 'SNI Daily') {
+            $rules['chg'] = 'required';
+            $rules['volume'] = 'required';
+        }
+
+        $request->validate($rules);
 
         Pivot::create($request->all());
 
@@ -49,14 +62,27 @@ class PivotController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'tanggal' => 'required|date',
             'open'    => 'required',
             'high'    => 'required',
             'low'     => 'required',
             'close'   => 'required',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
-        ]);
+        ];
+
+        if ($request->category === 'HSI Daily') {
+            $rules['chg'] = 'required';
+            $rules['volume'] = 'required';
+            $rules['open_interest'] = 'required';
+        }
+
+        if ($request->category === 'SNI Daily') {
+            $rules['chg'] = 'required';
+            $rules['volume'] = 'required';
+        }
+
+        $request->validate($rules);
 
         $pivot = Pivot::findOrFail($id);
         $pivot->update($request->all());

@@ -28,16 +28,16 @@ class PivotController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'open'    => 'required|numeric',
-            'high'    => 'required|numeric',
-            'low'     => 'required|numeric',
-            'close'   => 'required|numeric',
+            'open'    => 'required',
+            'high'    => 'required',
+            'low'     => 'required',
+            'close'   => 'required',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ]);
 
         Pivot::create($request->all());
 
-        return redirect()->route('pivot.index')->with('success', 'Data berhasil ditambahkan.');
+        return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -51,23 +51,24 @@ class PivotController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'open'    => 'required|numeric',
-            'high'    => 'required|numeric',
-            'low'     => 'required|numeric',
-            'close'   => 'required|numeric',
+            'open'    => 'required',
+            'high'    => 'required',
+            'low'     => 'required',
+            'close'   => 'required',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ]);
 
         $pivot = Pivot::findOrFail($id);
         $pivot->update($request->all());
 
-        return redirect()->route('pivot.index')->with('success', 'Data berhasil diperbarui.');
+        return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $pivot = Pivot::findOrFail($id);
+        $category = $pivot->category;
         $pivot->delete();
-        return redirect()->route('pivot.index')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('pivot.index', ['category' => $category])->with('success', 'Data berhasil dihapus.');
     }
 }

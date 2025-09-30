@@ -88,16 +88,16 @@
                                     {{ \Carbon\Carbon::parse($pivot->tanggal)->translatedFormat('d F Y') }}
                                 </td>
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->open, 2, '.', '') }}
+                                    {{ $pivot->open }}
                                 </td>
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->high, 2, '.', '') }}
+                                    {{ $pivot->high }}
                                 </td>
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->low, 2, '.', '') }}
+                                    {{ $pivot->low }}
                                 </td>
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ number_format($pivot->close, 2, '.', '') }}
+                                    {{ $pivot->close }}
                                 </td>
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->category }}
@@ -106,8 +106,8 @@
                                     <div class="flex gap-2">
                                         <a href="{{ route('pivot.edit', $pivot->id) }}"
                                             class="w-1/2 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 text-sm font-semibold text-center">Edit</a>
-                                        <a href="{{ route('pivot.destroy', $pivot->id) }}"
-                                            class="w-1/2 bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm font-semibold text-center">Hapus</a>
+                                        <button type="button" onclick="openDeleteModal({{ $pivot->id }})"
+                                            class="w-1/2 bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm font-semibold text-center">Hapus</button>
                                     </div>
                                 </td>
                             </tr>
@@ -124,6 +124,23 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="deleteModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Konfirmasi Hapus</h3>
+            <p class="mb-6">Apakah Anda yakin ingin menghapus data ini?</p>
+            <div class="flex justify-end gap-4">
+                <button onclick="closeDeleteModal()"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                <form id="deleteForm" action="" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya, Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.querySelectorAll('.category-button').forEach(button => {
             button.addEventListener('click', () => {
@@ -133,5 +150,14 @@
                 window.location.href = url.toString();
             });
         });
+
+        function openDeleteModal(id) {
+            document.getElementById('deleteForm').action = `/pivot-fibonacci/${id}/delete`;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
     </script>
 </x-app-layout>

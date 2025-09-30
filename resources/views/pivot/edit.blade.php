@@ -21,7 +21,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label for="open" class="block font-medium">Open</label>
-                        <input type="number" name="open" id="open" step="0.01"
+                        <input type="text" name="open" id="open"
                             value="{{ old('open', $pivot->open) }}"
                             class="w-full border rounded p-2 @error('open') border-red-500 @enderror" required>
                         @error('open')
@@ -30,7 +30,7 @@
                     </div>
                     <div>
                         <label for="high" class="block font-medium">High</label>
-                        <input type="number" name="high" id="high" step="0.01"
+                        <input type="text" name="high" id="high"
                             value="{{ old('high', $pivot->high) }}"
                             class="w-full border rounded p-2 @error('high') border-red-500 @enderror" required>
                         @error('high')
@@ -39,7 +39,7 @@
                     </div>
                     <div>
                         <label for="low" class="block font-medium">Low</label>
-                        <input type="number" name="low" id="low" step="0.01"
+                        <input type="text" name="low" id="low"
                             value="{{ old('low', $pivot->low) }}"
                             class="w-full border rounded p-2 @error('low') border-red-500 @enderror" required>
                         @error('low')
@@ -48,7 +48,7 @@
                     </div>
                     <div>
                         <label for="close" class="block font-medium">Close</label>
-                        <input type="number" name="close" id="close" step="0.01"
+                        <input type="text" name="close" id="close"
                             value="{{ old('close', $pivot->close) }}"
                             class="w-full border rounded p-2 @error('close') border-red-500 @enderror" required>
                         @error('close')

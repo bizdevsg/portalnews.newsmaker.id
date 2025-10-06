@@ -29,9 +29,9 @@ class Berita extends Model
         'category_id',
         'slug',
     ];
-    
+
     protected $appends = ['images'];
-    
+
     // Method untuk mendapatkan judul berdasarkan PT
     public function getTitleForPt($ptCode)
     {
@@ -42,7 +42,7 @@ class Berita extends Model
             'ewf' => $this->title_ewf,
             'bpf' => $this->title_bpf,
         ];
-        
+
         return $ptTitles[strtolower($ptCode)] ?? $this->title;
     }
 
@@ -104,4 +104,6 @@ class Berita extends Model
             $this->image6 ?: null,
         ], fn($value) => !is_null($value)));
     }
+
+    public $timestamps = true;
 }

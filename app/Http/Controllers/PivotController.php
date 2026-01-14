@@ -18,7 +18,6 @@ class PivotController extends Controller
         return view('pivot.index', compact('pivots', 'category'));
     }
 
-
     public function create()
     {
         return view('pivot.create');
@@ -28,11 +27,11 @@ class PivotController extends Controller
     {
         $rules = [
             'tanggal' => 'required|date',
-            'open'    => 'required',
-            'high'    => 'required',
-            'low'     => 'required',
-            'close'   => 'required',
-            'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
+            'open' => 'required',
+            'high' => 'required',
+            'low' => 'required',
+            'close' => 'required',
+            'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ];
 
         if ($request->category === 'HSI Daily') {
@@ -64,10 +63,10 @@ class PivotController extends Controller
     {
         $rules = [
             'tanggal' => 'required|date',
-            'open'    => 'required',
-            'high'    => 'required',
-            'low'     => 'required',
-            'close'   => 'required',
+            'open' => 'required',
+            'high' => 'required',
+            'low' => 'required',
+            'close' => 'required',
             'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ];
 
@@ -95,6 +94,7 @@ class PivotController extends Controller
         $pivot = Pivot::findOrFail($id);
         $category = $pivot->category;
         $pivot->delete();
+
         return redirect()->route('pivot.index', ['category' => $category])->with('success', 'Data berhasil dihapus.');
     }
 }

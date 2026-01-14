@@ -1,4 +1,4 @@
-@section('namePage', 'Tambah Pivot & Fibonnaci')
+@section('namePage', 'Tambah Historical Data')
 
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
@@ -71,7 +71,8 @@
                     </div>
                     <div id="openInterestField">
                         <label for="open_interest" class="block font-medium">Open Interest</label>
-                        <input type="text" name="open_interest" id="open_interest" value="{{ old('open_interest') }}"
+                        <input type="text" name="open_interest" id="open_interest"
+                            value="{{ old('open_interest') }}"
                             class="w-full border rounded p-2 @error('open_interest') border-red-500 @enderror">
                         @error('open_interest')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -84,7 +85,7 @@
                     <select name="category" id="category"
                         class="w-full border rounded p-2 @error('category') border-red-500 @enderror" required>
                         <option value="">-- Pilih Kategori --</option>
-                        @foreach (['LGD Daily', 'LSI', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
+                        @foreach (['LGD Daily', 'LSI', 'BCO Daily', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
                             <option value="{{ $kategori }}" {{ old('category') == $kategori ? 'selected' : '' }}>
                                 {{ $kategori }}
                             </option>

@@ -1,4 +1,4 @@
-@section('namePage', 'Pivot & Fibonnaci')
+@section('namePage', 'Historical Data')
 
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
@@ -28,7 +28,7 @@
                 // Hapus "Semua"
                 $categories = [
                     'LGD Daily',
-                    'LSI',
+                    'BCO Daily',
                     'HSI Daily',
                     'SNI Daily',
                     'AUD/USD',
@@ -72,18 +72,18 @@
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                 Close</th>
-                            @if($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
-                            <th
-                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
-                                Chg.</th>
-                            <th
-                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
-                                Volume</th>
-                            @if($selectedCategory === 'HSI Daily')
-                            <th
-                                class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
-                                Open Interest</th>
-                            @endif
+                            @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                                <th
+                                    class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                    Chg.</th>
+                                <th
+                                    class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                    Volume</th>
+                                @if ($selectedCategory === 'HSI Daily')
+                                    <th
+                                        class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
+                                        Open Interest</th>
+                                @endif
                             @endif
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
@@ -112,18 +112,18 @@
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->close }}
                                 </td>
-                                @if($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->chg }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->volume }}
-                                </td>
-                                @if($selectedCategory === 'HSI Daily')
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->open_interest }}
-                                </td>
-                                @endif
+                                @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->chg }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->volume }}
+                                    </td>
+                                    @if ($selectedCategory === 'HSI Daily')
+                                        <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                            {{ $pivot->open_interest }}
+                                        </td>
+                                    @endif
                                 @endif
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->category }}
@@ -139,7 +139,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $selectedCategory === 'HSI Daily' ? '10' : ($selectedCategory === 'SNI Daily' ? '9' : '7') }}" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
+                                <td colspan="{{ $selectedCategory === 'HSI Daily' ? '10' : ($selectedCategory === 'SNI Daily' ? '9' : '7') }}"
+                                    class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
                                     belum
                                     tersedia.</td>
                             </tr>
@@ -161,7 +162,8 @@
                 <form id="deleteForm" action="" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya, Hapus</button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya,
+                        Hapus</button>
                 </form>
             </div>
         </div>

@@ -85,7 +85,7 @@
                         class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
                         {{ request()->routeIs('pivot.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
                         <i class="fa-solid fa-chart-line"></i>
-                        <span class="text-sm font-medium">Pivot & Fibonacci </span>
+                        <span class="text-sm font-medium">Historical Data</span>
                     </a>
                 </nav>
             </div>

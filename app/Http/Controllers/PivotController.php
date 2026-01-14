@@ -27,10 +27,10 @@ class PivotController extends Controller
     {
         $rules = [
             'tanggal' => 'required|date',
-            'open' => 'required',
-            'high' => 'required',
-            'low' => 'required',
-            'close' => 'required',
+            'open' => 'nullable',
+            'high' => 'nullable',
+            'low' => 'nullable',
+            'close' => 'nullable',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
             'isBankHoliday' => 'sometimes|boolean',
             'description' => 'nullable|string',
@@ -58,10 +58,10 @@ class PivotController extends Controller
     {
         $rules = [
             'tanggal' => 'required|date',
-            'open' => 'required',
-            'high' => 'required',
-            'low' => 'required',
-            'close' => 'required',
+            'open' => 'nullable',
+            'high' => 'nullable',
+            'low' => 'nullable',
+            'close' => 'nullable',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
             'isBankHoliday' => 'sometimes|boolean',
             'description' => 'nullable|string',

@@ -95,23 +95,39 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($pivots as $index => $pivot)
-                            <tr
-                                class="{{ $index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800' }}">
+                            @php
+                                $isHolidayRow = $pivot->isBankHoliday;
+                                $rowClass = $isHolidayRow
+                                    ? 'bg-red-50 text-black dark:bg-yellow-900/60 dark:text-white'
+                                    : ($index % 2 === 0
+                                        ? 'bg-white dark:bg-gray-900'
+                                        : 'bg-gray-100 dark:bg-gray-800');
+                            @endphp
+                            <tr class="{{ $rowClass }}">
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ \Carbon\Carbon::parse($pivot->tanggal)->translatedFormat('d F Y') }}
                                 </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->open }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->high }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->low }}
-                                </td>
-                                <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
-                                    {{ $pivot->close }}
-                                </td>
+                                @if ($pivot->isBankHoliday)
+                                    <td colspan="4"
+                                        class="px-4 py-2 text-center text-gray-800 dark:text-gray-100 whitespace-normal">
+                                        <span class="text-sm bg-red-100 text-red-900 px-5 py-0.5 rounded-full">
+                                            {{ $pivot->description ?? 'Bank Holiday' }}
+                                        </span>
+                                    </td>
+                                @else
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->open }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->high }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->low }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
+                                        {{ $pivot->close }}
+                                    </td>
+                                @endif
                                 {{-- @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
                                     <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                         {{ $pivot->chg }}
@@ -139,8 +155,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $selectedCategory === 'HSI Daily' ? '10' : ($selectedCategory === 'SNI Daily' ? '9' : '7') }}"
-                                    class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
+                                <td colspan="8" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Data
                                     belum
                                     tersedia.</td>
                             </tr>

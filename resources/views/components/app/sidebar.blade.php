@@ -21,12 +21,9 @@
             </button>
 
             <!-- Logo -->
-            <a class="flex justify-center dark:hidden" href="{{ route('dashboard') }}">
-                <img src="{{ asset('assets/NewsMaker-23-logo.png') }}" alt="Logo NewsMaker" class="h-20">
-            </a>
-
-            <a class="hidden dark:flex justify-center " href="{{ route('dashboard') }}">
-                <img src="{{ asset('assets/NewsMaker-23-logo-white.png') }}" alt="Logo NewsMaker" class="h-20">
+            <a class="flex justify-center" href="{{ route('dashboard') }}" aria-label="Dashboard">
+                <img src="{{ asset('assets/NewsMaker-23-logo.png') }}" alt="Logo NewsMaker"
+                    class="h-8 w-20 flex-none object-contain">
             </a>
         </div>
 

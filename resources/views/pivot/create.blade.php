@@ -52,7 +52,7 @@
                     </div>
                 </div>
 
-                <div id="hsiFields" class="grid grid-cols-2 md:grid-cols-3 gap-4" style="display: none;">
+                {{-- <div id="hsiFields" class="grid grid-cols-2 md:grid-cols-3 gap-4" style="display: none;">
                     <div>
                         <label for="chg" class="block font-medium">Chg.</label>
                         <input type="text" name="chg" id="chg" value="{{ old('chg') }}"
@@ -78,7 +78,7 @@
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
 
                 <div>
                     <label for="category" class="block font-medium">Kategori</label>

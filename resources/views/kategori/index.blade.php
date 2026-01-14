@@ -1,3 +1,5 @@
+@section('namePage', 'Kategori Berita')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <!-- Dashboard actions -->
@@ -6,7 +8,7 @@
             <h1 class="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Kategori Berita</h1>
 
             {{-- Button Tambah --}}
-            <a href="{{route('kategori.create')}}"
+            <a href="{{ route('kategori.create') }}"
                 class="bg-blue-500 text-center text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition">
                 Tambah Kategori
             </a>
@@ -15,59 +17,61 @@
 
     {{-- Alert --}}
     @if (session('success'))
-    <div id="successAlert" class="w-full max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-            class="border-l-4 border-green-600 p-4 mb-6 rounded-lg bg-green-100 dark:bg-green-800 flex items-center justify-between shadow-md transition-opacity duration-300">
-            <div class="flex items-center gap-2 text-green-800 dark:text-green-300 text-sm sm:text-base">
-                <i class="fa-solid fa-circle-check text-lg"></i>
-                <span>{{ session('success') }}</span>
+        <div id="successAlert" class="w-full max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+                class="border-l-4 border-green-600 p-4 mb-6 rounded-lg bg-green-100 dark:bg-green-800 flex items-center justify-between shadow-md transition-opacity duration-300">
+                <div class="flex items-center gap-2 text-green-800 dark:text-green-300 text-sm sm:text-base">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button onclick="closeAlert()"
+                    class="p-1 text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-400 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
-            <button onclick="closeAlert()"
-                class="p-1 text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-400 transition">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
         </div>
-    </div>
     @endif
 
     {{-- Grid Berita --}}
     <div class="px-4 sm:px-6 lg:px-8 py-4 w-full max-w-9xl mx-auto">
         @if ($categories->isEmpty())
-        <div
-            class="flex flex-col justify-center items-center mx-4 sm:mx-6 lg:mx-8 p-10 rounded-lg gap-3 bg-gray-200 dark:bg-gray-800 dark:text-gray-300 transition">
-            <img src="{{ asset('assets/hand-drawn-no-data-concept.png') }}" alt="No Data" class="h-50 rounded-lg">
-            <p class="text-gray-600 text-xl">Belum ada kategori berita.</p>
-        </div>
-        @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            @foreach($categories as $kategori)
             <div
-                class="border-blue-500 border-l-4 flex flex-col justify-between items-center p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md gap-4 transition">
-
-                <!-- Atas: Konten -->
-                <div class="w-full flex flex-col gap-1">
-                    <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ $kategori->name }}</h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-base">{{ $kategori->berita_count }} Berita</p>
-                </div>
-
-                <!-- Bawah: Tombol Aksi -->
-                <div class="w-full flex gap-2">
-                    <a href="{{route('berita.index', $kategori->slug)}}"
-                        class="w-full bg-yellow-500 text-center text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-600 transition">
-                        Lihat
-                    </a>
-                    <a href="{{route('kategori.edit', $kategori->id)}}"
-                        class="w-full bg-green-500 text-white px-4 py-2 rounded-lg text-center text-sm font-bold hover:bg-green-600 transition">
-                        Edit
-                    </a>
-                    <button onclick="showDeleteModal({{ $kategori->id }}, '{{ $kategori->name }}')"
-                        class="w-full bg-red-500 text-white dark:bg-red-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-700 dark:hover:bg-red-600 transition cursor-pointer">
-                        Hapus
-                    </button>
-                </div>
+                class="flex flex-col justify-center items-center mx-4 sm:mx-6 lg:mx-8 p-10 rounded-lg gap-3 bg-gray-200 dark:bg-gray-800 dark:text-gray-300 transition">
+                <img src="{{ asset('assets/hand-drawn-no-data-concept.png') }}" alt="No Data" class="h-50 rounded-lg">
+                <p class="text-gray-600 text-xl">Belum ada kategori berita.</p>
             </div>
-            @endforeach
-        </div>
+        @else
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach ($categories as $kategori)
+                    <div
+                        class="border-blue-500 border-l-4 flex flex-col justify-between items-center p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md gap-4 transition">
+
+                        <!-- Atas: Konten -->
+                        <div class="w-full flex flex-col gap-1">
+                            <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ $kategori->name }}
+                            </h1>
+                            <p class="text-gray-600 dark:text-gray-400 text-base">{{ $kategori->berita_count }} Berita
+                            </p>
+                        </div>
+
+                        <!-- Bawah: Tombol Aksi -->
+                        <div class="w-full flex gap-2">
+                            <a href="{{ route('berita.index', $kategori->slug) }}"
+                                class="w-full bg-yellow-500 text-center text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-600 transition">
+                                Lihat
+                            </a>
+                            <a href="{{ route('kategori.edit', $kategori->id) }}"
+                                class="w-full bg-green-500 text-white px-4 py-2 rounded-lg text-center text-sm font-bold hover:bg-green-600 transition">
+                                Edit
+                            </a>
+                            <button onclick="showDeleteModal({{ $kategori->id }}, '{{ $kategori->name }}')"
+                                class="w-full bg-red-500 text-white dark:bg-red-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-700 dark:hover:bg-red-600 transition cursor-pointer">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         @endif
 
         <!-- Modal Konfirmasi Hapus -->

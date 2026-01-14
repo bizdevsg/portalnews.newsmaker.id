@@ -1,3 +1,5 @@
+@section('namePage', 'Edit Kategori Berita')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         <!-- Dashboard actions -->
@@ -9,7 +11,7 @@
 
     <div class="mx-4 sm:mx-6 lg:mx-8 py-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         {{-- Form Tambah Kategori --}}
-        <form action="{{route('kategori.update', $kategori->id)}}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('kategori.update', $kategori->id) }}" method="POST" enctype="multipart/form-data">
             <div class="inline-flex items-center justify-between w-full mb-7">
                 {{-- Tombol Kembali --}}
                 <div class="text-left">
@@ -36,15 +38,18 @@
 
             {{-- Input Nama Kategori --}}
             <div class="">
-                <label for="name" class="block text-gray-700 dark:text-white font-medium mb-1 transition">Nama Kategori
+                <label for="name" class="block text-gray-700 dark:text-white font-medium mb-1 transition">Nama
+                    Kategori
                     <small class="text-red-500">(Maks. 20 Karakter)</small>
                 </label>
-                <input type="text" id="name" name="name" value="{{ old('name', $kategori->name ?? '') }}" class="w-full dark:bg-transparent dark:text-white px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none 
-                @error('name') is-invalid @enderror" placeholder="Masukkan nama kategori..." required>
+                <input type="text" id="name" name="name" value="{{ old('name', $kategori->name ?? '') }}"
+                    class="w-full dark:bg-transparent dark:text-white px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none 
+                @error('name') is-invalid @enderror"
+                    placeholder="Masukkan nama kategori..." required>
 
                 {{-- Tampilkan Pesan Error --}}
                 @error('name')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -91,12 +96,12 @@
     {{-- Script Modal --}}
     <script>
         function toggleModal(id) {
-        const modal = document.getElementById(id);
-        if (modal.classList.contains('hidden')) {
-            modal.classList.remove('hidden');
-        } else {
-            modal.classList.add('hidden');
+            const modal = document.getElementById(id);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
         }
-    }
     </script>
 </x-app-layout>

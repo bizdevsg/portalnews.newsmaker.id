@@ -1,3 +1,5 @@
+@section('namePage', 'Edit Berita')
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <div class="mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -49,7 +51,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <!-- SG -->
                     <div class="mb-4">
-                        <label for="title_sg" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul SG</label>
+                        <label for="title_sg" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
+                            SG</label>
                         <input type="text" id="title_sg" name="title_sg"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_sg') is-invalid @enderror"
                             placeholder="Judul untuk SG..." value="{{ old('title_sg', $berita->title_sg) }}">
@@ -60,7 +63,8 @@
 
                     <!-- RFB -->
                     <div class="mb-4">
-                        <label for="title_rfb" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul RFB</label>
+                        <label for="title_rfb" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
+                            RFB</label>
                         <input type="text" id="title_rfb" name="title_rfb"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_rfb') is-invalid @enderror"
                             placeholder="Judul untuk RFB..." value="{{ old('title_rfb', $berita->title_rfb) }}">
@@ -71,7 +75,8 @@
 
                     <!-- KPF -->
                     <div class="mb-4">
-                        <label for="title_kpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul KPF</label>
+                        <label for="title_kpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
+                            KPF</label>
                         <input type="text" id="title_kpf" name="title_kpf"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_kpf') is-invalid @enderror"
                             placeholder="Judul untuk KPF..." value="{{ old('title_kpf', $berita->title_kpf) }}">
@@ -82,7 +87,8 @@
 
                     <!-- EWF -->
                     <div class="mb-4">
-                        <label for="title_ewf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul EWF</label>
+                        <label for="title_ewf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
+                            EWF</label>
                         <input type="text" id="title_ewf" name="title_ewf"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_ewf') is-invalid @enderror"
                             placeholder="Judul untuk EWF..." value="{{ old('title_ewf', $berita->title_ewf) }}">
@@ -93,7 +99,8 @@
 
                     <!-- BPF -->
                     <div class="mb-4">
-                        <label for="title_bpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul BPF</label>
+                        <label for="title_bpf" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
+                            BPF</label>
                         <input type="text" id="title_bpf" name="title_bpf"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_bpf') is-invalid @enderror"
                             placeholder="Judul untuk BPF..." value="{{ old('title_bpf', $berita->title_bpf) }}">
@@ -112,16 +119,16 @@
                         3 => 'Gambar KPF:',
                         4 => 'Gambar EWF:',
                         5 => 'Gambar BPF:',
-                        6 => 'Gambar Backup:'
+                        6 => 'Gambar Backup:',
                     ];
 
                     $images = collect(range(1, 6))
-                        ->mapWithKeys(function($i) use ($berita, $imageLabels) {
+                        ->mapWithKeys(function ($i) use ($berita, $imageLabels) {
                             return [
                                 "image{$i}" => [
                                     'path' => $berita->{"image{$i}"},
-                                    'label' => $imageLabels[$i] ?? 'Gambar ' . $i
-                                ]
+                                    'label' => $imageLabels[$i] ?? 'Gambar ' . $i,
+                                ],
                             ];
                         })
                         ->filter(fn($item) => !empty($item['path']));

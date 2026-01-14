@@ -1,3 +1,5 @@
+@section('namePage', $berita->title)
+
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <div class="mb-5">
@@ -44,7 +46,7 @@
             <div
                 class="text-gray-700 dark:text-gray-300 leading-relaxed gap-5 flex flex-col bg-gray-200 dark:bg-gray-700 p-5 rounded-lg">
                 <div class="flex items-center gap-1">
-                    <span>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('l, d F Y') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('l, d F Y - H:i') }}</span>
                     <span>|</span>
                     <p class="text-sm bg-gray-500 dark:bg-amber-50 px-3 rounded-full text-white dark:text-gray-500">
                         <strong>Kategori:</strong> <span>{{ $kategori->name }}</span>

@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <div id="hsiFields" class="grid grid-cols-2 md:grid-cols-3 gap-4"
+                {{-- <div id="hsiFields" class="grid grid-cols-2 md:grid-cols-3 gap-4"
                     style="display: {{ $pivot->category === 'HSI Daily' || $pivot->category === 'SNI Daily' ? 'grid' : 'none' }};">
                     <div>
                         <label for="chg" class="block font-medium">Chg.</label>
@@ -83,7 +83,7 @@
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
 
                 <div>
                     <label for="category" class="block font-medium">Kategori</label>

@@ -72,7 +72,7 @@
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                 Close</th>
-                            @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                            {{-- @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
                                 <th
                                     class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                     Chg.</th>
@@ -84,7 +84,7 @@
                                         class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                         Open Interest</th>
                                 @endif
-                            @endif
+                            @endif --}}
                             <th
                                 class="px-4 py-2 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">
                                 Kategori</th>
@@ -112,7 +112,7 @@
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->close }}
                                 </td>
-                                @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
+                                {{-- @if ($selectedCategory === 'HSI Daily' || $selectedCategory === 'SNI Daily')
                                     <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                         {{ $pivot->chg }}
                                     </td>
@@ -124,7 +124,7 @@
                                             {{ $pivot->open_interest }}
                                         </td>
                                     @endif
-                                @endif
+                                @endif --}}
                                 <td class="px-4 py-2 text-center text-gray-800 dark:text-gray-100">
                                     {{ $pivot->category }}
                                 </td>

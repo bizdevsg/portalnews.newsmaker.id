@@ -32,18 +32,10 @@ class PivotController extends Controller
             'low' => 'required',
             'close' => 'required',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
+            // 'chg' => 'required',
+            // 'volume' => 'required',
+            // 'open_interest' => 'required',
         ];
-
-        if ($request->category === 'HSI Daily') {
-            $rules['chg'] = 'required';
-            $rules['volume'] = 'required';
-            $rules['open_interest'] = 'required';
-        }
-
-        if ($request->category === 'SNI Daily') {
-            $rules['chg'] = 'required';
-            $rules['volume'] = 'required';
-        }
 
         $request->validate($rules);
 
@@ -70,16 +62,16 @@ class PivotController extends Controller
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ];
 
-        if ($request->category === 'HSI Daily') {
-            $rules['chg'] = 'required';
-            $rules['volume'] = 'required';
-            $rules['open_interest'] = 'required';
-        }
+        // if ($request->category === 'HSI Daily') {
+        //     $rules['chg'] = 'required';
+        //     $rules['volume'] = 'required';
+        //     $rules['open_interest'] = 'required';
+        // }
 
-        if ($request->category === 'SNI Daily') {
-            $rules['chg'] = 'required';
-            $rules['volume'] = 'required';
-        }
+        // if ($request->category === 'SNI Daily') {
+        //     $rules['chg'] = 'required';
+        //     $rules['volume'] = 'required';
+        // }
 
         $request->validate($rules);
 

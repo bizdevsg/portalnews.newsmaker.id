@@ -32,86 +32,114 @@
 
         <hr>
 
-        <div class="space-y-8 mt-4">
-            <!-- Pages group -->
-            <div>
-                <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                    <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                        aria-hidden="true">•••</span>
-                    <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Dashboard</span>
-                </h3>
-                <nav class="flex flex-col gap-3 my-4">
-                    <!-- Dashboard -->
-                    <a href="{{ route('dashboard') }}"
-                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('dashboard') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-gauge-high"></i>
-                        <span class="text-sm font-medium">Beranda</span>
-                    </a>
-                </nav>
-            </div>
-        </div>
+        @php
+            $sidebarSections = [
+                [
+                    'label' => 'Dashboard',
+                    'items' => [
+                        [
+                            'label' => 'Beranda',
+                            'route' => 'dashboard',
+                            'icon' => 'fa-solid fa-gauge-high',
+                            'active' => request()->routeIs('dashboard'),
+                        ],
+                    ],
+                ],
+                [
+                    'label' => 'Fitur',
+                    'items' => [
+                        [
+                            'label' => 'Berita',
+                            'route' => 'kategori.index',
+                            'icon' => 'fa-solid fa-newspaper',
+                            'active' => request()->routeIs('berita.*') || request()->routeIs('kategori.*'),
+                        ],
+                        [
+                            'label' => 'Kalender Ekonomi',
+                            'route' => 'calendar.index',
+                            'icon' => 'fa-solid fa-calendar-days',
+                            'active' => request()->routeIs('calendar.*'),
+                        ],
+                        [
+                            'label' => 'Historical Data',
+                            'route' => 'pivot.index',
+                            'icon' => 'fa-solid fa-chart-line',
+                            'active' => request()->routeIs('pivot.*'),
+                        ],
+                    ],
+                ],
+            ];
 
-        <hr>
+            $managementSection = [
+                'label' => 'Manajemen',
+                'condition' => auth()->user()->role === 'Superadmin',
+                'items' => [
+                    [
+                        'label' => 'Manajemen Pengguna',
+                        'route' => 'user.index',
+                        'icon' => 'fa-solid fa-users',
+                        'active' => request()->routeIs('user.*'),
+                    ],
+                ],
+            ];
+        @endphp
 
-        <!-- Links -->
-        <div class="space-y-8 mt-4">
-            <!-- Pages group -->
-            <div>
-                <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                    <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                        aria-hidden="true">•••</span>
-                    <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Fitur</span>
-                </h3>
-                <nav class="flex flex-col gap-3 my-4">
-                    <!-- Berita -->
-                    <a href="{{ route('kategori.index') }}"
-                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('berita.*') || request()->routeIs('kategori.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-newspaper"></i>
-                        <span class="text-sm font-medium">Berita</span>
-                    </a>
-
-                    <!-- Berita -->
-                    <a href="{{ route('calendar.index') }}"
-                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('calendar.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <span class="text-sm font-medium">Kalender Ekonomi</span>
-                    </a>
-
-                    <!-- Berita -->
-                    <a href="{{ route('pivot.index') }}"
-                        class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('pivot.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <span class="text-sm font-medium">Historical Data</span>
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-        <hr>
-
-        @if (auth()->user()->role === 'Superadmin')
-            <hr>
-
-            <div class="space-y-8 my-4">
-                <!-- Pages group -->
+        @foreach ($sidebarSections as $section)
+            <div class="space-y-8 lg:sidebar-expanded:mt-4">
                 <div>
                     <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                        <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                            aria-hidden="true">•••</span>
-                        <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Manajemen</span>
+                        <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">{{ $section['label'] }}</span>
                     </h3>
                     <nav class="flex flex-col gap-3 my-4">
-                        <!-- User Manage -->
-                        <a href="{{ route('user.index') }}"
-                            class="flex items-center p-3 rounded-lg gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900
-                        {{ request()->routeIs('user.*') ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                            <i class="fa-solid fa-users"></i>
-                            <span class="text-sm font-medium">Manajemen Pengguna</span>
-                        </a>
+                        @foreach ($section['items'] as $item)
+                            <div class="relative group">
+                                <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}"
+                                    aria-label="{{ $item['label'] }}"
+                                    class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
+                                    <i class="{{ $item['icon'] }}"></i>
+                                    <span
+                                        class="lg:hidden lg:sidebar-expanded:block text-sm font-medium">{{ $item['label'] }}</span>
+                                </a>
+                                <div
+                                    class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity duration-200 dark:bg-gray-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100 {{ $item['active'] ? 'opacity-100' : '' }}">
+                                    {{ $item['label'] }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </nav>
+                </div>
+            </div>
+            @if (!$loop->last)
+                <hr>
+            @endif
+        @endforeach
+
+        <hr>
+
+        @if ($managementSection['condition'])
+            <div class="space-y-8 lg:sidebar-expanded:my-4">
+                <div>
+                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
+                        <span
+                            class="lg:hidden lg:sidebar-expanded:block 2xl:block">{{ $managementSection['label'] }}</span>
+                    </h3>
+                    <nav class="flex flex-col gap-3 my-4">
+                        @foreach ($managementSection['items'] as $item)
+                            <div class="relative group">
+                                <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}"
+                                    aria-label="{{ $item['label'] }}"
+                                    class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
+                                    <i class="{{ $item['icon'] }}"></i>
+                                    <span class="lg:hidden lg:sidebar-expanded:block text-sm font-medium">
+                                        {{ $item['label'] }}
+                                    </span>
+                                </a>
+                                <div
+                                    class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity duration-200 dark:bg-gray-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100 {{ $item['active'] ? 'opacity-100' : '' }}">
+                                    {{ $item['label'] }}
+                                </div>
+                            </div>
+                        @endforeach
                     </nav>
                 </div>
             </div>

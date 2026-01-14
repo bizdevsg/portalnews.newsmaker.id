@@ -32,14 +32,17 @@ class PivotController extends Controller
             'low' => 'required',
             'close' => 'required',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
+            'isBankHoliday' => 'sometimes|boolean',
+            'description' => 'nullable|string',
             // 'chg' => 'required',
             // 'volume' => 'required',
             // 'open_interest' => 'required',
         ];
 
-        $request->validate($rules);
+        $data = $request->validate($rules);
+        $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
-        Pivot::create($request->all());
+        Pivot::create($data);
 
         return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil ditambahkan.');
     }
@@ -60,6 +63,8 @@ class PivotController extends Controller
             'low' => 'required',
             'close' => 'required',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
+            'isBankHoliday' => 'sometimes|boolean',
+            'description' => 'nullable|string',
         ];
 
         // if ($request->category === 'HSI Daily') {
@@ -73,10 +78,11 @@ class PivotController extends Controller
         //     $rules['volume'] = 'required';
         // }
 
-        $request->validate($rules);
+        $data = $request->validate($rules);
+        $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         $pivot = Pivot::findOrFail($id);
-        $pivot->update($request->all());
+        $pivot->update($data);
 
         return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil diperbarui.');
     }

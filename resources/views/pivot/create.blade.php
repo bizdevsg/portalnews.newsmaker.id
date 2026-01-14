@@ -89,9 +89,27 @@
                             <option value="{{ $kategori }}" {{ old('category') == $kategori ? 'selected' : '' }}>
                                 {{ $kategori }}
                             </option>
-                        @endforeach
+                            @endforeach
                     </select>
                     @error('category')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mt-4 border-t pt-4 space-y-2">
+                    <label class="flex items-center gap-2 font-medium text-sm">
+                        <input type="checkbox" name="isBankHoliday" value="1"
+                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            @checked(old('isBankHoliday'))>
+                        <span>Bank Holiday</span>
+                    </label>
+                    <p class="text-xs text-gray-500">Tandai jika tanggal yang dimasukkan merupakan hari libur bank.</p>
+
+                    <label for="description" class="block font-medium">Keterangan Bank Holiday</label>
+                    <textarea name="description" id="description" rows="3"
+                        class="w-full border rounded p-2 @error('description') border-red-500 @enderror"
+                        placeholder="Tuliskan keterangan singkat mengenai bank holiday">{{ old('description') }}</textarea>
+                    @error('description')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -185,6 +203,38 @@
                 chgInput.required = false;
                 volumeInput.required = false;
                 openInterestInput.required = false;
+            }
+        });
+
+        const bankHolidayCheckbox = document.querySelector('input[name="isBankHoliday"]');
+        const ohlcInputs = ['open', 'high', 'low', 'close'].map(id => document.getElementById(id));
+
+        function toggleOhlcInputs() {
+            if (!bankHolidayCheckbox) {
+                return;
+            }
+
+            const isHoliday = bankHolidayCheckbox.checked;
+            ohlcInputs.forEach(input => {
+                if (!input) {
+                    return;
+                }
+
+                input.disabled = isHoliday;
+                input.classList.toggle('bg-gray-100', isHoliday);
+            });
+        }
+
+        bankHolidayCheckbox?.addEventListener('change', toggleOhlcInputs);
+        toggleOhlcInputs();
+
+        document.getElementById('pivotForm').addEventListener('submit', () => {
+            if (bankHolidayCheckbox?.checked) {
+                ohlcInputs.forEach(input => {
+                    if (input) {
+                        input.disabled = false;
+                    }
+                });
             }
         });
     </script>

@@ -21,5 +21,11 @@ class Pivot extends Model
         'category',
         'volume',
         'open_interest',
+        'isBankHoliday',
+        'description',
+    ];
+
+    protected $casts = [
+        'isBankHoliday' => 'boolean',
     ];
 }

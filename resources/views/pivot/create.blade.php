@@ -85,7 +85,7 @@
                     <select name="category" id="category"
                         class="w-full border rounded p-2 @error('category') border-red-500 @enderror" required>
                         <option value="">-- Pilih Kategori --</option>
-                        @foreach (['LGD Daily', 'LSI', 'BCO Daily', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
+                        @foreach (['LGD Daily', 'BCO Daily', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
                             <option value="{{ $kategori }}" {{ old('category') == $kategori ? 'selected' : '' }}>
                                 {{ $kategori }}
                             </option>

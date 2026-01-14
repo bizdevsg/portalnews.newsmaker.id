@@ -67,7 +67,7 @@ class PivotController extends Controller
             'high' => 'required',
             'low' => 'required',
             'close' => 'required',
-            'category' => 'required|string|in:LGD Daily,LSI,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
+            'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
         ];
 
         if ($request->category === 'HSI Daily') {

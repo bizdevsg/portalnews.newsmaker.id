@@ -128,7 +128,10 @@
                                 {{ $imageLabels[$i] ?? 'Gambar ' . $i }}
                             </label>
                             <input type="file" id="image{{ $i }}" name="image{{ $i }}"
+                                data-preview="preview-image{{ $i }}"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('image' . $i) is-invalid @enderror">
+                            <img id="preview-image{{ $i }}" alt="Preview {{ $imageLabels[$i] ?? 'Gambar ' . $i }}"
+                                class="mt-2 h-30 w-full rounded-lg object-cover hidden">
                             @error('image' . $i)
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -202,6 +205,29 @@
                     modal.classList.add('hidden');
                 }
             }
+        </script>
+
+        {{-- Script Preview Gambar --}}
+        <script>
+            document.querySelectorAll('input[type="file"][data-preview]').forEach((input) => {
+                input.addEventListener('change', (event) => {
+                    const file = event.target.files && event.target.files[0];
+                    const previewId = event.target.getAttribute('data-preview');
+                    const preview = document.getElementById(previewId);
+
+                    if (!preview) {
+                        return;
+                    }
+
+                    if (file && file.type.startsWith('image/')) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.classList.remove('hidden');
+                    } else {
+                        preview.src = '';
+                        preview.classList.add('hidden');
+                    }
+                });
+            });
         </script>
     </div>
 </x-app-layout>

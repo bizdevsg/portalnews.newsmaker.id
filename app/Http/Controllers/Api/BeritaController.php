@@ -5,11 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Berita;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
     public function index()
     {
+        $cachedJson = $this->readCachedJson();
+        if ($cachedJson !== null) {
+            return response($cachedJson, 200)->header('Content-Type', 'application/json');
+        }
+
         $beritas = Berita::select([
             'id',
             'title',
@@ -67,6 +73,32 @@ class BeritaController extends Controller
 
     public function show($slug)
     {
+        $cached = $this->readCachedArray();
+        if ($cached !== null && isset($cached['data']) && is_array($cached['data'])) {
+            $found = collect($cached['data'])->firstWhere('slug', $slug);
+            if ($found) {
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'data'   => $found
+                    ],
+                    200,
+                    [],
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                );
+            }
+
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Berita tidak ditemukan.'
+                ],
+                404,
+                [],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            );
+        }
+
         $berita = Berita::select([
             'id',
             'title',
@@ -133,5 +165,27 @@ class BeritaController extends Controller
             [],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
+    }
+
+    private function readCachedJson(): ?string
+    {
+        $path = 'cache/berita.json';
+        if (!Storage::disk('local')->exists($path)) {
+            return null;
+        }
+
+        $json = Storage::disk('local')->get($path);
+        return $json !== '' ? $json : null;
+    }
+
+    private function readCachedArray(): ?array
+    {
+        $json = $this->readCachedJson();
+        if ($json === null) {
+            return null;
+        }
+
+        $decoded = json_decode($json, true);
+        return is_array($decoded) ? $decoded : null;
     }
 }

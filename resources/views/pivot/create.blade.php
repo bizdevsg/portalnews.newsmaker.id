@@ -17,7 +17,7 @@
                     @enderror
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div id="ohlcFields" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label for="open" class="block font-medium">Open</label>
                         <input type="text" name="open" id="open" value="{{ old('open') }}"
@@ -105,13 +105,15 @@
                     </label>
                     <p class="text-xs text-gray-500">Tandai jika tanggal yang dimasukkan merupakan hari libur bank.</p>
 
-                    <label for="description" class="block font-medium">Keterangan Bank Holiday</label>
-                    <textarea name="description" id="description" rows="3"
-                        class="w-full border rounded p-2 @error('description') border-red-500 @enderror"
-                        placeholder="Tuliskan keterangan singkat mengenai bank holiday">{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                    <div id="bankHolidayDescription" class="space-y-2 hidden">
+                        <label for="description" class="block font-medium">Keterangan Bank Holiday</label>
+                        <textarea name="description" id="description" rows="3"
+                            class="w-full border rounded p-2 @error('description') border-red-500 @enderror"
+                            placeholder="Tuliskan keterangan singkat mengenai bank holiday">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="flex gap-4 mt-6">
@@ -208,6 +210,8 @@
 
         const bankHolidayCheckbox = document.querySelector('input[name="isBankHoliday"]');
         const ohlcInputs = ['open', 'high', 'low', 'close'].map(id => document.getElementById(id));
+        const ohlcContainer = document.getElementById('ohlcFields');
+        const bankHolidayDescription = document.getElementById('bankHolidayDescription');
 
         function toggleOhlcInputs() {
             if (!bankHolidayCheckbox) {
@@ -223,6 +227,14 @@
                 input.disabled = isHoliday;
                 input.classList.toggle('bg-gray-100', isHoliday);
             });
+
+            if (ohlcContainer) {
+                ohlcContainer.classList.toggle('hidden', isHoliday);
+            }
+
+            if (bankHolidayDescription) {
+                bankHolidayDescription.classList.toggle('hidden', !isHoliday);
+            }
         }
 
         bankHolidayCheckbox?.addEventListener('change', toggleOhlcInputs);

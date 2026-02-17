@@ -11,8 +11,8 @@ class PivotController extends Controller
     {
         $category = $request->get('category', 'LGD Daily');
 
-        $pivots = Pivot::where('category', $category)
-            ->orderBy('tanggal', 'desc')
+        $pivots = Pivot::where('symbol', $category)
+            ->orderBy('date', 'desc')
             ->get();
 
         return view('pivot.index', compact('pivots', 'category'));
@@ -42,7 +42,24 @@ class PivotController extends Controller
         $data = $request->validate($rules);
         $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
-        Pivot::create($data);
+        $mapped = [
+            'date' => $data['tanggal'],
+            'symbol' => $data['category'],
+            'open' => $data['open'] ?? null,
+            'high' => $data['high'] ?? null,
+            'low' => $data['low'] ?? null,
+            'close' => $data['close'] ?? null,
+            'event' => $data['isBankHoliday'] ? ($data['description'] ?? 'Bank Holiday') : null,
+        ];
+
+        if ($data['isBankHoliday']) {
+            $mapped['open'] = null;
+            $mapped['high'] = null;
+            $mapped['low'] = null;
+            $mapped['close'] = null;
+        }
+
+        Pivot::create($mapped);
 
         return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil ditambahkan.');
     }
@@ -82,7 +99,24 @@ class PivotController extends Controller
         $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         $pivot = Pivot::findOrFail($id);
-        $pivot->update($data);
+        $mapped = [
+            'date' => $data['tanggal'],
+            'symbol' => $data['category'],
+            'open' => $data['open'] ?? null,
+            'high' => $data['high'] ?? null,
+            'low' => $data['low'] ?? null,
+            'close' => $data['close'] ?? null,
+            'event' => $data['isBankHoliday'] ? ($data['description'] ?? 'Bank Holiday') : null,
+        ];
+
+        if ($data['isBankHoliday']) {
+            $mapped['open'] = null;
+            $mapped['high'] = null;
+            $mapped['low'] = null;
+            $mapped['close'] = null;
+        }
+
+        $pivot->update($mapped);
 
         return redirect()->route('pivot.index', ['category' => $request->category])->with('success', 'Data berhasil diperbarui.');
     }

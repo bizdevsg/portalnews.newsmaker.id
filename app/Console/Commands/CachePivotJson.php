@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\pivot;
+use App\Models\Pivot;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,7 +27,7 @@ class CachePivotJson extends Command
      */
     public function handle(): int
     {
-        $pivots = pivot::all();
+        $pivots = Pivot::all();
 
         $payload = [
             'Code'   => 200,

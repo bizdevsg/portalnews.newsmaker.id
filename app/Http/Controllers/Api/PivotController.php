@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\pivot;
+use App\Models\Pivot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,7 +19,7 @@ class PivotController extends Controller
             return response($cachedJson, 200)->header('Content-Type', 'application/json');
         }
 
-        $pivots = pivot::all(); // Gantilah dengan query yang sesuai kebutuhan
+        $pivots = Pivot::all(); // Gantilah dengan query yang sesuai kebutuhan
 
         return response()->json([
             'Code' => 200,

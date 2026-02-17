@@ -103,6 +103,23 @@
                     @enderror
                 </div>
 
+                {{-- Bank Holiday --}}
+                <div class="form-group flex flex-col gap-2">
+                    <label class="font-medium text-gray-700 dark:text-gray-100">Bank Holiday</label>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" name="isBankHoliday" value="1"
+                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            @checked(old('isBankHoliday', $calendar->isBankHoliday))>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Tandai sebagai bank holiday</span>
+                    </div>
+                    <textarea name="bankHolidayNote" id="bankHolidayNote" rows="2"
+                        placeholder="Tuliskan catatan bank holiday (opsional)"
+                        class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">{{ old('bankHolidayNote', $calendar->bankHolidayNote) }}</textarea>
+                    @error('bankHolidayNote')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 {{-- Why Traders Care --}}
                 <div class="form-group flex flex-col gap-2">
                     <label for="why_traders_care" class="font-medium text-gray-700 dark:text-gray-100">Why Traders

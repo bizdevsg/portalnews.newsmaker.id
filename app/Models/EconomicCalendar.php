@@ -26,10 +26,13 @@ class EconomicCalendar extends Model
         'frequency',
         'next_released',
         'notes',
+        'isBankHoliday',
+        'bankHolidayNote',
         'why_trader_care',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'isBankHoliday' => 'boolean',
     ];
 }

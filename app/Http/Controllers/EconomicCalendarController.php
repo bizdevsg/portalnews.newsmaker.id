@@ -71,8 +71,12 @@ class EconomicCalendarController extends Controller
             'frequency' => 'nullable|string|max:100',
             'next_released' => 'nullable|string|max:100',
             'notes' => 'nullable|string',
+            'isBankHoliday' => 'sometimes|boolean',
+            'bankHolidayNote' => 'nullable|string',
             'why_trader_care' => 'nullable|string',
         ]);
+
+        $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         EconomicCalendar::create($validatedData);
 
@@ -111,8 +115,12 @@ class EconomicCalendarController extends Controller
             'frequency' => 'required|string|max:100',
             'next_released' => 'nullable|string|max:100',
             'notes' => 'nullable|string',
+            'isBankHoliday' => 'sometimes|boolean',
+            'bankHolidayNote' => 'nullable|string',
             'why_trader_care' => 'nullable|string',
         ]);
+
+        $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         $calendar = EconomicCalendar::findOrFail($id);
         $calendar->update($validatedData);

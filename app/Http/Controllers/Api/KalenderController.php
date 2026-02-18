@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\EconomicCalendar;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class KalenderController extends Controller
 {
@@ -13,12 +13,32 @@ class KalenderController extends Controller
      */
     public function index()
     {
-        // Ambil semua data KalenderEkonomi
-        $KalenderEkonomi = EconomicCalendar::all(); // Gantilah dengan query yang sesuai kebutuhan
+        $path = 'cache/kalender.json';
+        if (!Storage::disk('local')->exists($path)) {
+            Artisan::call('kalender:cache-json');
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $KalenderEkonomi
-        ], 200);
+        if (!Storage::disk('local')->exists($path)) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Cache kalender belum tersedia.'
+                ],
+                503
+            );
+        }
+
+        $json = Storage::disk('local')->get($path);
+        if (!is_string($json) || $json === '') {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Cache kalender tidak valid.'
+                ],
+                500
+            );
+        }
+
+        return response($json, 200)->header('Content-Type', 'application/json');
     }
 }

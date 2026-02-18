@@ -195,7 +195,7 @@
         });
 
         function openDeleteModal(id) {
-            document.getElementById('deleteForm').action = `/pivot-fibonacci/${id}/delete`;
+            document.getElementById('deleteForm').action = `/historical-data/${id}/delete`;
             document.getElementById('deleteModal').classList.remove('hidden');
         }
 

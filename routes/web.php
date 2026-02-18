@@ -57,7 +57,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
 
     // Pivot & Fibonacci
-    Route::prefix('pivot-fibonacci')->group(function () {
+    Route::prefix('historical-data')->group(function () {
         Route::get('/', [PivotController::class, 'index'])->name('pivot.index');
         Route::post('/store', [PivotController::class, 'store'])->name('pivot.store');
         Route::get('/tambah', [PivotController::class, 'create'])->name('pivot.create');

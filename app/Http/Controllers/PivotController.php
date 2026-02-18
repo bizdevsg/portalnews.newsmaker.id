@@ -32,15 +32,17 @@ class PivotController extends Controller
             'low' => 'nullable',
             'close' => 'nullable',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
-            'isBankHoliday' => 'sometimes|boolean',
+            'isBankHoliday' => 'nullable|boolean',
             'description' => 'nullable|string',
             // 'chg' => 'required',
             // 'volume' => 'required',
             // 'open_interest' => 'required',
         ];
 
+        $request->merge([
+            'isBankHoliday' => $request->boolean('isBankHoliday'),
+        ]);
         $data = $request->validate($rules);
-        $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         Pivot::create($data);
 
@@ -63,7 +65,7 @@ class PivotController extends Controller
             'low' => 'nullable',
             'close' => 'nullable',
             'category' => 'required|string|in:LGD Daily,BCO Daily,HSI Daily,SNI Daily,AUD/USD,EUR/USD,GBP/USD,USD/CHF,USD/JPY',
-            'isBankHoliday' => 'sometimes|boolean',
+            'isBankHoliday' => 'nullable|boolean',
             'description' => 'nullable|string',
         ];
 
@@ -78,8 +80,10 @@ class PivotController extends Controller
         //     $rules['volume'] = 'required';
         // }
 
+        $request->merge([
+            'isBankHoliday' => $request->boolean('isBankHoliday'),
+        ]);
         $data = $request->validate($rules);
-        $data['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         $pivot = Pivot::findOrFail($id);
         $pivot->update($data);

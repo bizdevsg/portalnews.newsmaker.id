@@ -97,6 +97,7 @@
                 </div>
 
                 <div class="mt-4 border-t pt-4 space-y-2">
+                    <input type="hidden" name="isBankHoliday" value="0">
                     <label class="flex items-center gap-2 font-medium text-sm">
                         <input type="checkbox" name="isBankHoliday" value="1"
                             class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -208,7 +209,7 @@
             }
         });
 
-        const bankHolidayCheckbox = document.querySelector('input[name="isBankHoliday"]');
+        const bankHolidayCheckbox = document.querySelector('input[type="checkbox"][name="isBankHoliday"]');
         const ohlcInputs = ['open', 'high', 'low', 'close'].map(id => document.getElementById(id));
         const ohlcContainer = document.getElementById('ohlcFields');
         const bankHolidayDescription = document.getElementById('bankHolidayDescription');

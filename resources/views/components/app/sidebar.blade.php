@@ -84,7 +84,7 @@
         @foreach ($sidebarSections as $section)
             <div class="space-y-8 lg:sidebar-expanded:mt-4">
                 <div>
-                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
+                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-300 font-semibold pl-3">
                         <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">{{ $section['label'] }}</span>
                     </h3>
                     <nav class="flex flex-col gap-3 my-4">

@@ -2,16 +2,17 @@
 
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-        <div class="card p-6 bg-white rounded shadow">
+        <div class="card p-6 bg-white rounded shadow dark:bg-slate-800 dark:text-slate-100">
             <h2 class="text-xl font-semibold mb-4">Tambah Data Pivot</h2>
 
             <form id="pivotForm" action="{{ route('pivot.store') }}" method="POST" class="space-y-4">
                 @csrf
 
                 <div>
-                    <label for="tanggal" class="block font-medium">Tanggal</label>
+                    <label for="tanggal" class="block font-medium text-slate-700 dark:text-slate-200">Tanggal</label>
                     <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}"
-                        class="w-full border rounded p-2 @error('tanggal') border-red-500 @enderror" required>
+                        class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('tanggal') border-red-500 @enderror"
+                        required>
                     @error('tanggal')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -19,33 +20,37 @@
 
                 <div id="ohlcFields" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <label for="open" class="block font-medium">Open</label>
+                        <label for="open" class="block font-medium text-slate-700 dark:text-slate-200">Open</label>
                         <input type="text" name="open" id="open" value="{{ old('open') }}"
-                            class="w-full border rounded p-2 @error('open') border-red-500 @enderror" required>
+                            class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('open') border-red-500 @enderror"
+                            required>
                         @error('open')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="high" class="block font-medium">High</label>
+                        <label for="high" class="block font-medium text-slate-700 dark:text-slate-200">High</label>
                         <input type="text" name="high" id="high" value="{{ old('high') }}"
-                            class="w-full border rounded p-2 @error('high') border-red-500 @enderror" required>
+                            class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('high') border-red-500 @enderror"
+                            required>
                         @error('high')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="low" class="block font-medium">Low</label>
+                        <label for="low" class="block font-medium text-slate-700 dark:text-slate-200">Low</label>
                         <input type="text" name="low" id="low" value="{{ old('low') }}"
-                            class="w-full border rounded p-2 @error('low') border-red-500 @enderror" required>
+                            class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('low') border-red-500 @enderror"
+                            required>
                         @error('low')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="close" class="block font-medium">Close</label>
+                        <label for="close" class="block font-medium text-slate-700 dark:text-slate-200">Close</label>
                         <input type="text" name="close" id="close" value="{{ old('close') }}"
-                            class="w-full border rounded p-2 @error('close') border-red-500 @enderror" required>
+                            class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('close') border-red-500 @enderror"
+                            required>
                         @error('close')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -81,9 +86,10 @@
                 </div> --}}
 
                 <div>
-                    <label for="category" class="block font-medium">Kategori</label>
+                    <label for="category" class="block font-medium text-slate-700 dark:text-slate-200">Kategori</label>
                     <select name="category" id="category"
-                        class="w-full border rounded p-2 @error('category') border-red-500 @enderror" required>
+                        class="w-full border rounded p-2 bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 @error('category') border-red-500 @enderror"
+                        required>
                         <option value="">-- Pilih Kategori --</option>
                         @foreach (['LGD Daily', 'BCO Daily', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
                             <option value="{{ $kategori }}" {{ old('category') == $kategori ? 'selected' : '' }}>
@@ -96,20 +102,20 @@
                     @enderror
                 </div>
 
-                <div class="mt-4 border-t pt-4 space-y-2">
+                <div class="mt-4 border-t pt-4 space-y-2 border-slate-200 dark:border-slate-700">
                     <input type="hidden" name="isBankHoliday" value="0">
-                    <label class="flex items-center gap-2 font-medium text-sm">
+                    <label class="flex items-center gap-2 font-medium text-sm text-slate-700 dark:text-slate-200">
                         <input type="checkbox" name="isBankHoliday" value="1"
-                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-900"
                             @checked(old('isBankHoliday'))>
                         <span>Bank Holiday</span>
                     </label>
-                    <p class="text-xs text-gray-500">Tandai jika tanggal yang dimasukkan merupakan hari libur bank.</p>
+                    <p class="text-xs text-gray-500 dark:text-slate-400">Tandai jika tanggal yang dimasukkan merupakan hari libur bank.</p>
 
                     <div id="bankHolidayDescription" class="space-y-2 hidden">
-                        <label for="description" class="block font-medium">Keterangan Bank Holiday</label>
+                        <label for="description" class="block font-medium text-slate-700 dark:text-slate-200">Keterangan Bank Holiday</label>
                         <textarea name="description" id="description" rows="3"
-                            class="w-full border rounded p-2 @error('description') border-red-500 @enderror"
+                            class="w-full border rounded p-2 bg-white text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:placeholder-slate-400 disabled:bg-gray-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400 @error('description') border-red-500 @enderror"
                             placeholder="Tuliskan keterangan singkat mengenai bank holiday">{{ old('description') }}</textarea>
                         @error('description')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -134,12 +140,12 @@
 
     <!-- Modal Konfirmasi Simpan -->
     <div id="submitModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded p-6 w-full max-w-md">
+        <div class="bg-white rounded p-6 w-full max-w-md dark:bg-slate-800 dark:text-slate-100">
             <h3 class="text-lg font-semibold mb-4">Konfirmasi Simpan</h3>
-            <p class="mb-6">Apakah Anda yakin ingin menyimpan data ini?</p>
+            <p class="mb-6 text-slate-600 dark:text-slate-300">Apakah Anda yakin ingin menyimpan data ini?</p>
             <div class="flex justify-end gap-4">
                 <button onclick="closeSubmitModal()"
-                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600">Batal</button>
                 <button onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ya,
                     Simpan</button>
             </div>
@@ -148,12 +154,12 @@
 
     <!-- Modal Konfirmasi Kembali -->
     <div id="backModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded p-6 w-full max-w-md">
+        <div class="bg-white rounded p-6 w-full max-w-md dark:bg-slate-800 dark:text-slate-100">
             <h3 class="text-lg font-semibold mb-4">Konfirmasi Kembali</h3>
-            <p class="mb-6">Apakah Anda yakin ingin kembali? Data yang belum disimpan akan hilang.</p>
+            <p class="mb-6 text-slate-600 dark:text-slate-300">Apakah Anda yakin ingin kembali? Data yang belum disimpan akan hilang.</p>
             <div class="flex justify-end gap-4">
                 <button onclick="closeBackModal()"
-                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600">Batal</button>
                 <a href="{{ route('pivot.index') }}"
                     class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya, Kembali</a>
             </div>

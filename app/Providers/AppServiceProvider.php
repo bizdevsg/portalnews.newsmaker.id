@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Berita;
+use App\Models\EconomicCalendar;
+use App\Models\Pivot;
+use App\Observers\BeritaObserver;
+use App\Observers\EconomicCalendarObserver;
+use App\Observers\PivotObserver;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,5 +23,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void {}
+    public function boot(): void
+    {
+        Berita::observe(BeritaObserver::class);
+        EconomicCalendar::observe(EconomicCalendarObserver::class);
+        Pivot::observe(PivotObserver::class);
+    }
 }

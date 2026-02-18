@@ -3,135 +3,81 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Berita;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $beritas = Berita::select([
-            'id',
-            'title',
-            'title_sg',
-            'title_rfb',
-            'title_kpf',
-            'title_ewf',
-            'title_bpf',
-            'slug',
-            'content',
-            'image1',
-            'image2',
-            'image3',
-            'image4',
-            'image5',
-            'image6',
-            'category_id',
-            'created_at',
-            'updated_at'
-        ])
-            ->with(['category:id,name,slug'])
-            ->get()
-            ->transform(function ($berita) {
-                return [
-                    'id'         => $berita->id,
-                    'title'      => $berita->title,
-                    'titles'     => [
-                        'default' => $berita->title,
-                        'sg'      => $berita->title_sg ?? $berita->title,
-                        'rfb'     => $berita->title_rfb ?? $berita->title,
-                        'kpf'     => $berita->title_kpf ?? $berita->title,
-                        'ewf'     => $berita->title_ewf ?? $berita->title,
-                        'bpf'     => $berita->title_bpf ?? $berita->title,
-                    ],
-                    'slug'       => $berita->slug,
-                    'content'    => $berita->content, // HTML asli
-                    'category_id' => $berita->category_id,
-                    'kategori'   => $berita->category,
-                    'images'     => $berita->images, // accessor
-                    'created_at' => $berita->created_at,
-                    'updated_at' => $berita->updated_at,
-                ];
-            });
-
-        return response()->json(
-            [
-                'status' => 'success',
-                'data'   => $beritas
-            ],
-            200,
-            [],
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES // <- tambahan penting
-        );
+        return $this->respondFromCache('cache/berita.json');
     }
 
-    public function show($slug)
+    public function show(string $slug): JsonResponse
     {
-        $berita = Berita::select([
-            'id',
-            'title',
-            'title_sg',
-            'title_rfb',
-            'title_kpf',
-            'title_ewf',
-            'title_bpf',
-            'slug',
-            'content',
-            'image1',
-            'image2',
-            'image3',
-            'image4',
-            'image5',
-            'image6',
-            'category_id',
-            'created_at',
-            'updated_at'
-        ])
-            ->with(['category:id,name'])
-            ->where('slug', $slug)
-            ->first();
-
-        if (!$berita) {
+        $payload = $this->getCachePayload('cache/berita.json');
+        if ($payload === null) {
             return response()->json(
-                [
-                    'status'  => 'error',
-                    'message' => 'Berita tidak ditemukan.'
-                ],
+                ['status' => 'error', 'message' => 'Cache berita belum tersedia.'],
+                503
+            );
+        }
+
+        $items = $payload['data'] ?? [];
+        $item = collect($items)->firstWhere('slug', $slug);
+
+        if (!$item) {
+            return response()->json(
+                ['status' => 'error', 'message' => 'Berita tidak ditemukan.'],
                 404,
                 [],
                 JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
             );
         }
 
-        $data = [
-            'id'         => $berita->id,
-            'title'      => $berita->title,
-            'titles'     => [
-                'default' => $berita->title,
-                'sg'      => $berita->title_sg ?? $berita->title,
-                'rfb'     => $berita->title_rfb ?? $berita->title,
-                'kpf'     => $berita->title_kpf ?? $berita->title,
-                'ewf'     => $berita->title_ewf ?? $berita->title,
-                'bpf'     => $berita->title_bpf ?? $berita->title,
-                'backup'  => $berita->title_backup ?? $berita->title,
-            ],
-            'slug'       => $berita->slug,
-            'content'    => $berita->content, // HTML asli
-            'category_id' => $berita->category_id,
-            'kategori'   => $berita->category,
-            'images'     => $berita->images,
-            'created_at' => $berita->created_at,
-            'updated_at' => $berita->updated_at,
-        ];
-
         return response()->json(
-            [
-                'status' => 'success',
-                'data'   => $data
-            ],
+            ['status' => 'success', 'data' => $item],
             200,
             [],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
+    }
+
+    private function respondFromCache(string $path): JsonResponse
+    {
+        $payload = $this->getCachePayload($path);
+
+        if ($payload === null) {
+            return response()->json(
+                ['status' => 'error', 'message' => 'Cache API belum tersedia.'],
+                503
+            );
+        }
+
+        return response()->json(
+            $payload,
+            200,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+    }
+
+    private function getCachePayload(string $path): ?array
+    {
+        if (!Storage::disk('local')->exists($path)) {
+            return null;
+        }
+
+        $json = Storage::disk('local')->get($path);
+        if ($json === null || $json === '') {
+            return null;
+        }
+
+        $payload = json_decode($json, true);
+        if (!is_array($payload)) {
+            return null;
+        }
+
+        return $payload;
     }
 }

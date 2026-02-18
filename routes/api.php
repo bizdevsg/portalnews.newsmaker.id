@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\PivotController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

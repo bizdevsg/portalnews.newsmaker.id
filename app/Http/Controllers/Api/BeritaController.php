@@ -3,43 +3,94 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Berita;
+use Illuminate\Http\Request;
 
 class BeritaController extends Controller
 {
-    private string $cachePath = 'cache/berita.json';
-
     public function index()
     {
-        $json = $this->readCacheJson();
-        if ($json === null) {
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Cache berita belum tersedia.'
-                ],
-                503
-            );
-        }
+        $beritas = Berita::select([
+            'id',
+            'title',
+            'title_sg',
+            'title_rfb',
+            'title_kpf',
+            'title_ewf',
+            'title_bpf',
+            'slug',
+            'content',
+            'image1',
+            'image2',
+            'image3',
+            'image4',
+            'image5',
+            'image6',
+            'category_id',
+            'created_at',
+            'updated_at'
+        ])
+            ->with(['category:id,name,slug'])
+            ->get()
+            ->transform(function ($berita) {
+                return [
+                    'id'         => $berita->id,
+                    'title'      => $berita->title,
+                    'titles'     => [
+                        'default' => $berita->title,
+                        'sg'      => $berita->title_sg ?? $berita->title,
+                        'rfb'     => $berita->title_rfb ?? $berita->title,
+                        'kpf'     => $berita->title_kpf ?? $berita->title,
+                        'ewf'     => $berita->title_ewf ?? $berita->title,
+                        'bpf'     => $berita->title_bpf ?? $berita->title,
+                    ],
+                    'slug'       => $berita->slug,
+                    'content'    => $berita->content, // HTML asli
+                    'category_id' => $berita->category_id,
+                    'kategori'   => $berita->category,
+                    'images'     => $berita->images, // accessor
+                    'created_at' => $berita->created_at,
+                    'updated_at' => $berita->updated_at,
+                ];
+            });
 
-        return response($json, 200)->header('Content-Type', 'application/json');
+        return response()->json(
+            [
+                'status' => 'success',
+                'data'   => $beritas
+            ],
+            200,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES // <- tambahan penting
+        );
     }
 
     public function show($slug)
     {
-        $payload = $this->readCacheDecoded();
-        if ($payload === null || !isset($payload['data']) || !is_array($payload['data'])) {
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Cache berita belum tersedia.'
-                ],
-                503
-            );
-        }
+        $berita = Berita::select([
+            'id',
+            'title',
+            'title_sg',
+            'title_rfb',
+            'title_kpf',
+            'title_ewf',
+            'title_bpf',
+            'slug',
+            'content',
+            'image1',
+            'image2',
+            'image3',
+            'image4',
+            'image5',
+            'image6',
+            'category_id',
+            'created_at',
+            'updated_at'
+        ])
+            ->with(['category:id,name'])
+            ->where('slug', $slug)
+            ->first();
 
-        $berita = collect($payload['data'])->firstWhere('slug', $slug);
         if (!$berita) {
             return response()->json(
                 [
@@ -52,47 +103,35 @@ class BeritaController extends Controller
             );
         }
 
+        $data = [
+            'id'         => $berita->id,
+            'title'      => $berita->title,
+            'titles'     => [
+                'default' => $berita->title,
+                'sg'      => $berita->title_sg ?? $berita->title,
+                'rfb'     => $berita->title_rfb ?? $berita->title,
+                'kpf'     => $berita->title_kpf ?? $berita->title,
+                'ewf'     => $berita->title_ewf ?? $berita->title,
+                'bpf'     => $berita->title_bpf ?? $berita->title,
+                'backup'  => $berita->title_backup ?? $berita->title,
+            ],
+            'slug'       => $berita->slug,
+            'content'    => $berita->content, // HTML asli
+            'category_id' => $berita->category_id,
+            'kategori'   => $berita->category,
+            'images'     => $berita->images,
+            'created_at' => $berita->created_at,
+            'updated_at' => $berita->updated_at,
+        ];
+
         return response()->json(
             [
                 'status' => 'success',
-                'data'   => $berita
+                'data'   => $data
             ],
             200,
             [],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
-    }
-
-    private function readCacheJson(): ?string
-    {
-        if (!Storage::disk('local')->exists($this->cachePath)) {
-            Artisan::call('berita:cache-json');
-        }
-
-        if (!Storage::disk('local')->exists($this->cachePath)) {
-            return null;
-        }
-
-        $json = Storage::disk('local')->get($this->cachePath);
-        if (!is_string($json) || $json === '') {
-            return null;
-        }
-
-        return $json;
-    }
-
-    private function readCacheDecoded(): ?array
-    {
-        $json = $this->readCacheJson();
-        if ($json === null) {
-            return null;
-        }
-
-        $decoded = json_decode($json, true);
-        if (!is_array($decoded)) {
-            return null;
-        }
-
-        return $decoded;
     }
 }

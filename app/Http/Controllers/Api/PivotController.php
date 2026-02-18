@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Pivot;
+use Illuminate\Http\Request;
 
 class PivotController extends Controller
 {
@@ -13,32 +13,12 @@ class PivotController extends Controller
      */
     public function index()
     {
-        $path = 'cache/pivot.json';
-        if (!Storage::disk('local')->exists($path)) {
-            Artisan::call('pivot:cache-json');
-        }
+        $pivots = Pivot::all(); // baca langsung dari database
 
-        if (!Storage::disk('local')->exists($path)) {
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Cache pivot belum tersedia.'
-                ],
-                503
-            );
-        }
-
-        $json = Storage::disk('local')->get($path);
-        if (!is_string($json) || $json === '') {
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Cache pivot tidak valid.'
-                ],
-                500
-            );
-        }
-
-        return response($json, 200)->header('Content-Type', 'application/json');
+        return response()->json([
+            'Code' => 200,
+            'status' => 'success',
+            'data' => $pivots
+        ], 200);
     }
 }

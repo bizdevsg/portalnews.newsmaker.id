@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Berita;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class CacheBeritaJson extends Command
@@ -28,7 +27,7 @@ class CacheBeritaJson extends Command
      */
     public function handle(): int
     {
-        $columns = [
+        $beritas = Berita::select([
             'id',
             'title',
             'title_sg',
@@ -47,13 +46,7 @@ class CacheBeritaJson extends Command
             'category_id',
             'created_at',
             'updated_at',
-        ];
-
-        if (Schema::hasColumn('beritas', 'title_backup')) {
-            $columns[] = 'title_backup';
-        }
-
-        $beritas = Berita::select($columns)
+        ])
             ->with(['category:id,name,slug'])
             ->get()
             ->transform(function ($berita) {
@@ -67,7 +60,6 @@ class CacheBeritaJson extends Command
                         'kpf' => $berita->title_kpf ?? $berita->title,
                         'ewf' => $berita->title_ewf ?? $berita->title,
                         'bpf' => $berita->title_bpf ?? $berita->title,
-                        'backup' => $berita->title_backup ?? $berita->title,
                     ],
                     'slug' => $berita->slug,
                     'content' => $berita->content,

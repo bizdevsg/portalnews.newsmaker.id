@@ -2,18 +2,17 @@
 
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-        <div class="card p-6 bg-white dark:bg-gray-800 rounded shadow">
-            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Edit Data Pivot</h2>
+        <div class="card p-6 bg-white rounded shadow">
+            <h2 class="text-xl font-semibold mb-4">Edit Data Pivot</h2>
 
             <form id="pivotForm" action="{{ route('pivot.update', $pivot->id) }}" method="POST" class="space-y-4">
                 @csrf
                 @method('PUT')
 
                 <div>
-                    <label for="tanggal" class="block font-medium text-gray-700 dark:text-gray-200 mb-1">Tanggal</label>
+                    <label for="tanggal" class="block font-medium">Tanggal</label>
                     <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', $pivot->tanggal) }}"
-                        class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('tanggal') border-red-500 @enderror"
-                        required>
+                        class="w-full border rounded p-2 @error('tanggal') border-red-500 @enderror" required>
                     @error('tanggal')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -21,41 +20,33 @@
 
                 <div id="ohlcFields" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <label for="open"
-                            class="block font-medium text-gray-700 dark:text-gray-200 mb-1">Open</label>
+                        <label for="open" class="block font-medium">Open</label>
                         <input type="text" name="open" id="open" value="{{ old('open', $pivot->open) }}"
-                            class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('open') border-red-500 @enderror"
-                            required>
+                            class="w-full border rounded p-2 @error('open') border-red-500 @enderror" required>
                         @error('open')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="high"
-                            class="block font-medium text-gray-700 dark:text-gray-200 mb-1">High</label>
+                        <label for="high" class="block font-medium">High</label>
                         <input type="text" name="high" id="high" value="{{ old('high', $pivot->high) }}"
-                            class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('high') border-red-500 @enderror"
-                            required>
+                            class="w-full border rounded p-2 @error('high') border-red-500 @enderror" required>
                         @error('high')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="low"
-                            class="block font-medium text-gray-700 dark:text-gray-200 mb-1">Low</label>
+                        <label for="low" class="block font-medium">Low</label>
                         <input type="text" name="low" id="low" value="{{ old('low', $pivot->low) }}"
-                            class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('low') border-red-500 @enderror"
-                            required>
+                            class="w-full border rounded p-2 @error('low') border-red-500 @enderror" required>
                         @error('low')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="close"
-                            class="block font-medium text-gray-700 dark:text-gray-200 mb-1">Close</label>
+                        <label for="close" class="block font-medium">Close</label>
                         <input type="text" name="close" id="close" value="{{ old('close', $pivot->close) }}"
-                            class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('close') border-red-500 @enderror"
-                            required>
+                            class="w-full border rounded p-2 @error('close') border-red-500 @enderror" required>
                         @error('close')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -95,40 +86,36 @@
                 </div> --}}
 
                 <div>
-                    <label for="category"
-                        class="block font-medium text-gray-700 dark:text-gray-200 mb-1">Kategori</label>
+                    <label for="category" class="block font-medium">Kategori</label>
                     <select name="category" id="category"
-                        class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('category') border-red-500 @enderror"
-                        required>
+                        class="w-full border rounded p-2 @error('category') border-red-500 @enderror" required>
                         <option value="">-- Pilih Kategori --</option>
                         @foreach (['LGD Daily', 'BCO Daily', 'HSI Daily', 'SNI Daily', 'AUD/USD', 'EUR/USD', 'GBP/USD', 'USD/CHF', 'USD/JPY'] as $kategori)
                             <option value="{{ $kategori }}"
                                 {{ old('category', $pivot->category) == $kategori ? 'selected' : '' }}>
                                 {{ $kategori }}
                             </option>
-                        @endforeach
+                            @endforeach
                     </select>
                     @error('category')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+                <div class="mt-4 border-t pt-4 space-y-2">
                     <input type="hidden" name="isBankHoliday" value="0">
-                    <label class="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-200">
+                    <label class="flex items-center gap-2 font-medium text-sm">
                         <input type="checkbox" name="isBankHoliday" value="1"
                             class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                             @checked(old('isBankHoliday', $pivot->isBankHoliday))>
                         <span>Bank Holiday</span>
                     </label>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Tandai jika tanggal yang dimasukkan merupakan
-                        hari libur bank.</p>
+                    <p class="text-xs text-gray-500">Tandai jika tanggal yang dimasukkan merupakan hari libur bank.</p>
 
                     <div id="bankHolidayDescription" class="space-y-2 hidden">
-                        <label for="description" class="block font-medium text-gray-700 dark:text-gray-200">Keterangan
-                            Bank Holiday</label>
+                        <label for="description" class="block font-medium">Keterangan Bank Holiday</label>
                         <textarea name="description" id="description" rows="3"
-                            class="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 @error('description') border-red-500 @enderror"
+                            class="w-full border rounded p-2 @error('description') border-red-500 @enderror"
                             placeholder="Tuliskan keterangan singkat mengenai bank holiday">{{ old('description', $pivot->description) }}</textarea>
                         @error('description')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -138,12 +125,12 @@
 
                 <div class="flex gap-4 mt-6">
                     <button type="button" onclick="openBackModal()"
-                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600">
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                         Kembali
                     </button>
 
                     <button type="button" onclick="openSubmitModal()"
-                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                         Simpan
                     </button>
                 </div>
@@ -153,14 +140,13 @@
 
     <!-- Modal Konfirmasi Simpan -->
     <div id="submitModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center hidden z-50">
-        <div class="bg-white dark:bg-gray-900 rounded p-6 w-full max-w-md">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Konfirmasi Simpan</h3>
-            <p class="mb-6 text-gray-700 dark:text-gray-300">Apakah Anda yakin ingin menyimpan data ini?</p>
+        <div class="bg-white rounded p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Konfirmasi Simpan</h3>
+            <p class="mb-6">Apakah Anda yakin ingin menyimpan data ini?</p>
             <div class="flex justify-end gap-4">
                 <button onclick="closeSubmitModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">Batal</button>
-                <button onclick="submitForm()"
-                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">Ya,
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                <button onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ya,
                     Simpan</button>
             </div>
         </div>
@@ -168,16 +154,14 @@
 
     <!-- Modal Konfirmasi Kembali -->
     <div id="backModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center hidden z-50">
-        <div class="bg-white dark:bg-gray-900 rounded p-6 w-full max-w-md">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Konfirmasi Kembali</h3>
-            <p class="mb-6 text-gray-700 dark:text-gray-300">Apakah Anda yakin ingin kembali? Data yang belum disimpan
-                akan hilang.</p>
+        <div class="bg-white rounded p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Konfirmasi Kembali</h3>
+            <p class="mb-6">Apakah Anda yakin ingin kembali? Data yang belum disimpan akan hilang.</p>
             <div class="flex justify-end gap-4">
                 <button onclick="closeBackModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">Batal</button>
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
                 <a href="{{ route('pivot.index') }}"
-                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-400">Ya,
-                    Kembali</a>
+                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya, Kembali</a>
             </div>
         </div>
     </div>

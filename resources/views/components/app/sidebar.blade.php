@@ -63,6 +63,12 @@
                             'icon' => 'fa-solid fa-chart-line',
                             'active' => request()->routeIs('pivot.*'),
                         ],
+                        [
+                            'label' => 'TikTok',
+                            'route' => 'tiktok.index',
+                            'icon' => 'fa-brands fa-tiktok',
+                            'active' => request()->routeIs('tiktok.*'),
+                        ],
                     ],
                 ],
             ];
@@ -94,8 +100,7 @@
                                     aria-label="{{ $item['label'] }}"
                                     class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
                                     <i class="{{ $item['icon'] }}"></i>
-                                    <span
-                                        class="lg:hidden lg:sidebar-expanded:block text-sm font-medium">{{ $item['label'] }}</span>
+                                    <span class="text-sm font-medium">{{ $item['label'] }}</span>
                                 </a>
                                 <div
                                     class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity duration-200 dark:bg-gray-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100 {{ $item['active'] ? 'opacity-100' : '' }}">
@@ -127,7 +132,7 @@
                                     aria-label="{{ $item['label'] }}"
                                     class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
                                     <i class="{{ $item['icon'] }}"></i>
-                                    <span class="lg:hidden lg:sidebar-expanded:block text-sm font-medium">
+                                    <span class="text-sm font-medium">
                                         {{ $item['label'] }}
                                     </span>
                                 </a>

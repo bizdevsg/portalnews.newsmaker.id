@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\PivotController;
+use App\Http\Controllers\Api\TiktokController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,5 +26,7 @@ Route::prefix('v1')->middleware('bearer')->group(
         Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);
 
         Route::get('/pivot-history', [PivotController::class, 'index']);
+
+        Route::get('/tiktok', [TiktokController::class, 'index']);
     }
 );

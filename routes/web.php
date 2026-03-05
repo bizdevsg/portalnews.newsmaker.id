@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\EconomicCalendarController;
 use App\Http\Controllers\PivotController;
+use App\Http\Controllers\TiktokController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -64,6 +65,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::put('/{id}/update', [PivotController::class, 'update'])->name('pivot.update');
         Route::get('/{id}/edit', [PivotController::class, 'edit'])->name('pivot.edit');
         Route::delete('/{id}/delete', [PivotController::class, 'destroy'])->name('pivot.destroy');
+    });
+
+    // TikTok
+    Route::prefix('tiktok')->group(function () {
+        Route::get('/', [TiktokController::class, 'index'])->name('tiktok.index');
+        Route::post('/store', [TiktokController::class, 'store'])->name('tiktok.store');
+        Route::get('/tambah', [TiktokController::class, 'create'])->name('tiktok.create');
+        Route::delete('/{id}/delete', [TiktokController::class, 'destroy'])->name('tiktok.destroy');
     });
 
     // e-Book

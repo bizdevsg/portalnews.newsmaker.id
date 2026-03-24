@@ -1,18 +1,53 @@
-@section('namePage', 'Tambah Kalende Ekonomi')
+@section('namePage', 'Tambah Kalender Ekonomi')
+
+@php($errors = $errors ?? new \Illuminate\Support\ViewErrorBag())
 
 <x-app-layout>
-    <div class="mx-4 sm:mx-6 lg:mx-8 my-8">
-        <form action="{{ route('calendar.store') }}" method="POST"
-            class="flex flex-col gap-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+    <div class="mx-auto flex w-full flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+        @if ($errors->any())
+            <section
+                class="rounded-xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700 shadow-sm dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
+                <h2 class="font-semibold">Periksa kembali form sebelum menyimpan.</h2>
+                <ul class="mt-2 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
+
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div class="min-w-0">
+                    <button type="button" onclick="openModal('modalKembali')"
+                        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Kembali ke kalender
+                    </button>
+
+                    <h1 class="mt-3 text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">
+                        Tambah Kalender Ekonomi
+                    </h1>
+                    <p class="mt-2 max-w-3xl text-sm text-slate-500 dark:text-slate-400">
+                        Masukkan event baru dengan struktur form yang lebih ringkas supaya lebih nyaman dipakai di desktop
+                        maupun mobile.
+                    </p>
+                </div>
+
+                <button type="button" onclick="openModal('modalSubmit')"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                    <i class="fa-solid fa-plus"></i>
+                    Simpan Event
+                </button>
+            </div>
+        </section>
+
+        <form id="calendarForm" action="{{ route('calendar.store') }}" method="POST" class="flex flex-col gap-6">
             @csrf
 
-            <div class="flex justify-between items-center">
-                <button type="button" onclick="toggleModal('modalKembali')"
-                    class="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 py-2 px-6 rounded-lg text-gray-600 dark:text-gray-200 hover:text-gray-800 dark:hover:text-gray-100 cursor-pointer">
-                    <i class="fa-solid fa-chevron-left"></i>
-                    <span class="hidden md:block">Kembali</span>
-                </button>
+            @include('calendar.partials.form-fields', ['calendar' => null, 'isEdit' => false])
 
+<<<<<<< Updated upstream
                 <h1 class="text-xl md:text-2xl text-gray-800 dark:text-gray-100 font-bold">Kalender Ekonomi</h1>
 
                 <button type="button" onclick="toggleModal('modalSubmit')"
@@ -94,173 +129,107 @@
                         <label for="date" class="font-medium text-gray-700 dark:text-gray-100">Tanggal</label>
                         <input type="date" name="date" id="date" required
                             class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
+=======
+            <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Siap Disimpan</h2>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                            Pastikan peristiwa, impact, dan sumber sudah sesuai sebelum event ditambahkan.
+                        </p>
+>>>>>>> Stashed changes
                     </div>
 
-                    <div class="form-group w-full flex flex-col gap-2">
-                        <label for="time" class="font-medium text-gray-700 dark:text-gray-100">Waktu</label>
-                        <input type="text" name="time" id="time" placeholder="Contoh: 13:00 / 10th" required
-                            class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
-                    </div>
-                </div>
-
-                {{-- Impact --}}
-                <div class="form-group flex flex-col gap-2">
-                    <label for="impact" class="font-medium text-gray-700 dark:text-gray-100">Impact</label>
-                    <select name="impact" id="impact" required
-                        class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
-                        <option value="">Pilih Impact</option>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                    </select>
-                </div>
-
-                {{-- Country Dropdown --}}
-                <div class="form-group flex flex-col gap-2">
-                    <label for="country" class="font-medium text-gray-700 dark:text-gray-100">Negara</label>
-                    <div class="relative">
-                        <button type="button" id="dropdownButton"
-                            class="w-full flex justify-between items-center px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 rounded-md shadow-sm focus:outline-none transition-all cursor-pointer">
-                            <span class="flex items-center gap-2">Pilih Negara</span>
-                            <svg class="w-4 h-4 ml-2 transition-transform duration-300" fill="currentColor"
-                                viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M10 12a1 1 0 01-.7-.3l-3-3a1 1 0 011.4-1.4L10 9.6l2.3-2.3a1 1 0 111.4 1.4l-3 3a1 1 0 01-.7.3z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                        <button type="button" onclick="openModal('modalKembali')"
+                            class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
+                            Batal
                         </button>
-
-                        <input type="hidden" name="country" id="selectedCountry" value="IDN">
-
-                        <ul id="dropdownList"
-                            class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-md hidden max-h-60 overflow-y-auto"
-                            role="listbox">
-                            @php
-                                $countries = [
-                                    ['codeCountry' => 'AUD', 'code' => 'AU', 'name' => 'Australia'],
-                                    ['codeCountry' => 'CAD', 'code' => 'CA', 'name' => 'Canada'],
-                                    ['codeCountry' => 'CHF', 'code' => 'CH', 'name' => 'Switzerland'],
-                                    ['codeCountry' => 'CHN', 'code' => 'CN', 'name' => 'China'],
-                                    ['codeCountry' => 'EUR', 'code' => 'EU', 'name' => 'European Union'],
-                                    ['codeCountry' => 'GBP', 'code' => 'GB', 'name' => 'United Kingdom'],
-                                    ['codeCountry' => 'IDN', 'code' => 'ID', 'name' => 'Indonesia'],
-                                    ['codeCountry' => 'JPN', 'code' => 'JP', 'name' => 'Japan'],
-                                    ['codeCountry' => 'US', 'code' => 'US', 'name' => 'United States'],
-                                ];
-                            @endphp
-                            @foreach ($countries as $country)
-                                @if ($country['code'] == 'EU')
-                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                        <img src="https://flagcdn.com/w40/{{ strtolower($country['code']) }}.png"
-                                            class="w-5 h-4" alt="{{ $country['name'] }}">
-                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                                    </li>
-                                @else
-                                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-gray-800 dark:text-gray-100"
-                                        data-value="{{ $country['codeCountry'] }}" role="option" tabindex="0">
-                                        <img src="https://flagsapi.com/{{ $country['code'] }}/shiny/24.png">
-                                        {{ $country['codeCountry'] }} - {{ $country['name'] }}
-                                    </li>
-                                @endif
-                            @endforeach
-                        </ul>
+                        <button type="button" onclick="openModal('modalSubmit')"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Tambahkan
+                        </button>
                     </div>
                 </div>
-
-                {{-- Previous, Forecast, Actual --}}
-                <div class="flex flex-col md:flex-row gap-4 justify-between">
-                    <div class="form-group flex flex-col gap-2 w-full">
-                        <label for="previous" class="font-medium text-gray-700 dark:text-gray-100">Previous</label>
-                        <input type="text" name="previous" id="previous"
-                            class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
-                    </div>
-
-                    <div class="form-group flex flex-col gap-2 w-full">
-                        <label for="forecast" class="font-medium text-gray-700 dark:text-gray-100">Forecast</label>
-                        <input type="text" name="forecast" id="forecast"
-                            class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
-                    </div>
-
-                    <div class="form-group flex flex-col gap-2 w-full">
-                        <label for="actual" class="font-medium text-gray-700 dark:text-gray-100">Actual</label>
-                        <input type="text" name="actual" id="actual"
-                            class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
-                    </div>
-                </div>
-            </div>
-
-            {{-- Modal Submit --}}
-            <div id="modalSubmit"
-                class="hidden fixed inset-0 bg-gray-900/50 dark:bg-gray-900/75 flex items-center justify-center px-3 z-100">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Konfirmasi</h2>
-                    <p class="dark:text-gray-300">Apakah Anda yakin ingin menambahkan berita ini?</p>
-                    <div class="flex justify-end mt-4">
-                        <button onclick="toggleModal('modalSubmit')"
-                            class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg cursor-pointer">Batal</button>
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg cursor-pointer">Ya,
-                            Tambahkan</button>
-                    </div>
-                </div>
-            </div>
+            </section>
         </form>
     </div>
 
-    {{-- Modal Kembali --}}
-    <div id="modalKembali"
-        class="hidden fixed inset-0 bg-gray-900/50 dark:bg-gray-900/75 flex items-center justify-center px-3 z-100">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Konfirmasi</h2>
-            <p class="dark:text-gray-300">Apakah Anda yakin ingin kembali? Perubahan tidak akan disimpan.</p>
-            <div class="flex justify-end mt-4">
-                <button onclick="toggleModal('modalKembali')"
-                    class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg cursor-pointer">Batal</button>
-                <a href="{{ route('calendar.index') }}"
-                    class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg cursor-pointer">Ya, Kembali</a>
+    <div id="modalSubmit" data-modal
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/50 px-4">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950">
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Simpan event baru?</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                Event akan langsung masuk ke daftar kalender setelah disimpan.
+            </p>
+
+            <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button type="button" onclick="closeModal('modalSubmit')"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
+                    Batal
+                </button>
+                <button type="submit" form="calendarForm"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                    <i class="fa-solid fa-check"></i>
+                    Ya, simpan
+                </button>
             </div>
         </div>
     </div>
 
-    {{-- Script Dropdown --}}
+    <div id="modalKembali" data-modal
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/50 px-4">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950">
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Tinggalkan halaman ini?</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                Data yang belum disimpan akan hilang jika Anda kembali ke daftar kalender.
+            </p>
+
+            <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button type="button" onclick="closeModal('modalKembali')"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
+                    Tetap di sini
+                </button>
+                <a href="{{ route('calendar.index') }}"
+                    class="inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700">
+                    Ya, kembali
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const button = document.getElementById("dropdownButton");
-        const list = document.getElementById("dropdownList");
-        const icon = button.querySelector("svg");
-        const hiddenInput = document.getElementById("selectedCountry");
-
-        button.addEventListener("click", () => {
-            list.classList.toggle("hidden");
-            icon.classList.toggle("rotate-180");
-        });
-
-        list.querySelectorAll("li").forEach(item => {
-            item.addEventListener("click", () => {
-                const selectedValue = item.dataset.value;
-                button.querySelector("span").innerHTML = item.innerHTML;
-                hiddenInput.value = selectedValue;
-                list.classList.add("hidden");
-                icon.classList.remove("rotate-180");
-            });
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!button.contains(e.target) && !list.contains(e.target)) {
-                list.classList.add("hidden");
-                icon.classList.remove("rotate-180");
-            }
-        });
-    </script>
-    {{-- Script Modal --}}
-    <script>
-        function toggleModal(id) {
+        function openModal(id) {
             const modal = document.getElementById(id);
-            if (modal.classList.contains('hidden')) {
+
+            if (modal) {
                 modal.classList.remove('hidden');
-            } else {
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+
+            if (modal) {
                 modal.classList.add('hidden');
             }
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('[data-modal]').forEach(function(modal) {
+                    modal.classList.add('hidden');
+                });
+            }
+        });
+
+        document.querySelectorAll('[data-modal]').forEach(function(modal) {
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
     </script>
 </x-app-layout>

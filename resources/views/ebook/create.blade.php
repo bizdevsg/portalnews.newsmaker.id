@@ -113,9 +113,9 @@
             <h3 class="text-lg font-semibold mb-4">Konfirmasi Simpan</h3>
             <p class="mb-6">Apakah Anda yakin ingin menyimpan buku ini?</p>
             <div class="flex justify-end gap-4">
-                <button onclick="closeSubmitModal()"
+                <button type="button" onclick="closeSubmitModal()"
                     class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
-                <button onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ya,
+                <button type="submit" form="pivotForm" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ya,
                     Simpan</button>
             </div>
         </div>
@@ -128,7 +128,7 @@
             <h3 class="text-lg font-semibold mb-4">Konfirmasi Kembali</h3>
             <p class="mb-6">Apakah Anda yakin ingin kembali? Data yang belum disimpan akan hilang.</p>
             <div class="flex justify-end gap-4">
-                <button onclick="closeBackModal()"
+                <button type="button" onclick="closeBackModal()"
                     class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
                 <a href="{{ route('ebook.index') }}"
                     class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya, Kembali</a>
@@ -143,10 +143,6 @@
 
         function closeSubmitModal() {
             document.getElementById('submitModal').classList.add('hidden');
-        }
-
-        function submitForm() {
-            document.getElementById('pivotForm').submit();
         }
 
         function openBackModal() {

@@ -13,13 +13,43 @@ class EconomicCalendarController extends Controller
      */
     public function index()
     {
-        // Mengambil data kalender dengan pengurutan berdasarkan created_at dan time
-        $calendars = EconomicCalendar::orderBy('date', 'desc')
+        $baseQuery = EconomicCalendar::query();
+        $today = now()->startOfDay();
+
+        // Mengambil data kalender dengan pengurutan berdasarkan tanggal dan waktu
+        $calendars = (clone $baseQuery)->orderBy('date', 'desc')
             ->orderBy('time', 'desc')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
+
+        $stats = [
+            'totalEvents' => (clone $baseQuery)->count(),
+            'highImpactCount' => (clone $baseQuery)->where('impact', 'High')->count(),
+            'mediumImpactCount' => (clone $baseQuery)->where('impact', 'Medium')->count(),
+            'lowImpactCount' => (clone $baseQuery)->where('impact', 'Low')->count(),
+            'todayEventsCount' => (clone $baseQuery)->whereDate('date', $today)->count(),
+            'bankHolidayCount' => (clone $baseQuery)->where('isBankHoliday', true)->count(),
+            'countryCount' => (clone $baseQuery)
+                ->whereNotNull('country')
+                ->where('country', '!=', '')
+                ->distinct()
+                ->count('country'),
+            'nextEvent' => (clone $baseQuery)
+                ->whereDate('date', '>=', $today)
+                ->orderBy('date')
+                ->orderBy('time')
+                ->first(),
+            'latestEventDate' => (clone $baseQuery)
+                ->orderBy('date', 'desc')
+                ->orderBy('time', 'desc')
+                ->value('date'),
+        ];
 
         // Mengembalikan view dengan data kalender yang sudah diambil
-        return view('calendar.index', ['calendars' => $calendars]);
+        return view('calendar.index', [
+            'calendars' => $calendars,
+            'stats' => $stats,
+        ]);
     }
 
     /**

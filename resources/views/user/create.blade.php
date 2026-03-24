@@ -123,11 +123,11 @@
                         </h2>
                         <p class="dark:text-gray-300">Apakah Anda yakin ingin menambahkan pengguna ini?</p>
                         <div class="flex justify-end mt-4">
-                            <button onclick="toggleModal('modalSubmit')"
+                            <button type="button" onclick="toggleModal('modalSubmit')"
                                 class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg cursor-pointer">
                                 Batal
                             </button>
-                            <button type="submit" id="submitButton"
+                            <button type="submit"
                                 class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg cursor-pointer">
                                 Ya, Tambahkan
                             </button>
@@ -146,7 +146,7 @@
                 Konfirmasi</h2>
             <p class="dark:text-gray-300">Apakah Anda yakin ingin kembali? Data tidak akan disimpan.</p>
             <div class="flex justify-end mt-4">
-                <button onclick="toggleModal('modalKembali')"
+                <button type="button" onclick="toggleModal('modalKembali')"
                     class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg cursor-pointer">
                     Batal
                 </button>
@@ -177,12 +177,5 @@
                 eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
             }
         }
-
-        // Tambahkan efek loading saat tombol submit diklik
-        document.getElementById('submitButton').addEventListener('click', function() {
-            this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Memproses...';
-            this.disabled = true;
-            document.getElementById('userForm').submit();
-        });
     </script>
 </x-app-layout>

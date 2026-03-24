@@ -1,7 +1,5 @@
 import { Livewire } from "../../vendor/livewire/livewire/dist/livewire.esm";
 import "@fortawesome/fontawesome-free/css/all.css";
-import "@fortawesome/fontawesome-free/js/all.js";
-import Swiper from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -10,80 +8,148 @@ Livewire.start();
 
 import "./bootstrap";
 
-// Import Chart.js
-import { Chart } from "chart.js";
-
-// Import flatpickr
-import flatpickr from "flatpickr";
-
-// import component from './components/component';
-import dashboardCard01 from "./components/dashboard-card-01";
-import dashboardCard02 from "./components/dashboard-card-02";
-import dashboardCard03 from "./components/dashboard-card-03";
-import dashboardCard04 from "./components/dashboard-card-04";
-import dashboardCard05 from "./components/dashboard-card-05";
-import dashboardCard06 from "./components/dashboard-card-06";
-import dashboardCard08 from "./components/dashboard-card-08";
-import dashboardCard09 from "./components/dashboard-card-09";
-import dashboardCard11 from "./components/dashboard-card-11";
-
-// Define Chart.js default settings
-/* eslint-disable prefer-destructuring */
-Chart.defaults.font.family = '"Inter", sans-serif';
-Chart.defaults.font.weight = 500;
-Chart.defaults.plugins.tooltip.borderWidth = 1;
-Chart.defaults.plugins.tooltip.displayColors = false;
-Chart.defaults.plugins.tooltip.mode = "nearest";
-Chart.defaults.plugins.tooltip.intersect = false;
-Chart.defaults.plugins.tooltip.position = "nearest";
-Chart.defaults.plugins.tooltip.caretSize = 0;
-Chart.defaults.plugins.tooltip.caretPadding = 20;
-Chart.defaults.plugins.tooltip.cornerRadius = 8;
-Chart.defaults.plugins.tooltip.padding = 8;
-
-// Function that generates a gradient for line charts
-export const chartAreaGradient = (ctx, chartArea, colorStops) => {
-    if (!ctx || !chartArea || !colorStops || colorStops.length === 0) {
-        return "transparent";
-    }
-    const gradient = ctx.createLinearGradient(
-        0,
-        chartArea.bottom,
-        0,
-        chartArea.top
-    );
-    colorStops.forEach(({ stop, color }) => {
-        gradient.addColorStop(stop, color);
-    });
-    return gradient;
-};
-
-// Register Chart.js plugin to add a bg option for chart area
-Chart.register({
-    id: "chartAreaPlugin",
-    // eslint-disable-next-line object-shorthand
-    beforeDraw: (chart) => {
-        if (
-            chart.config.options.chartArea &&
-            chart.config.options.chartArea.backgroundColor
-        ) {
-            const ctx = chart.canvas.getContext("2d");
-            const { chartArea } = chart;
-            ctx.save();
-            ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-            // eslint-disable-next-line max-len
-            ctx.fillRect(
-                chartArea.left,
-                chartArea.top,
-                chartArea.right - chartArea.left,
-                chartArea.bottom - chartArea.top
-            );
-            ctx.restore();
-        }
-    },
-});
-
 document.addEventListener("DOMContentLoaded", () => {
+    const shouldSkipDoubleSubmit = (form) => {
+        if (!form || form.hasAttribute("data-no-double-submit")) {
+            return true;
+        }
+
+        const method = (form.getAttribute("method") || "get").toLowerCase();
+        if (method === "get") {
+            return true;
+        }
+
+        return Array.from(form.attributes).some(({ name }) => {
+            return (
+                name.startsWith("wire:submit") ||
+                name.startsWith("x-on:submit") ||
+                name === "@submit"
+            );
+        });
+    };
+
+    const getFormSubmitters = (form) => {
+        const submitters = new Set(
+            form.querySelectorAll(
+                'button[type="submit"], input[type="submit"], button:not([type])'
+            )
+        );
+
+        if (!form.id) {
+            return Array.from(submitters);
+        }
+
+        const escapedId = window.CSS?.escape ? CSS.escape(form.id) : form.id;
+        document.querySelectorAll(`[form="${escapedId}"]`).forEach((element) => {
+            const tagName = element.tagName.toLowerCase();
+            const type = (
+                element.getAttribute("type") ||
+                (tagName === "button" ? "submit" : "")
+            ).toLowerCase();
+
+            if (type === "submit") {
+                submitters.add(element);
+            }
+        });
+
+        return Array.from(submitters);
+    };
+
+    const setSubmitterLoadingState = (submitter) => {
+        if (!submitter) {
+            return;
+        }
+
+        if (
+            submitter instanceof HTMLInputElement &&
+            !("originalSubmitLabel" in submitter.dataset)
+        ) {
+            submitter.dataset.originalSubmitLabel = submitter.value;
+            submitter.value = "Memproses...";
+        }
+
+        if (
+            submitter instanceof HTMLButtonElement &&
+            !("originalSubmitLabel" in submitter.dataset)
+        ) {
+            submitter.dataset.originalSubmitLabel = submitter.innerHTML;
+            submitter.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+        }
+    };
+
+    const resetSubmitterState = (submitter) => {
+        if (!submitter) {
+            return;
+        }
+
+        if (
+            submitter instanceof HTMLInputElement &&
+            "originalSubmitLabel" in submitter.dataset
+        ) {
+            submitter.value = submitter.dataset.originalSubmitLabel;
+            delete submitter.dataset.originalSubmitLabel;
+        }
+
+        if (
+            submitter instanceof HTMLButtonElement &&
+            "originalSubmitLabel" in submitter.dataset
+        ) {
+            submitter.innerHTML = submitter.dataset.originalSubmitLabel;
+            delete submitter.dataset.originalSubmitLabel;
+        }
+
+        submitter.disabled = false;
+        submitter.removeAttribute("aria-disabled");
+    };
+
+    const unlockForm = (form) => {
+        delete form.dataset.submitting;
+        form.removeAttribute("aria-busy");
+
+        getFormSubmitters(form).forEach((submitter) => {
+            resetSubmitterState(submitter);
+        });
+    };
+
+    const lockForm = (form, submitter) => {
+        form.dataset.submitting = "true";
+        form.setAttribute("aria-busy", "true");
+
+        getFormSubmitters(form).forEach((element) => {
+            element.disabled = true;
+            element.setAttribute("aria-disabled", "true");
+        });
+
+        setSubmitterLoadingState(submitter);
+    };
+
+    document.addEventListener("submit", (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || shouldSkipDoubleSubmit(form)) {
+            return;
+        }
+
+        if (form.dataset.submitting === "true") {
+            event.preventDefault();
+            return;
+        }
+
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        lockForm(form, event.submitter || null);
+    });
+
+    window.addEventListener("pageshow", () => {
+        document
+            .querySelectorAll("form[data-submitting='true']")
+            .forEach((form) => {
+                unlockForm(form);
+            });
+    });
+
     // Light switcher
     const lightSwitches = document.querySelectorAll(".light-switch");
     if (lightSwitches.length > 0) {
@@ -122,35 +188,36 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-    // Flatpickr
-    flatpickr(".datepicker", {
-        mode: "range",
-        static: true,
-        monthSelectorType: "static",
-        dateFormat: "M j, Y",
-        defaultDate: [new Date().setDate(new Date().getDate() - 6), new Date()],
-        prevArrow:
-            '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
-        nextArrow:
-            '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
-        onReady: (selectedDates, dateStr, instance) => {
-            // eslint-disable-next-line no-param-reassign
-            instance.element.value = dateStr.replace("to", "-");
-            const customClass = instance.element.getAttribute("data-class");
-            instance.calendarContainer.classList.add(customClass);
-        },
-        onChange: (selectedDates, dateStr, instance) => {
-            // eslint-disable-next-line no-param-reassign
-            instance.element.value = dateStr.replace("to", "-");
-        },
-    });
-    dashboardCard01();
-    dashboardCard02();
-    dashboardCard03();
-    dashboardCard04();
-    dashboardCard05();
-    dashboardCard06();
-    dashboardCard08();
-    dashboardCard09();
-    dashboardCard11();
+    const datepickers = document.querySelectorAll(".datepicker");
+    if (datepickers.length > 0) {
+        import("flatpickr").then(({ default: flatpickr }) => {
+            flatpickr(".datepicker", {
+                mode: "range",
+                static: true,
+                monthSelectorType: "static",
+                dateFormat: "M j, Y",
+                defaultDate: [
+                    new Date().setDate(new Date().getDate() - 6),
+                    new Date(),
+                ],
+                prevArrow:
+                    '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
+                nextArrow:
+                    '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
+                onReady: (selectedDates, dateStr, instance) => {
+                    // eslint-disable-next-line no-param-reassign
+                    instance.element.value = dateStr.replace("to", "-");
+                    const customClass =
+                        instance.element.getAttribute("data-class");
+                    if (customClass) {
+                        instance.calendarContainer.classList.add(customClass);
+                    }
+                },
+                onChange: (selectedDates, dateStr, instance) => {
+                    // eslint-disable-next-line no-param-reassign
+                    instance.element.value = dateStr.replace("to", "-");
+                },
+            });
+        });
+    }
 });

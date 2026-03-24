@@ -1,4 +1,5 @@
 <x-app-layout>
+<<<<<<< Updated upstream
     <div class="px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full max-w-9xl mx-auto">
         <div class="mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
             <form action="{{ route('berita.update', [$kategori->slug, $berita->id]) }}" method="POST"
@@ -215,4 +216,17 @@
             }
         </script>
     </div>
+=======
+    @include('berita._form', [
+        'formAction' => route('berita.update', [$kategori->slug, $berita->id]),
+        'berita' => $berita,
+        'pageTitle' => 'Edit Berita',
+        'pageDescription' => 'Perbarui judul, gambar, atau isi berita dengan layout yang lebih terstruktur dan mudah dipindai.',
+        'submitLabel' => 'Simpan Perubahan',
+        'submitIcon' => 'fa-save',
+        'submitModalMessage' => 'Apakah Anda yakin ingin menyimpan perubahan berita ini?',
+        'backUrl' => route('berita.index', $kategori->slug),
+        'backModalMessage' => 'Apakah Anda yakin ingin kembali? Perubahan yang belum disimpan akan hilang.',
+    ])
+>>>>>>> Stashed changes
 </x-app-layout>

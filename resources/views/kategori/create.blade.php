@@ -51,7 +51,7 @@
                     <h2 class="text-lg font-semibold mb-4">Konfirmasi</h2>
                     <p>Apakah Anda yakin ingin menambahkan kategori ini?</p>
                     <div class="flex justify-end mt-4">
-                        <button onclick="toggleModal('modalSubmit')"
+                        <button type="button" onclick="toggleModal('modalSubmit')"
                             class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white py-2 px-4 rounded-lg">
                             Batal
                         </button>
@@ -71,7 +71,7 @@
             <h2 class="text-lg font-semibold mb-4">Konfirmasi</h2>
             <p>Apakah Anda yakin ingin kembali? Perubahan tidak akan disimpan.</p>
             <div class="flex justify-end mt-4">
-                <button onclick="toggleModal('modalKembali')"
+                <button type="button" onclick="toggleModal('modalKembali')"
                     class="mr-2 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white py-2 px-4 rounded-lg">
                     Batal
                 </button>

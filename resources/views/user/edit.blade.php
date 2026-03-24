@@ -122,7 +122,7 @@
                         <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Konfirmasi</h2>
                         <p class="dark:text-gray-300">Apakah Anda yakin ingin menyimpan perubahan?</p>
                         <div class="flex justify-end mt-4">
-                            <button onclick="toggleModal('modalSubmit')"
+                            <button type="button" onclick="toggleModal('modalSubmit')"
                                 class="mr-2 bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 rounded-lg">
                                 Batal
                             </button>

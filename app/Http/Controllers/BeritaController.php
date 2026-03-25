@@ -108,7 +108,10 @@ class BeritaController extends Controller
         // Ambil berita berdasarkan ID
         $berita = Berita::findOrFail($id);
 
-        return view('berita.edit', compact('berita', 'kategori'));
+        // Ambil semua kategori untuk opsi pemindahan
+        $categories = Category::all();
+
+        return view('berita.edit', compact('berita', 'kategori', 'categories'));
     }
 
     // Mengupdate berita
@@ -129,6 +132,7 @@ class BeritaController extends Controller
             'image4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image5' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image6' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Ambil berita berdasarkan ID
@@ -152,9 +156,14 @@ class BeritaController extends Controller
             'title_ewf' => $request->title_ewf,
             'title_bpf' => $request->title_bpf,
             'content' => $request->content,
+            'category_id' => $request->category_id,
         ]);
 
-        return redirect()->route('berita.index', $slug)
+        // Redirect ke kategori baru jika dipindahkan
+        $targetKategori = Category::find($request->category_id);
+        $redirectSlug = $targetKategori?->slug ?? $slug;
+
+        return redirect()->route('berita.index', $redirectSlug)
             ->with('success', 'Berita berhasil diperbarui!');
     }
 

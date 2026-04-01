@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'bearer' => \App\Http\Middleware\BearerToken::class,
+        'bearer-newsmaker' => \App\Http\Middleware\BearerNewsmakerToken::class,
     ];
 }

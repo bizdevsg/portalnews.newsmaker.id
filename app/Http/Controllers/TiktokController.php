@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 
 class TiktokController extends Controller
 {
+    protected function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'embed_code' => 'required|string',
+            'backup_video_url' => 'nullable|string|max:255',
+        ];
+    }
+
     public function index()
     {
         $tiktoks = Tiktok::query()
@@ -23,15 +32,35 @@ class TiktokController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'embed_code' => 'required|string',
-            'backup_video_url' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validate($this->rules());
 
         Tiktok::create($validated);
 
         return redirect()->route('tiktok.index')->with('success', 'Data TikTok berhasil ditambahkan.');
+    }
+
+    public function show($id)
+    {
+        $tiktok = Tiktok::findOrFail($id);
+
+        return view('tiktok.show', compact('tiktok'));
+    }
+
+    public function edit($id)
+    {
+        $tiktok = Tiktok::findOrFail($id);
+
+        return view('tiktok.edit', compact('tiktok'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $tiktok = Tiktok::findOrFail($id);
+        $validated = $request->validate($this->rules());
+
+        $tiktok->update($validated);
+
+        return redirect()->route('tiktok.index')->with('success', 'Data TikTok berhasil diperbarui.');
     }
 
     public function destroy($id)

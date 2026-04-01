@@ -3,9 +3,13 @@
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EbookController;
 use App\Http\Controllers\EconomicCalendarController;
+use App\Http\Controllers\EconomicCalendarDetailController;
+use App\Http\Controllers\Newsmaker23Controller;
+use App\Http\Controllers\NewsmakerArticleController;
+use App\Http\Controllers\NewsmakerMainCategoryController;
 use App\Http\Controllers\PivotController;
+use App\Http\Controllers\PopupBannerController;
 use App\Http\Controllers\TiktokController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -47,14 +51,26 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
 
     // Kalender Route
-    Route::prefix('kalender')->group(function () {
-        Route::get('/', [EconomicCalendarController::class, 'index'])->name('calendar.index');
-        Route::post('/store', [EconomicCalendarController::class, 'store'])->name('calendar.store');
-        Route::get('/tambah', [EconomicCalendarController::class, 'create'])->name('calendar.create');
-        Route::put('/{id}/update', [EconomicCalendarController::class, 'update'])->name('calendar.update');
-        Route::get('/{id}/edit', [EconomicCalendarController::class, 'edit'])->name('calendar.edit');
-        Route::delete('/{id}/delete', [EconomicCalendarController::class, 'destroy'])->name('calendar.delete');
-        Route::get('/{id}/show', [EconomicCalendarController::class, 'show'])->name('calendar.show');
+    Route::prefix('kalender')->name('calendar.')->group(function () {
+        Route::get('/', [EconomicCalendarController::class, 'index'])->name('index');
+        Route::get('/preview', [EconomicCalendarController::class, 'preview'])->name('preview');
+        Route::get('/tambah', [EconomicCalendarController::class, 'create'])->name('create');
+        Route::post('/store', [EconomicCalendarController::class, 'store'])->name('store');
+        Route::get('/{calendarCategory}/show', [EconomicCalendarController::class, 'show'])->name('show');
+        Route::get('/{calendarCategory}/edit', [EconomicCalendarController::class, 'edit'])->name('edit');
+        Route::put('/{calendarCategory}/update', [EconomicCalendarController::class, 'update'])->name('update');
+        Route::delete('/{calendarCategory}/delete', [EconomicCalendarController::class, 'destroy'])->name('delete');
+
+        Route::get('/{calendarCategory}/detail/tambah', [EconomicCalendarDetailController::class, 'create'])
+            ->name('detail.create');
+        Route::post('/{calendarCategory}/detail/store', [EconomicCalendarDetailController::class, 'store'])
+            ->name('detail.store');
+        Route::get('/detail/{detail}/edit', [EconomicCalendarDetailController::class, 'edit'])
+            ->name('detail.edit');
+        Route::put('/detail/{detail}/update', [EconomicCalendarDetailController::class, 'update'])
+            ->name('detail.update');
+        Route::delete('/detail/{detail}/delete', [EconomicCalendarDetailController::class, 'destroy'])
+            ->name('detail.delete');
     });
 
     // Pivot & Fibonacci
@@ -72,18 +88,43 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/', [TiktokController::class, 'index'])->name('tiktok.index');
         Route::post('/store', [TiktokController::class, 'store'])->name('tiktok.store');
         Route::get('/tambah', [TiktokController::class, 'create'])->name('tiktok.create');
+        Route::put('/{id}/update', [TiktokController::class, 'update'])->name('tiktok.update');
+        Route::get('/{id}/edit', [TiktokController::class, 'edit'])->name('tiktok.edit');
+        Route::get('/{id}/show', [TiktokController::class, 'show'])->name('tiktok.show');
         Route::delete('/{id}/delete', [TiktokController::class, 'destroy'])->name('tiktok.destroy');
     });
 
-    // e-Book
-    Route::prefix('e-book')->group(function () {
-        Route::get('/', [EbookController::class, 'index'])->name('ebook.index');
-        Route::post('/store', [EbookController::class, 'store'])->name('ebook.store');
-        Route::get('/tambah', [EbookController::class, 'create'])->name('ebook.create');
-        Route::put('/{id}/update', [EbookController::class, 'update'])->name('ebook.update');
-        Route::get('/{id}/edit', [EbookController::class, 'edit'])->name('ebook.edit');
-        Route::delete('/{id}/delete', [EbookController::class, 'destroy'])->name('ebook.destroy');
-        Route::get('/{id}/show', [EbookController::class, 'show'])->name('ebook.show');
+    // Newsmaker 23
+    Route::prefix('newsmaker23')->name('newsmaker23.')->group(function () {
+        Route::get('/', [Newsmaker23Controller::class, 'index'])->name('index');
+
+        Route::prefix('main-category')->name('main-category.')->group(function () {
+            Route::get('/', [NewsmakerMainCategoryController::class, 'index'])->name('index');
+            Route::get('/tambah', [NewsmakerMainCategoryController::class, 'create'])->name('create');
+            Route::post('/store', [NewsmakerMainCategoryController::class, 'store'])->name('store');
+            Route::get('/{slug}', [NewsmakerMainCategoryController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [NewsmakerMainCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [NewsmakerMainCategoryController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [NewsmakerMainCategoryController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('berita')->name('berita.')->group(function () {
+            Route::get('/', [NewsmakerArticleController::class, 'index'])->name('index');
+            Route::get('/tambah', [NewsmakerArticleController::class, 'create'])->name('create');
+            Route::post('/store', [NewsmakerArticleController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [NewsmakerArticleController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [NewsmakerArticleController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [NewsmakerArticleController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    Route::prefix('popup-banner')->name('popup-banner.')->group(function () {
+        Route::get('/', [PopupBannerController::class, 'index'])->name('index');
+        Route::get('/tambah', [PopupBannerController::class, 'create'])->name('create');
+        Route::post('/store', [PopupBannerController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [PopupBannerController::class, 'edit'])->name('edit');
+        Route::put('/{id}/update', [PopupBannerController::class, 'update'])->name('update');
+        Route::delete('/{id}/delete', [PopupBannerController::class, 'destroy'])->name('destroy');
     });
 
     // User Management Route

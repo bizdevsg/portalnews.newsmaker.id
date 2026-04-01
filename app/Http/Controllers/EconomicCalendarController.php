@@ -2,44 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EconomicCalendar;
-use Carbon\Carbon;
+use App\Models\EconomicCalendarCategory;
+use App\Services\EconomicCalendarPayloadService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class EconomicCalendarController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil data kalender dengan pengurutan berdasarkan created_at dan time
-        $calendars = EconomicCalendar::orderBy('date', 'desc')
-            ->orderBy('time', 'desc')
-            ->get();
+        $search = trim((string) $request->input('q'));
 
-        // Mengembalikan view dengan data kalender yang sudah diambil
-        return view('calendar.index', ['calendars' => $calendars]);
+        $categories = EconomicCalendarCategory::withCount('details')
+            ->with('latestDetail')
+            ->withMax('details', 'date')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($filter) use ($search) {
+                    $like = '%'.$search.'%';
+
+                    $filter->where('figures', 'like', $like)
+                        ->orWhere('sources', 'like', $like)
+                        ->orWhere('country', 'like', $like)
+                        ->orWhere('impact', 'like', $like)
+                        ->orWhere('measures', 'like', $like);
+                });
+            })
+            // ->orderByDesc('details_max_date')
+            // ->orderBy('country', 'asc')
+            ->orderBy('figures', 'asc')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('calendar.index', compact('categories', 'search'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(EconomicCalendarCategory $calendarCategory)
     {
-        $calendar = EconomicCalendar::findOrFail($id);
+        $calendarCategory->load([
+            'details' => fn ($query) => $query
+                ->orderByDesc('date')
+                ->orderByDesc('time')
+                ->orderByDesc('id'),
+        ]);
 
-        // Ambil tanggal kalender ekonomi
-        $calendarDate = Carbon::parse($calendar->date);
-
-        // Ambil data lain yang memiliki figures yang sama dan tanggal lebih kecil dari tanggal ini
-        $histories = EconomicCalendar::where('figures', $calendar->figures)
-            ->where('date', '<', $calendarDate)
-            ->orderBy('date', 'desc')
-            ->limit(5) // atau ->take(5)
-            ->get();
-
-        return view('calendar.show', compact('calendar', 'histories'));
+        return view('calendar.show', [
+            'calendar' => $calendarCategory,
+        ]);
     }
 
     /**
@@ -50,94 +67,175 @@ class EconomicCalendarController extends Controller
         return view('calendar.create');
     }
 
+    public function preview(Request $request, EconomicCalendarPayloadService $payloadService)
+    {
+        $data = $payloadService->getPreparedData();
+        $search = trim((string) $request->query('q'));
+
+        $availablePeriods = $payloadService->availablePeriods();
+        $groupedData = $data === null ? [] : $payloadService->groupByPeriods($data);
+
+        $defaultPeriod = 'this-week';
+        if (! in_array($defaultPeriod, $availablePeriods, true) || empty($groupedData[$defaultPeriod] ?? [])) {
+            foreach ($availablePeriods as $period) {
+                if (! empty($groupedData[$period] ?? [])) {
+                    $defaultPeriod = $period;
+                    break;
+                }
+            }
+        }
+
+        $requestedPeriod = $payloadService->normalizePeriod($request->query('period'));
+        $activePeriod = in_array($requestedPeriod, $availablePeriods, true) ? $requestedPeriod : $defaultPeriod;
+
+        $items = array_values($groupedData[$activePeriod] ?? []);
+        if ($search !== '') {
+            $searchNeedle = Str::lower($search);
+
+            $items = array_values(array_filter($items, function (array $item) use ($searchNeedle): bool {
+                $searchableValues = [
+                    $item['impact'] ?? null,
+                    $item['figures'] ?? null,
+                ];
+
+                if (filled($item['date'] ?? null)) {
+                    $searchableValues[] = $item['date'];
+
+                    try {
+                        $parsedDate = \Carbon\Carbon::parse((string) $item['date']);
+
+                        $searchableValues[] = $parsedDate->format('d-m-Y');
+                        $searchableValues[] = $parsedDate->format('d/m/Y');
+                        $searchableValues[] = $parsedDate->format('d M Y');
+                    } catch (\Throwable) {
+                        // Keep the raw date when parsing fails.
+                    }
+                }
+
+                foreach ($searchableValues as $value) {
+                    if ($value === null || $value === '') {
+                        continue;
+                    }
+
+                    if (str_contains(Str::lower((string) $value), $searchNeedle)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }));
+        }
+
+        $perPage = 10;
+        $currentPage = max(1, (int) $request->query('page', 1));
+        $offset = ($currentPage - 1) * $perPage;
+
+        $paginatedItems = new LengthAwarePaginator(
+            array_slice($items, $offset, $perPage),
+            count($items),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'pageName' => 'page',
+            ]
+        );
+
+        $paginatedItems->appends([
+            'period' => $activePeriod,
+            'q' => $search,
+        ]);
+
+        return view('calendar.preview', [
+            'groupedData' => $groupedData,
+            'meta' => $payloadService->buildPeriodsMeta(),
+            'availablePeriods' => $availablePeriods,
+            'cacheAvailable' => $data !== null,
+            'activePeriod' => $activePeriod,
+            'paginatedItems' => $paginatedItems,
+            'search' => $search,
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'date' => 'nullable|date',
-            'time' => 'nullable|string|max:10',
-            'custom_time' => 'nullable|string|max:10',
-            'country' => 'required|string|max:50',
-            'impact' => 'required|string|in:Low,Medium,High',
-            'figures' => 'required|string|max:100',
-            'previous' => 'nullable|string|max:100',
-            'forecast' => 'nullable|string|max:100',
-            'actual' => 'nullable|string|max:100',
-            'sources' => 'required|string',
-            'measures' => 'nullable|string',
-            'usual_effect' => 'nullable|string',
-            'frequency' => 'nullable|string|max:100',
-            'next_released' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
-            'isBankHoliday' => 'sometimes|boolean',
-            'bankHolidayNote' => 'nullable|string',
-            'why_trader_care' => 'nullable|string',
-        ]);
+        $validatedData = $this->validateCategory($request);
 
-        $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
+        $calendarCategory = EconomicCalendarCategory::create($validatedData);
 
-        EconomicCalendar::create($validatedData);
-
-        return redirect()->route('calendar.index')
-            ->with('success', 'Economic data added successfully.');
+        return redirect()
+            ->route('calendar.index')
+            ->with('success', 'Category kalender berhasil ditambahkan.');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(EconomicCalendarCategory $calendarCategory)
     {
-        $calendar = EconomicCalendar::findOrFail($id);
-
-        return view('calendar.edit', compact('calendar'));
+        return view('calendar.edit', [
+            'calendar' => $calendarCategory,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, EconomicCalendarCategory $calendarCategory): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'date' => 'nullable|date',
-            'time' => 'nullable|string|max:10',
-            'custom_time' => 'nullable|string|max:10',
-            'country' => 'required|string|max:50',
-            'impact' => 'required|string|in:Low,Medium,High',
-            'figures' => 'required|string|max:100',
-            'previous' => 'nullable|string|max:100',
-            'forecast' => 'nullable|string|max:100',
-            'actual' => 'nullable|string|max:100',
-            'sources' => 'required|string',
-            'measures' => 'required|string',
-            'usual_effect' => 'required|string',
-            'frequency' => 'required|string|max:100',
-            'next_released' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
-            'isBankHoliday' => 'sometimes|boolean',
-            'bankHolidayNote' => 'nullable|string',
-            'why_trader_care' => 'nullable|string',
-        ]);
+        $validatedData = $this->validateCategory($request, $calendarCategory->id);
 
-        $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
+        $calendarCategory->update($validatedData);
+        $calendarCategory->details()->update($calendarCategory->syncedDetailAttributes());
 
-        $calendar = EconomicCalendar::findOrFail($id);
-        $calendar->update($validatedData);
-
-        return redirect()->route('calendar.index')
-            ->with('success', 'Economic data updated successfully.');
+        return redirect()
+            ->route('calendar.show', $calendarCategory)
+            ->with('success', 'Category kalender berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(EconomicCalendarCategory $calendarCategory): RedirectResponse
     {
-        $calendar = EconomicCalendar::findOrFail($id);
-        $calendar->delete();
+        $calendarCategory->delete();
 
-        return redirect()->route('calendar.index')
-            ->with('success', 'Economic data deleted successfully.');
+        return redirect()
+            ->route('calendar.index')
+            ->with('success', 'Category kalender berhasil dihapus.');
+    }
+
+    private function validateCategory(Request $request, ?int $categoryId = null): array
+    {
+        $validatedData = $request->validate([
+            'country' => ['required', 'string', 'max:50'],
+            'impact' => ['required', Rule::in(['Low', 'Medium', 'High'])],
+            'figures' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('economic_calendar_categories', 'figures')
+                    ->ignore($categoryId)
+                    ->where(fn ($query) => $query
+                        ->where('country', $request->input('country'))
+                        ->where('impact', $request->input('impact'))),
+            ],
+            'sources' => ['required', 'string'],
+            'measures' => ['nullable', 'string'],
+            'usual_effect' => ['nullable', 'string'],
+            'frequency' => ['nullable', 'string', 'max:100'],
+            'next_released' => ['nullable', 'string', 'max:100'],
+            'notes' => ['nullable', 'string'],
+            'isBankHoliday' => ['sometimes', 'boolean'],
+            'bankHolidayNote' => ['nullable', 'string'],
+            'why_trader_care' => ['nullable', 'string'],
+        ]);
+
+        $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
+
+        return $validatedData;
     }
 }

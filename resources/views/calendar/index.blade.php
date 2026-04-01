@@ -1,174 +1,208 @@
 @section('namePage', 'Kalender Ekonomi')
 
 <x-app-layout>
-    <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto flex flex-col gap-4 h-full">
-        <!-- Header -->
-        <div class="flex justify-between items-center">
-            <h1 class="flex items-center gap-3 text-2xl md:text-3xl text-gray-800 dark:text-white font-bold">
-                Kalender Ekonomi
-                <span class="text-base">
-                    <x-tool-tip text="Data akan ditampilkan berdasarkan tanggal dan waktu." />
-                </span>
-            </h1>
-
-            <!-- Tombol Tambah Kalender -->
-            <a href="{{ route('calendar.create') }}"
-                class="bg-blue-500 text-center text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition">
-                <span class="hidden md:block">Tambah Kalender</span>
-                <span class="block md:hidden"><i class="fa-solid fa-plus"></i></span>
-            </a>
-        </div>
-
-        <!-- Tabel Kalender -->
-        <div class="overflow-x-auto md:overflow-x-visible">
-            <table
-                class="min-w-max md:min-w-full divide-y divide-gray-200 dark:divide-gray-700 shadow-md rounded-lg overflow-hidden">
-                <thead class="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-semibold">Peristiwa</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Tanggal</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Waktu</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Impact</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Negara</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Previous</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Forecast</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Actual</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody
-                    class="divide-y divide-gray-500 dark:divide-gray-100 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-                    @foreach ($calendars as $index => $calendar)
-                        <tr
-                            class="transition duration-200 
-                        @if (strtolower($calendar->impact) === 'high') bg-blue-300 hover:bg-blue-200 text-gray-800 
-                        @else hover:bg-gray-50 dark:hover:bg-gray-800 @endif">
-                            <td class="px-4 py-2 text-sm font-semibold">{{ $calendar->figures }}</td>
-                            <td class="px-4 py-2 text-center text-sm">
-                                {{ \Carbon\Carbon::parse($calendar->date)->format('d M Y') }}
-                            </td>
-                            <td class="px-4 py-2 text-center text-sm">
-                                {{ $calendar->time }}
-                            </td>
-                            <td
-                                class="px-4 py-2 text-center text-sm font-bold
-                            @if (strtolower($calendar->impact) === 'high') text-red-800
-                            @elseif(strtolower($calendar->impact) === 'medium') text-yellow-600 dark:text-yellow-400
-                            @elseif(strtolower($calendar->impact) === 'low') text-green-600 dark:text-green-400 @endif">
-                                @if (strtolower($calendar->impact) === 'high')
-                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                        class="fa-solid fa-star"></i>
-                                @elseif(strtolower($calendar->impact) === 'medium')
-                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                                @elseif(strtolower($calendar->impact) === 'low')
-                                    <i class="fa-solid fa-star"></i>
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-center text-sm">
-                                <div class="flex items-center justify-center gap-2">
-                                    @php
-                                        $currencyToCountry = [
-                                            'US' => 'US',
-                                            'EUR' => 'EU',
-                                            'JPY' => 'JP',
-                                            'GBP' => 'GB',
-                                            'AUD' => 'AU',
-                                            'CAD' => 'CA',
-                                            'CHF' => 'CH',
-                                            'CHN' => 'CN',
-                                            'HKD' => 'HK',
-                                            'IDN' => 'ID',
-                                        ];
-                                        $currencyCode = strtoupper($calendar->country);
-                                        $countryCode = $currencyToCountry[$currencyCode] ?? 'unknown';
-                                    @endphp
-                                    @if ($countryCode !== 'unknown')
-                                        <img src="https://flagsapi.com/{{ $countryCode }}/shiny/24.png">
-                                    @endif
-                                    {{ $currencyCode }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-2 text-center text-sm">
-                                {{ $calendar->previous ?? '-' }}
-                            </td>
-                            <td class="px-4 py-2 text-center text-sm">
-                                {{ $calendar->forecast ?? '-' }}
-                            </td>
-                            <td
-                                class="px-4 py-2 text-center text-sm
-                            @php
-if (!function_exists('parseEconomicValue')) {
-                                function parseEconomicValue($value) {
-                                    if (empty($value)) return null;
-                                    if (preg_match('/(-?\d+(\.\d+)?)([KMB%]?)/i', $value, $matches)) {
-                                        $number = floatval($matches[1]);
-                                        $suffix = strtoupper($matches[3]);
-                                        return match ($suffix) {
-                                            'K' => $number * 1000,
-                                            'M' => $number * 1000000,
-                                            'B' => $number * 1000000000,
-                                            default => $number,
-                                        };
-                                    }
-                                    return null;
-                                }
-                            }
-                            $actual = parseEconomicValue($calendar->actual ?? null);
-                            $previous = parseEconomicValue($calendar->previous ?? null); @endphp
-            
-                            @if (is_numeric($actual) && is_numeric($previous)) {{ $actual > $previous ? 'text-green-800 font-semibold' : ($actual < $previous ? 'text-red-900' : 'text-gray-700 dark:text-gray-300') }}
-                            @else
-                                text-gray-700 dark:text-gray-300 @endif">
-                                {{ $calendar->actual ?? '-' }}
-                            </td>
-                            <td class="px-4 py-2 text-center text-sm flex justify-center gap-2">
-                                <a href="{{ route('calendar.show', $calendar->id) }}"
-                                    class="w-full bg-green-400 hover:bg-green-500 text-black px-3 py-1 rounded text-sm">Detail</a>
-                                <a href="{{ route('calendar.edit', $calendar->id) }}"
-                                    class="w-full bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded text-sm">Edit</a>
-                                <button type="button" onclick="openDeleteModal({{ $calendar->id }})"
-                                    class="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm cursor-pointer">
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <!-- Modal Konfirmasi Hapus -->
-            <div id="deleteModal" class="fixed inset-0 z-50 hidden bg-gray-900/50 flex items-center justify-center">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-sm">
-                    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Konfirmasi Hapus</h2>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">Apakah kamu yakin ingin menghapus data ini?
-                    </p>
-                    <form id="deleteForm" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <div class="flex justify-end gap-2">
-                            <button type="button" onclick="closeDeleteModal()"
-                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded cursor-pointer">Batal</button>
-                            <button type="submit"
-                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer">Hapus</button>
-                        </div>
-                    </form>
-                </div>
+    <div x-data="{
+        openPreviewPopup() {
+            const popup = window.open(
+                '{{ route('calendar.preview') }}',
+                'calendar-preview',
+                'popup=yes,width=1440,height=900,left=120,top=80,resizable=yes,scrollbars=yes'
+            );
+    
+            if (popup) {
+                popup.focus();
+            } else {
+                window.location.href = '{{ route('calendar.preview') }}';
+            }
+        }
+    }" class="px-4 sm:px-6 lg:px-8 py-8 w-full mx-auto flex flex-col gap-6">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <p class="text-sm text-blue-600 dark:text-blue-400 font-semibold">Kalender Ekonomi</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Category Header</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Setiap category menyimpan header, lalu update rutinnya cukup lewat data detail.
+                </p>
             </div>
 
+            <div class="space-y-2 flex flex-col ">
+                <button type="button" @click="openPreviewPopup()"
+                    class="w-full cursor-pointer text-center rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                    Preview
+                </button>
+
+                <a href="{{ route('calendar.create') }}"
+                    class="w-full text-center rounded-lg bg-blue-600 px-4 py-2 text-xs text-nowrap font-semibold text-white hover:bg-blue-700">
+                    Tambah
+                </a>
+            </div>
         </div>
+
+        <form action="{{ route('calendar.index') }}" method="GET"
+            class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+            <div class="flex flex-col gap-3 md:flex-row">
+                <div class="flex-1">
+                    <label for="q" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pencarian
+                        Category</label>
+                    <input type="text" name="q" id="q" value="{{ $search ?? '' }}"
+                        class="mt-2 block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                        placeholder="Cari category, source, country, impact, atau measures">
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button type="submit"
+                        class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900">
+                        Cari
+                    </button>
+                    @if (!empty($search))
+                        <a href="{{ route('calendar.index') }}"
+                            class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </form>
+
+        @php
+            $currencyToCountry = [
+                'US' => 'US',
+                'EUR' => 'EU',
+                'JPN' => 'JP',
+                'GBP' => 'GB',
+                'AUD' => 'AU',
+                'CAD' => 'CA',
+                'CHF' => 'CH',
+                'CHN' => 'CN',
+                'HKD' => 'HK',
+                'IDN' => 'ID',
+            ];
+
+            $countryToName = [
+                'US' => 'United States',
+                'EU' => 'Eurozone',
+                'JP' => 'Japan',
+                'GB' => 'United Kingdom',
+                'AU' => 'Australia',
+                'CA' => 'Canada',
+                'CH' => 'Switzerland',
+                'CN' => 'China',
+                'HK' => 'Hong Kong',
+                'ID' => 'Indonesia',
+            ];
+        @endphp
+
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            @forelse ($categories as $category)
+                @php
+                    $currencyCode = strtoupper($category->country);
+                    $countryCode = $currencyToCountry[$currencyCode] ?? $currencyCode;
+                    $countryName = $countryToName[$countryCode] ?? $currencyCode;
+                    $latestDetail = $category->latestDetail;
+                    $impactClasses =
+                        $category->impact === 'High'
+                            ? 'bg-red-100 text-red-700 border-red-200'
+                            : ($category->impact === 'Medium'
+                                ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                                : 'bg-green-100 text-green-700 border-green-200');
+                @endphp
+
+                <div
+                    class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-2 min-w-0">
+                                @if ($countryCode)
+                                    @if ($countryCode === 'EU')
+                                        <img src="https://flagcdn.com/w40/eu.png" class="h-4 w-5 rounded-sm"
+                                            alt="{{ $currencyCode }}">
+                                    @else
+                                        <img src="https://flagsapi.com/{{ $countryCode }}/shiny/24.png"
+                                            alt="{{ $currencyCode }}">
+                                    @endif
+                                @endif
+                                <span class="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400">
+                                    {{ $countryName }}
+                                </span>
+                            </div>
+
+                            <span
+                                class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold {{ $impactClasses }}">
+                                {{ $category->impact }}
+                            </span>
+                        </div>
+
+                        <div class="mt-2">
+                            <h2 class="text-base font-bold text-gray-900 dark:text-white line-clamp-1">
+                                {{ $category->figures }}
+                            </h2>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 truncate">
+                                {{ $category->sources }}
+                            </p>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <div class="rounded-xl bg-gray-50 dark:bg-gray-900/50 px-3 py-2">
+                                <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Detail
+                                </p>
+                                <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
+                                    {{ $category->details_count }}
+                                </p>
+                            </div>
+
+                            <div class="rounded-xl bg-gray-50 dark:bg-gray-900/50 px-3 py-2">
+                                <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Rilis
+                                </p>
+                                <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
+                                    {{ $latestDetail?->date ? \Carbon\Carbon::parse($latestDetail->date)->format('d M Y') : '-' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-900/40 p-3">
+                        <div class="flex gap-2 w-full">
+                            <a href="{{ route('calendar.show', $category) }}"
+                                class="w-full rounded-lg bg-slate-700 px-3 py-2 text-center text-xs font-semibold text-white hover:bg-slate-800">
+                                Detail
+                            </a>
+                            <a href="{{ route('calendar.edit', $category) }}"
+                                class="w-full rounded-lg bg-amber-500 px-3 py-2 text-center text-xs font-semibold text-white hover:bg-amber-600">
+                                Edit
+                            </a>
+                            <form action="{{ route('calendar.delete', $category) }}" method="POST"
+                                onsubmit="return confirm('Hapus category dan semua data detailnya?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="w-full rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 cursor-pointer">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div
+                    class="sm:col-span-2 xl:col-span-3 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    @if (!empty($search))
+                        Tidak ada category yang cocok dengan pencarian "{{ $search }}".
+                    @else
+                        Belum ada category kalender. Buat header terlebih dahulu, lalu tambahkan data detail.
+                    @endif
+                </div>
+            @endforelse
+        </div>
+
+        @if ($categories->hasPages())
+            <div
+                class="rounded-xl shadow border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-700 dark:bg-slate-900">
+                <div class="hidden lg:flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    {{ $categories->onEachSide(1)->links('vendor.pagination.tailwind') }}
+                </div>
+
+                {{ $categories->links('vendor.pagination.mobile') }}
+            </div>
+        @endif
     </div>
-
-    <script>
-        let deleteForm = document.getElementById('deleteForm');
-        let deleteModal = document.getElementById('deleteModal');
-
-        function openDeleteModal(id) {
-            deleteForm.action = `{{ url('/kalender') }}/${id}/delete`;
-            deleteModal.classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            deleteModal.classList.add('hidden');
-        }
-    </script>
 </x-app-layout>

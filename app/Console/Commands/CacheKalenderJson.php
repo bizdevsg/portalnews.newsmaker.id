@@ -27,7 +27,12 @@ class CacheKalenderJson extends Command
      */
     public function handle(): int
     {
-        $kalender = EconomicCalendar::all();
+        $kalender = EconomicCalendar::all()->map(function (EconomicCalendar $calendar): array {
+            $row = $calendar->toArray();
+            $row['date'] = $calendar->getRawOriginal('date');
+
+            return $row;
+        })->values()->all();
 
         $payload = [
             'status' => 'success',

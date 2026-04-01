@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
+@php
+    $hideSidebar = filter_var($attributes['hideSidebar'] ?? false, FILTER_VALIDATE_BOOLEAN);
+    $hideHeader = filter_var($attributes['hideHeader'] ?? false, FILTER_VALIDATE_BOOLEAN);
+@endphp
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,13 +59,17 @@
     <!-- Page wrapper -->
     <div class="flex h-[100dvh] overflow-hidden">
 
-        <x-app.sidebar :variant="$attributes['sidebarVariant']" />
+        @unless ($hideSidebar)
+            <x-app.sidebar :variant="$attributes['sidebarVariant']" />
+        @endunless
 
         <!-- Content area -->
         <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden @if ($attributes['background']) {{ $attributes['background'] }} @endif"
             x-ref="contentarea">
 
-            <x-app.header :variant="$attributes['headerVariant']" />
+            @unless ($hideHeader)
+                <x-app.header :variant="$attributes['headerVariant']" />
+            @endunless
 
             <main class="grow">
                 {{ $slot }}

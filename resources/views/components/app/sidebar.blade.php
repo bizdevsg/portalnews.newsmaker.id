@@ -1,165 +1,182 @@
 <div class="min-w-fit">
     <!-- Sidebar backdrop (mobile only) -->
-    <div class="fixed inset-0 bg-gray-900/30 z-40 lg:hidden lg:z-auto transition-opacity duration-200"
-        :class="sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'" aria-hidden="true" x-cloak></div>
+    <div class="fixed inset-0 z-40 bg-slate-900/40 transition-opacity duration-200 lg:hidden lg:z-auto"
+        :class="sidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'" aria-hidden="true" x-cloak></div>
+
+    @php
+        $sidebarSections = [
+            [
+                'label' => 'Dashboard',
+                'items' => [
+                    [
+                        'label' => 'Beranda',
+                        'route' => 'dashboard',
+                        'icon' => 'fa-solid fa-gauge-high',
+                        'active' => request()->routeIs('dashboard'),
+                    ],
+                ],
+            ],
+            [
+                'label' => '5 PT',
+                'items' => [
+                    [
+                        'label' => 'Berita',
+                        'route' => 'kategori.index',
+                        'icon' => 'fa-solid fa-newspaper',
+                        'active' => request()->routeIs('berita.*') || request()->routeIs('kategori.*'),
+                    ],
+                ],
+            ],
+            [
+                'label' => 'Newsmaker 23',
+                'items' => [
+                    [
+                        'label' => 'Berita',
+                        'route' => 'newsmaker23.index',
+                        'icon' => 'fa-solid fa-layer-group',
+                        'active' => request()->routeIs('newsmaker23.*'),
+                    ],
+                    [
+                        'label' => 'Kalender Ekonomi',
+                        'route' => 'calendar.index',
+                        'icon' => 'fa-solid fa-calendar-days',
+                        'active' => request()->routeIs('calendar.*'),
+                    ],
+                    [
+                        'label' => 'Historical Data',
+                        'route' => 'pivot.index',
+                        'icon' => 'fa-solid fa-chart-line',
+                        'active' => request()->routeIs('pivot.*'),
+                    ],
+                    [
+                        'label' => 'TikTok',
+                        'route' => 'tiktok.index',
+                        'icon' => 'fa-brands fa-tiktok',
+                        'active' => request()->routeIs('tiktok.*'),
+                    ],
+                    [
+                        'label' => 'Pop Up Banner',
+                        'route' => 'popup-banner.index',
+                        'icon' => 'fa-solid fa-rectangle-ad',
+                        'active' => request()->routeIs('popup-banner.*'),
+                    ],
+                ],
+            ],
+        ];
+
+        $managementSection = [
+            'label' => 'Manajemen',
+            'condition' => auth()->user()->role === 'Superadmin',
+            'items' => [
+                [
+                    'label' => 'Manajemen Pengguna',
+                    'route' => 'user.index',
+                    'icon' => 'fa-solid fa-users',
+                    'active' => request()->routeIs('user.*'),
+                ],
+            ],
+        ];
+
+        $navigationSections = $sidebarSections;
+        if ($managementSection['condition']) {
+            $navigationSections[] = [
+                'label' => $managementSection['label'],
+                'items' => $managementSection['items'],
+            ];
+        }
+
+        $navLinkClasses = static function (bool $active): string {
+            if ($active) {
+                return 'border border-slate-900 bg-slate-900 text-white shadow-sm dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900';
+            }
+
+            return 'border border-transparent bg-blue-50 dark:bg-blue-50/20 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white';
+        };
+
+        $navIconClasses = static function (bool $active): string {
+            if ($active) {
+                return 'bg-white/15 text-white dark:bg-slate-900/10 dark:text-slate-900';
+            }
+
+            return 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300';
+        };
+    @endphp
 
     <!-- Sidebar -->
     <div id="sidebar"
-        class="flex lg:flex! flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-[100dvh] overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:w-64! shrink-0 bg-white dark:bg-gray-800 px-4 transition-all duration-200 ease-in-out {{ $variant === 'v2' ? 'border-r border-gray-200 dark:border-gray-700/60' : 'shadow-xs' }}"
-        :class="sidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-64'" @click.outside="sidebarOpen = false"
+        class="absolute left-0 top-0 z-40 flex h-[100dvh] w-64 pb-4 shrink-0 flex-col overflow-y-auto no-scrollbar border-r border-slate-200 bg-white transition-all duration-200 ease-in-out max-lg:-translate-x-full dark:border-slate-800 dark:bg-slate-900 lg:static lg:left-auto lg:top-auto lg:flex! lg:w-20 lg:translate-x-0 lg:sidebar-expanded:!w-64 2xl:w-64! {{ $variant === 'v2' ? '' : 'shadow-sm' }}"
+        :class="sidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'" @click.outside="sidebarOpen = false"
         @keydown.escape.window="sidebarOpen = false">
-
-        <!-- Sidebar header -->
-        <div class="flex justify-between md:justify-center my-4 pr-3 sm:px-2">
-            <!-- Close button -->
-            <button class="lg:hidden text-gray-500 hover:text-gray-400 cursor-pointer"
-                @click.stop="sidebarOpen = !sidebarOpen" aria-controls="sidebar" :aria-expanded="sidebarOpen">
-                <span class="sr-only">Close sidebar</span>
-                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z" />
-                </svg>
-            </button>
-
-            <!-- Logo -->
-            <a class="flex justify-center" href="{{ route('dashboard') }}" aria-label="Dashboard">
-                <img src="{{ asset('assets/NewsMaker-23-logo.png') }}" alt="Logo NewsMaker"
-                    class="h-8 w-20 flex-none object-contain">
-            </a>
-        </div>
-
-        <hr>
-
-        @php
-            $sidebarSections = [
-                [
-                    'label' => 'Dashboard',
-                    'items' => [
-                        [
-                            'label' => 'Beranda',
-                            'route' => 'dashboard',
-                            'icon' => 'fa-solid fa-gauge-high',
-                            'active' => request()->routeIs('dashboard'),
-                        ],
-                    ],
-                ],
-                [
-                    'label' => 'Fitur',
-                    'items' => [
-                        [
-                            'label' => 'Berita',
-                            'route' => 'kategori.index',
-                            'icon' => 'fa-solid fa-newspaper',
-                            'active' => request()->routeIs('berita.*') || request()->routeIs('kategori.*'),
-                        ],
-                        [
-                            'label' => 'Kalender Ekonomi',
-                            'route' => 'calendar.index',
-                            'icon' => 'fa-solid fa-calendar-days',
-                            'active' => request()->routeIs('calendar.*'),
-                        ],
-                        [
-                            'label' => 'Historical Data',
-                            'route' => 'pivot.index',
-                            'icon' => 'fa-solid fa-chart-line',
-                            'active' => request()->routeIs('pivot.*'),
-                        ],
-                        [
-                            'label' => 'TikTok',
-                            'route' => 'tiktok.index',
-                            'icon' => 'fa-brands fa-tiktok',
-                            'active' => request()->routeIs('tiktok.*'),
-                        ],
-                    ],
-                ],
-            ];
-
-            $managementSection = [
-                'label' => 'Manajemen',
-                'condition' => auth()->user()->role === 'Superadmin',
-                'items' => [
-                    [
-                        'label' => 'Manajemen Pengguna',
-                        'route' => 'user.index',
-                        'icon' => 'fa-solid fa-users',
-                        'active' => request()->routeIs('user.*'),
-                    ],
-                ],
-            ];
-        @endphp
-
-        @foreach ($sidebarSections as $section)
-            <div class="space-y-8 lg:sidebar-expanded:mt-4">
-                <div>
-                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                        <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">{{ $section['label'] }}</span>
-                    </h3>
-                    <nav class="flex flex-col gap-3 my-4">
-                        @foreach ($section['items'] as $item)
-                            <div class="relative group">
-                                <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}"
-                                    aria-label="{{ $item['label'] }}"
-                                    class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                                    <i class="{{ $item['icon'] }}"></i>
-                                    <span class="text-sm font-medium">{{ $item['label'] }}</span>
-                                </a>
-                                <div
-                                    class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity duration-200 dark:bg-gray-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100 {{ $item['active'] ? 'opacity-100' : '' }}">
-                                    {{ $item['label'] }}
-                                </div>
-                            </div>
-                        @endforeach
-                    </nav>
-                </div>
-            </div>
-            @if (!$loop->last)
-                <hr>
-            @endif
-        @endforeach
-
-        <hr>
-
-        @if ($managementSection['condition'])
-            <div class="space-y-8 lg:sidebar-expanded:my-4">
-                <div>
-                    <h3 class="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-                        <span
-                            class="lg:hidden lg:sidebar-expanded:block 2xl:block">{{ $managementSection['label'] }}</span>
-                    </h3>
-                    <nav class="flex flex-col gap-3 my-4">
-                        @foreach ($managementSection['items'] as $item)
-                            <div class="relative group">
-                                <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}"
-                                    aria-label="{{ $item['label'] }}"
-                                    class="flex items-center p-3 rounded-lg gap-3 lg:gap-0 lg:sidebar-expanded:gap-3 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-900 {{ $item['active'] ? 'bg-gray-200 dark:bg-gray-900 font-bold' : '' }}">
-                                    <i class="{{ $item['icon'] }}"></i>
-                                    <span class="text-sm font-medium">
-                                        {{ $item['label'] }}
-                                    </span>
-                                </a>
-                                <div
-                                    class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity duration-200 dark:bg-gray-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100 {{ $item['active'] ? 'opacity-100' : '' }}">
-                                    {{ $item['label'] }}
-                                </div>
-                            </div>
-                        @endforeach
-                    </nav>
-                </div>
-            </div>
-        @endif
-
-        <!-- Expand / collapse button -->
-        <div class="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">
-            <div class="w-12 pl-4 pr-3 py-2">
-                <button
-                    class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 transition-colors"
-                    @click="sidebarExpanded = !sidebarExpanded">
-                    <span class="sr-only">Expand / collapse sidebar</span>
-                    <svg class="shrink-0 fill-current text-gray-400 dark:text-gray-500 sidebar-expanded:rotate-180"
-                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                        <path
-                            d="M15 16a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v14a1 1 0 0 1-1 1ZM8.586 7H1a1 1 0 1 0 0 2h7.586l-2.793 2.793a1 1 0 1 0 1.414 1.414l4.5-4.5A.997.997 0 0 0 12 8.01M11.924 7.617a.997.997 0 0 0-.217-.324l-4.5-4.5a1 1 0 0 0-1.414 1.414L8.586 7M12 7.99a.996.996 0 0 0-.076-.373Z" />
+        <div class="flex h-full flex-col">
+            <!-- Sidebar header -->
+            <div
+                class="mb-6 flex items-center justify-between gap-3 border-b border-slate-200 h-16 dark:border-slate-800">
+                {{-- <button
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 lg:hidden"
+                    @click.stop="sidebarOpen = !sidebarOpen" aria-controls="sidebar" :aria-expanded="sidebarOpen">
+                    <span class="sr-only">Close sidebar</span>
+                    <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z" />
                     </svg>
-                </button>
+                </button> --}}
+
+                <a class="flex min-w-0 flex-1 px-3 items-center gap-3 rounded-xl lg:mx-auto lg:w-full lg:flex-none lg:justify-center lg:gap-0 lg:px-0 lg:sidebar-expanded:justify-start lg:sidebar-expanded:gap-3 lg:sidebar-expanded:px-3 2xl:justify-start 2xl:gap-3 2xl:px-3"
+                    href="{{ route('dashboard') }}" aria-label="Dashboard">
+                    <span
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                        <img src="{{ asset('Icon/favicon-96x96.png') }}" alt="Logo NewsMaker"
+                            class="h-6 w-6 rounded-lg object-cover">
+                    </span>
+                    <span class="min-w-0 flex-1 lg:hidden lg:flex-none lg:sidebar-expanded:block 2xl:block">
+                        <span class="block truncate text-sm font-semibold text-slate-900 dark:text-white">NewsMaker
+                            23</span>
+                    </span>
+                </a>
+            </div>
+
+            <div class="flex-1 space-y-6 px-3">
+                @foreach ($navigationSections as $section)
+                    <section class="space-y-3">
+                        <div
+                            class="flex items-center gap-2 px-2 lg:justify-center lg:sidebar-expanded:justify-start 2xl:justify-start">
+                            <span
+                                class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 lg:hidden lg:sidebar-expanded:inline 2xl:inline select-none">
+                                {{ $section['label'] }}
+                            </span>
+                        </div>
+
+                        <nav class="space-y-3 lg:space-y-0 lg:sidebar-expanded:space-y-3 2xl:space-y-3">
+                            @foreach ($section['items'] as $item)
+                                <div class="group relative">
+                                    <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}"
+                                        aria-label="{{ $item['label'] }}"
+                                        class="flex items-center gap-3 rounded-xl p-1.5 transition-colors duration-200 lg:justify-center lg:gap-0 lg:sidebar-expanded:justify-start lg:sidebar-expanded:gap-3 2xl:justify-start 2xl:gap-3 {{ $navLinkClasses($item['active']) }}">
+                                        <span
+                                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm transition {{ $navIconClasses($item['active']) }}">
+                                            <i class="{{ $item['icon'] }}"></i>
+                                        </span>
+
+                                        <span
+                                            class="min-w-0 truncate text-sm font-semibold lg:hidden lg:sidebar-expanded:block 2xl:block">
+                                            {{ $item['label'] }}
+                                        </span>
+                                    </a>
+
+                                    {{-- <div
+                                            class="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 dark:bg-slate-800 lg:flex lg:sidebar-expanded:hidden group-hover:opacity-100">
+                                            {{ $item['label'] }}
+                                        </div> --}}
+                                </div>
+
+                                @unless ($loop->last)
+                                    <div class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden">
+                                        <div class="mx-auto my-2 h-px w-8 bg-slate-200 dark:bg-slate-800"></div>
+                                    </div>
+                                @endunless
+                            @endforeach
+                        </nav>
+                    </section>
+                @endforeach
             </div>
         </div>
     </div>

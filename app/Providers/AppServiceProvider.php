@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Berita;
 use App\Models\EconomicCalendar;
+use App\Models\EconomicCalendarCategory;
 use App\Models\Pivot;
 use App\Observers\BeritaObserver;
 use App\Observers\EconomicCalendarObserver;
+use App\Observers\EconomicCalendarCategoryObserver;
 use App\Observers\PivotObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Berita::observe(BeritaObserver::class);
         EconomicCalendar::observe(EconomicCalendarObserver::class);
+        EconomicCalendarCategory::observe(EconomicCalendarCategoryObserver::class);
         Pivot::observe(PivotObserver::class);
     }
 }

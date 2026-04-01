@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EconomicCalendar extends Model
 {
@@ -12,6 +13,7 @@ class EconomicCalendar extends Model
     protected $table = 'economic_calendars';
 
     protected $fillable = [
+        'economic_calendar_category_id',
         'date',
         'time',
         'country',
@@ -35,4 +37,9 @@ class EconomicCalendar extends Model
         'date' => 'date',
         'isBankHoliday' => 'boolean',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(EconomicCalendarCategory::class, 'economic_calendar_category_id');
+    }
 }

@@ -1,27 +1,32 @@
-@section('namePage', 'Berita Newsmaker23')
+@section('namePage', 'Berita Pasar Indonesia')
 
 <x-app-layout>
     <div class="w-full px-4 py-8 sm:px-6 lg:px-8">
         <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="space-y-2">
-                    <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Newsmaker23</p>
-                    <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Semua Berita</h1>
+                    <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Pasar Indonesia</p>
+                    <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Berita</h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Semua artikel bilingual yang sudah tersimpan. Untuk menambah berita, masuk dulu ke halaman kategori.
+                        Kelola berita Pasar Indonesia dengan format input seperti Newsmaker 23 tanpa kategori.
                     </p>
                 </div>
 
                 <div class="flex flex-wrap gap-3">
                     <a
-                        href="{{ route('newsmaker23.index') }}"
+                        href="{{ route('pasar-indonesia.index') }}"
                         class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
                         Dashboard
                     </a>
                     <a
-                        href="{{ route('newsmaker23.main-category.index') }}"
+                        href="{{ route('pasar-indonesia.analisis.index') }}"
                         class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-                        Pilih Kategori
+                        Analisis
+                    </a>
+                    <a
+                        href="{{ route('pasar-indonesia.berita.create') }}"
+                        class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                        Tambah Berita
                     </a>
                 </div>
             </div>
@@ -40,43 +45,42 @@
         @endif
 
         <section class="mt-6">
-            @if ($articles->isEmpty())
+            @if ($items->isEmpty())
                 <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
                     <img src="{{ asset('assets/hand-drawn-no-data-concept.png') }}" alt="No Data" class="mx-auto h-40 object-contain">
                     <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">Belum ada berita.</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    @foreach ($articles as $article)
+                    @foreach ($items as $item)
                         <article class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                            <img src="{{ asset($article->image) }}" alt="{{ $article->title_id }}" class="h-48 w-full rounded-t-2xl object-cover">
+                            <img src="{{ asset($item->image) }}" alt="{{ $item->title_id }}" class="h-48 w-full rounded-t-2xl object-cover">
 
                             <div class="p-5">
-                                <p class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">{{ $article->mainCategory?->name ?? '-' }}</p>
-                                <h2 class="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">{{ $article->title_id }}</h2>
-                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $article->title_en }}</p>
+                                <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ $item->title_id }}</h2>
+                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $item->title_en }}</p>
 
                                 <div class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $article->authorUser?->name ?? $article->author ?? '-' }}</p>
-                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Source:</span> {{ $article->source }}</p>
+                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $item->author?->name ?? '-' }}</p>
+                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Source:</span> {{ $item->source }}</p>
                                 </div>
 
-                                <form id="delete-form-{{ $article->id }}" action="{{ route('newsmaker23.berita.destroy', $article->id) }}" method="POST" class="hidden">
+                                <form id="delete-form-{{ $item->id }}" action="{{ route('pasar-indonesia.berita.destroy', $item->id) }}" method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
                                 </form>
 
                                 <div class="mt-5 grid grid-cols-2 gap-3">
                                     <a
-                                        href="{{ route('newsmaker23.berita.edit', $article->id) }}"
+                                        href="{{ route('pasar-indonesia.berita.edit', $item->id) }}"
                                         class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">
                                         Edit
                                     </a>
                                     <button
                                         type="button"
                                         class="js-delete-trigger inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700"
-                                        data-delete-form="delete-form-{{ $article->id }}"
-                                        data-delete-title="{{ $article->title_id }}">
+                                        data-delete-form="delete-form-{{ $item->id }}"
+                                        data-delete-title="{{ $item->title_id }}">
                                         Hapus
                                     </button>
                                 </div>

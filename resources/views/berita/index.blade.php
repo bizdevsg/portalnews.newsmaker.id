@@ -67,9 +67,10 @@
 
                             {{-- Footer berita --}}
                             <div class="flex justify-between items-center mt-4">
-                                <span class="text-sm text-gray-400 dark:text-gray-500">
-                                    {{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('l, d F Y - H:i') }}
-                                </span>
+                                <div class="text-sm text-gray-400 dark:text-gray-500">
+                                    <p>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('l, d F Y - H:i') }}</p>
+                                    <p class="text-xs">Author: {{ $berita->user?->name ?? '-' }}</p>
+                                </div>
                                 <div class="flex space-x-2">
                                     <a href="{{ route('berita.show', ['slug' => $kategori->slug, 'id' => $berita->id]) }}"
                                         class="bg-yellow-500 hover:bg-yellow-700 py-1 px-2 text-white rounded transition">

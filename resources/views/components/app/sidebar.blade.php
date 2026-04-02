@@ -62,6 +62,17 @@
                     ],
                 ],
             ],
+            [
+                'label' => 'Pasar Indonesia',
+                'items' => [
+                    [
+                        'label' => 'Pasar Indonesia',
+                        'route' => 'pasar-indonesia.index',
+                        'icon' => 'fa-solid fa-magnifying-glass-chart',
+                        'active' => request()->routeIs('pasar-indonesia.*'),
+                    ],
+                ],
+            ],
         ];
 
         $managementSection = [

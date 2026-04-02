@@ -25,7 +25,7 @@ class NewsmakerMainCategoryController extends Controller
         $category = NewsmakerMainCategory::withCount('articles')
             ->where('slug', $slug)
             ->firstOrFail();
-        $articles = $category->articles()->with('mainCategory')->latest()->get();
+        $articles = $category->articles()->with(['mainCategory', 'authorUser'])->latest()->get();
 
         return view('newsmaker23.main-category.show', compact('category', 'articles'));
     }

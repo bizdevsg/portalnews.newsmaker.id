@@ -44,10 +44,14 @@ class CacheBeritaJson extends Command
             'image5',
             'image6',
             'category_id',
+            'user_id',
             'created_at',
             'updated_at',
         ])
-            ->with(['category:id,name,slug'])
+            ->with([
+                'category:id,name,slug',
+                'user:id,name',
+            ])
             ->get()
             ->transform(function ($berita) {
                 return [
@@ -64,6 +68,11 @@ class CacheBeritaJson extends Command
                     'slug' => $berita->slug,
                     'content' => $berita->content,
                     'category_id' => $berita->category_id,
+                    'user_id' => $berita->user_id,
+                    'author' => $berita->user ? [
+                        'id' => $berita->user->id,
+                        'name' => $berita->user->name,
+                    ] : null,
                     'kategori' => $berita->category,
                     'images' => $berita->images,
                     'created_at' => $berita->created_at,

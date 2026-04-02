@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\NewsmakerArticleController;
+use App\Http\Controllers\Api\PasarIndonesiaArticleController;
 use App\Http\Controllers\Api\PivotController;
 use App\Http\Controllers\Api\PopupBannerController;
 use App\Http\Controllers\Api\TiktokController;
@@ -47,6 +48,17 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
 
                 Route::get('/tiktok', [TiktokController::class, 'index']);
                 Route::get('/popup-banner', [PopupBannerController::class, 'index']);
+
+                Route::prefix('pasar-indonesia')->group(
+                    function () {
+                        Route::get('/berita', [PasarIndonesiaArticleController::class, 'berita']);
+                        Route::get('/berita/{slug}', [PasarIndonesiaArticleController::class, 'beritaShow'])
+                            ->where('slug', '[A-Za-z0-9-]+');
+                        Route::get('/analisis', [PasarIndonesiaArticleController::class, 'analisis']);
+                        Route::get('/analisis/{slug}', [PasarIndonesiaArticleController::class, 'analisisShow'])
+                            ->where('slug', '[A-Za-z0-9-]+');
+                    }
+                );
             }
         );
     }

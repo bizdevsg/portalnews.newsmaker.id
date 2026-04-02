@@ -11,7 +11,7 @@ class NewsmakerArticleController extends Controller
 {
     public function index()
     {
-        $articles = NewsmakerArticle::with('mainCategory')->latest()->get();
+        $articles = NewsmakerArticle::with(['mainCategory', 'authorUser'])->latest()->get();
 
         return view('newsmaker23.berita.index', compact('articles'));
     }
@@ -44,7 +44,6 @@ class NewsmakerArticleController extends Controller
             'title_en' => 'required|max:150',
             'content_id' => 'required',
             'content_en' => 'required',
-            'author' => 'required|max:100',
             'source' => 'required|max:150',
         ]);
 
@@ -66,6 +65,8 @@ class NewsmakerArticleController extends Controller
         $namaFile = time() . '_' . $request->file('image')->getClientOriginalName();
         $request->file('image')->move($uploadPath, $namaFile);
 
+        $author = $request->user();
+
         NewsmakerArticle::create([
             'main_category_id' => $request->main_category_id,
             'sub_category_id' => $subCategory->id,
@@ -74,7 +75,8 @@ class NewsmakerArticleController extends Controller
             'title_en' => $request->title_en,
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
-            'author' => $request->author,
+            'author' => $author?->name ?? 'System',
+            'author_id' => $author?->id,
             'source' => $request->source,
         ]);
 
@@ -84,7 +86,7 @@ class NewsmakerArticleController extends Controller
 
     public function edit($id)
     {
-        $article = NewsmakerArticle::findOrFail($id);
+        $article = NewsmakerArticle::with('authorUser')->findOrFail($id);
         $mainCategories = NewsmakerMainCategory::orderBy('name')->get();
 
         return view('newsmaker23.berita.edit', compact('article', 'mainCategories'));
@@ -99,7 +101,6 @@ class NewsmakerArticleController extends Controller
             'title_en' => 'required|max:150',
             'content_id' => 'required',
             'content_en' => 'required',
-            'author' => 'required|max:100',
             'source' => 'required|max:150',
         ]);
 
@@ -133,6 +134,22 @@ class NewsmakerArticleController extends Controller
             $updatedImage = 'uploads/newsmaker23/' . $namaFile;
         }
 
+        $currentUser = $request->user();
+        $resolvedAuthorId = $article->author_id ?? $currentUser?->id;
+        $resolvedAuthorName = $article->author;
+
+        if ($resolvedAuthorId !== null) {
+            if ($currentUser && $currentUser->id === $resolvedAuthorId) {
+                $resolvedAuthorName = $currentUser->name;
+            } elseif ($article->authorUser) {
+                $resolvedAuthorName = $article->authorUser->name;
+            }
+        }
+
+        if ($resolvedAuthorName === null || trim((string) $resolvedAuthorName) === '') {
+            $resolvedAuthorName = $currentUser?->name ?? 'System';
+        }
+
         $data = [
             'main_category_id' => $request->main_category_id,
             'sub_category_id' => $subCategory->id,
@@ -140,7 +157,8 @@ class NewsmakerArticleController extends Controller
             'title_en' => $request->title_en,
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
-            'author' => $request->author,
+            'author' => $resolvedAuthorName,
+            'author_id' => $resolvedAuthorId,
             'source' => $request->source,
         ];
 

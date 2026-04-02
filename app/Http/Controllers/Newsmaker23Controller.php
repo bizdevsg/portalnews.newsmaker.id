@@ -21,7 +21,7 @@ class Newsmaker23Controller extends Controller
             ->take(6)
             ->get();
 
-        $latestArticles = NewsmakerArticle::with('mainCategory')
+        $latestArticles = NewsmakerArticle::with(['mainCategory', 'authorUser'])
             ->latest()
             ->take(6)
             ->get();

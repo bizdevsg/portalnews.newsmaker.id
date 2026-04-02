@@ -60,4 +60,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function beritas()
+    {
+        return $this->hasMany(Berita::class, 'user_id');
+    }
+
+    public function newsmakerArticles()
+    {
+        return $this->hasMany(NewsmakerArticle::class, 'author_id');
+    }
 }

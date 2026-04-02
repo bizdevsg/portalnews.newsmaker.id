@@ -39,6 +39,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
+                'authorUser:id,name,email',
             ])
             ->latest()
             ->paginate(self::PER_PAGE)
@@ -83,6 +84,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
+                'authorUser:id,name,email',
             ])
             ->where('main_category_id', $category->id)
             ->latest()
@@ -112,6 +114,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
+                'authorUser:id,name,email',
             ])
             ->where('slug', $slug)
             ->first();
@@ -158,13 +161,19 @@ class NewsmakerArticleController extends Controller
             'slug' => $article->slug,
             'main_category_id' => $article->main_category_id,
             'sub_category_id' => $article->sub_category_id,
+            'author_id' => $article->author_id,
             'image' => $article->image,
             'image_url' => $article->image ? asset($article->image) : null,
             'title_id' => $article->title_id,
             'title_en' => $article->title_en,
             'content_id' => $article->content_id,
             'content_en' => $article->content_en,
-            'author' => $article->author,
+            'author' => $article->authorUser?->name ?? $article->author,
+            'author_user' => $article->authorUser ? [
+                'id' => $article->authorUser->id,
+                'name' => $article->authorUser->name,
+                'email' => $article->authorUser->email,
+            ] : null,
             'source' => $article->source,
             'main_category' => $article->mainCategory ? [
                 'id' => $article->mainCategory->id,

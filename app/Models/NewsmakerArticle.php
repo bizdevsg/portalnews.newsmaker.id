@@ -22,6 +22,7 @@ class NewsmakerArticle extends Model
         'content_id',
         'content_en',
         'author',
+        'author_id',
         'source',
     ];
 
@@ -52,6 +53,11 @@ class NewsmakerArticle extends Model
     public function subCategory()
     {
         return $this->belongsTo(NewsmakerSubCategory::class, 'sub_category_id');
+    }
+
+    public function authorUser()
+    {
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     private static function generateUniqueSlug(?string $title, ?int $ignoreId = null, $date = null): string

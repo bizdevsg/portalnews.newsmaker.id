@@ -1,13 +1,8 @@
-@section('namePage', 'Tambah Berita Newsmaker23')
+@section('namePage', 'Tambah Berita Pasar Indonesia')
 
 <x-app-layout>
-    @php
-        $backUrl = route('newsmaker23.main-category.show', $selectedMainCategory->slug);
-    @endphp
-
-    <form id="newsForm" action="{{ route('newsmaker23.berita.store') }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
+    <form id="newsForm" action="{{ route('pasar-indonesia.berita.store') }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
         @csrf
-        <input type="hidden" name="main_category_id" value="{{ old('main_category_id', $selectedMainCategory->id) }}">
 
         <section class="overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-900 px-6 py-8 shadow-2xl ring-1 ring-white/10 sm:px-8 lg:px-10">
             <div class="flex flex-wrap items-start justify-between gap-6">
@@ -19,13 +14,13 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-300">Tambah</p>
                         <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Buat berita dua bahasa</h1>
                         <p class="text-sm leading-6 text-blue-100 sm:text-base">
-                            Anda sedang menambahkan berita ke kategori {{ $selectedMainCategory->name }}. Lengkapi meta artikel, judul Indonesia dan Inggris, serta konten editor untuk kedua bahasa.
+                            Lengkapi media, judul Indonesia dan Inggris, serta konten editor untuk kedua bahasa.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ $backUrl }}" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                    <a href="{{ route('pasar-indonesia.index') }}#berita" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                         Kembali
                     </a>
                     <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-50">
@@ -43,35 +38,6 @@
         @endif
 
         <div class="mt-8 space-y-6">
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-                    <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Kategori</p>
-                        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Penempatan artikel</h2>
-                        <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
-                            Artikel baru akan langsung masuk ke kategori yang sedang Anda buka.
-                        </p>
-                    </div>
-
-                    <div>
-                        <p class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            Kategori aktif
-                        </p>
-                        <div class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 dark:border-slate-700 dark:bg-slate-950">
-                            <p class="text-base font-semibold text-slate-900 dark:text-slate-100">
-                                {{ $selectedMainCategory->name }}
-                            </p>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                                Jika ingin menambah berita ke kategori lain, kembali dulu ke halaman kategori lalu buka kategori tujuan.
-                            </p>
-                        </div>
-                        @error('main_category_id')
-                            <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </section>
-
             <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="space-y-6">
                     <div class="space-y-2">
@@ -91,16 +57,6 @@
                         </div>
 
                         <div>
-                            <label for="author_display" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                Author
-                            </label>
-                            <input type="text" id="author_display" value="{{ auth()->user()->name }}" class="w-full cursor-not-allowed rounded-2xl border border-slate-300 bg-slate-100 px-4 py-3 text-slate-700 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" readonly>
-                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                Author diisi otomatis dari akun Anda.
-                            </p>
-                        </div>
-
-                        <div>
                             <label for="source" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Source
                             </label>
@@ -108,6 +64,20 @@
                             @error('source')
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div>
+                            <p class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                Author
+                            </p>
+                            <div class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 dark:border-slate-700 dark:bg-slate-950">
+                                <p class="text-base font-semibold text-slate-900 dark:text-slate-100">
+                                    {{ auth()->user()->name }}
+                                </p>
+                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                    Author diambil dari user yang sedang login.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -176,7 +146,7 @@
             </section>
 
             <div class="flex flex-wrap justify-end gap-3">
-                <a href="{{ $backUrl }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                <a href="{{ route('pasar-indonesia.index') }}#berita" class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                     Kembali
                 </a>
                 <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">

@@ -15,7 +15,10 @@ class BeritaController extends Controller
         $kategori = Category::where('slug', $slug)->firstOrFail();
 
         // Ambil berita berdasarkan category_id
-        $beritas = Berita::where('category_id', $kategori->id)->latest()->get();
+        $beritas = Berita::with('user:id,name')
+            ->where('category_id', $kategori->id)
+            ->latest()
+            ->get();
 
         return view('berita.index', compact('beritas', 'kategori'));
     }
@@ -75,6 +78,7 @@ class BeritaController extends Controller
             'title_bpf' => $request->title_bpf,
             'content' => $request->content,
             'category_id' => $kategori->id,
+            'user_id' => $request->user()->id,
             'image1' => $images['image1'],
             'image2' => $images['image2'],
             'image3' => $images['image3'],

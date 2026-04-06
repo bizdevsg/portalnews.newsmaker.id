@@ -34,8 +34,7 @@ return new class extends Migration
 
                     if ($authorName !== '') {
                         $matchedUserId = DB::table('users')->where('name', $authorName)->value('id')
-                            ?? DB::table('users')->where('username', $authorName)->value('id')
-                            ?? DB::table('users')->where('email', $authorName)->value('id');
+                            ?? DB::table('users')->where('username', $authorName)->value('id');
                     }
 
                     $resolvedUserId = $matchedUserId ?? $defaultUserId;

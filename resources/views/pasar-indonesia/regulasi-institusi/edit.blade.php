@@ -1,15 +1,16 @@
-@section('namePage', 'Edit Berita Pasar Indonesia')
+@section('namePage', 'Edit Berita Regulasi & Institusi')
 
 <x-app-layout>
     @php
         $backUrl = $categories->contains('slug', $item->category)
-            ? route('pasar-indonesia.berita.kategori.show', $item->category)
-            : route('pasar-indonesia.berita.index');
+            ? route('regulasi-institusi.kategori.show', $item->category)
+            : route('regulasi-institusi.index');
     @endphp
 
-    <form id="newsForm" action="{{ route('pasar-indonesia.berita.update', $item->id) }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
+    <form id="newsForm" action="{{ route('regulasi-institusi.update', $item->id) }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
         @csrf
         @method('PUT')
+        <input type="hidden" name="category_id" value="{{ old('category_id', optional($categories->firstWhere('slug', $item->category))->id) }}">
 
         <section class="overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 px-6 py-8 shadow-2xl ring-1 ring-white/10 sm:px-8 lg:px-10">
             <div class="flex flex-wrap items-start justify-between gap-6">
@@ -21,7 +22,7 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-300">Edit</p>
                         <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Perbarui berita dua bahasa</h1>
                         <p class="text-sm leading-6 text-indigo-100 sm:text-base">
-                            Edit kategori, meta artikel, judul, dan isi bilingual agar berita tetap konsisten.
+                            Edit meta artikel, judul, dan isi bilingual agar berita tetap konsisten.
                         </p>
                     </div>
                 </div>
@@ -45,35 +46,6 @@
         @endif
 
         <div class="mt-8 space-y-6">
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-                    <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Kategori</p>
-                        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Penempatan artikel</h2>
-                        <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
-                            Pastikan artikel tetap berada di kategori yang tepat setelah diperbarui.
-                        </p>
-                    </div>
-
-                    <div>
-                        <label for="category_id" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            Kategori
-                        </label>
-                        <select id="category_id" name="category_id" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('category_id') border-rose-500 @enderror" required>
-                            <option value="">Pilih kategori</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('category_id', optional($categories->firstWhere('slug', $item->category))->id) == $category->id)>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('category_id')
-                            <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </section>
-
             <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="space-y-6">
                     <div class="space-y-2">
@@ -213,3 +185,4 @@
         });
     </script>
 </x-app-layout>
+

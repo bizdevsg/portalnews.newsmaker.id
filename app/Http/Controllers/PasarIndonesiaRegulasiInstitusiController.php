@@ -2,35 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PasarIndonesiaArticle;
-use App\Models\PasarIndonesiaCategory;
+use App\Models\PasarIndonesiaRegulasiInstitusiArticle;
+use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
 use Illuminate\Http\Request;
 
-class PasarIndonesiaBeritaController extends Controller
+class PasarIndonesiaRegulasiInstitusiController extends Controller
 {
     public function create(Request $request)
     {
         $selectedCategoryId = $request->integer('category_id');
 
         if (!$selectedCategoryId) {
-            return redirect()->route('pasar-indonesia.berita.index')
+            return redirect()->route('regulasi-institusi.index')
                 ->with('info', 'Masuk dulu ke kategori yang dituju untuk menambahkan berita.');
         }
 
-        $selectedCategory = PasarIndonesiaCategory::find($selectedCategoryId);
+        $selectedCategory = PasarIndonesiaRegulasiInstitusiCategory::find($selectedCategoryId);
 
         if (!$selectedCategory) {
-            return redirect()->route('pasar-indonesia.berita.index')
+            return redirect()->route('regulasi-institusi.index')
                 ->with('info', 'Kategori tujuan tidak ditemukan. Pilih kategori lain untuk menambahkan berita.');
         }
 
-        return view('pasar-indonesia.berita.create', compact('selectedCategory'));
+        return view('pasar-indonesia.regulasi-institusi.create', compact('selectedCategory'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'category_id' => 'required|exists:pasar_indonesia_categories,id',
+            'category_id' => 'required|exists:pasar_indonesia_regulasi_institusi_categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
@@ -39,9 +39,9 @@ class PasarIndonesiaBeritaController extends Controller
             'source' => 'required|max:150',
         ]);
 
-        $selectedCategory = PasarIndonesiaCategory::findOrFail($request->category_id);
+        $selectedCategory = PasarIndonesiaRegulasiInstitusiCategory::findOrFail($request->category_id);
 
-        $uploadPath = public_path('uploads/pasar-indonesia/berita');
+        $uploadPath = public_path('uploads/pasar-indonesia/regulasi-institusi');
         if (!file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -49,48 +49,45 @@ class PasarIndonesiaBeritaController extends Controller
         $filename = time() . '_' . $request->file('image')->getClientOriginalName();
         $request->file('image')->move($uploadPath, $filename);
 
-        PasarIndonesiaArticle::create([
-            'type' => 'berita',
-            'image' => 'uploads/pasar-indonesia/berita/' . $filename,
+        PasarIndonesiaRegulasiInstitusiArticle::create([
+            'category' => $selectedCategory->slug,
+            'image' => 'uploads/pasar-indonesia/regulasi-institusi/' . $filename,
             'title_id' => $request->title_id,
             'title_en' => $request->title_en,
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
             'author_id' => $request->user()->id,
             'source' => $request->source,
-            'category' => $selectedCategory->slug,
         ]);
 
-        return redirect()->route('pasar-indonesia.berita.kategori.show', $selectedCategory->slug)
-            ->with('success', 'Berita Pasar Indonesia berhasil ditambahkan.');
+        return redirect()->route('regulasi-institusi.kategori.show', $selectedCategory->slug)
+            ->with('success', 'Berita Regulasi & Institusi berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $item = PasarIndonesiaArticle::query()
-            ->with('author')
-            ->where('type', 'berita')
+        $item = PasarIndonesiaRegulasiInstitusiArticle::query()
+            ->with(['author', 'categoryItem'])
             ->findOrFail($id);
 
-        $categories = PasarIndonesiaCategory::query()->orderBy('name')->get();
+        $categories = PasarIndonesiaRegulasiInstitusiCategory::query()->orderBy('name')->get();
 
-        return view('pasar-indonesia.berita.edit', compact('item', 'categories'));
+        return view('pasar-indonesia.regulasi-institusi.edit', compact('item', 'categories'));
     }
 
     public function show($id)
     {
-        $item = PasarIndonesiaArticle::query()
+        $item = PasarIndonesiaRegulasiInstitusiArticle::query()
             ->with(['author', 'categoryItem'])
-            ->where('type', 'berita')
             ->findOrFail($id);
 
-        return view('pasar-indonesia.berita.show', compact('item'));
+        return view('pasar-indonesia.regulasi-institusi.show', compact('item'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'category_id' => 'required|exists:pasar_indonesia_categories,id',
+            'category_id' => 'required|exists:pasar_indonesia_regulasi_institusi_categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
@@ -99,12 +96,12 @@ class PasarIndonesiaBeritaController extends Controller
             'source' => 'required|max:150',
         ]);
 
-        $selectedCategory = PasarIndonesiaCategory::findOrFail($request->category_id);
-        $item = PasarIndonesiaArticle::where('type', 'berita')->findOrFail($id);
+        $selectedCategory = PasarIndonesiaRegulasiInstitusiCategory::findOrFail($request->category_id);
+        $item = PasarIndonesiaRegulasiInstitusiArticle::findOrFail($id);
         $updatedImage = $item->image;
 
         if ($request->hasFile('image')) {
-            $uploadPath = public_path('uploads/pasar-indonesia/berita');
+            $uploadPath = public_path('uploads/pasar-indonesia/regulasi-institusi');
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
@@ -118,26 +115,26 @@ class PasarIndonesiaBeritaController extends Controller
 
             $filename = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->move($uploadPath, $filename);
-            $updatedImage = 'uploads/pasar-indonesia/berita/' . $filename;
+            $updatedImage = 'uploads/pasar-indonesia/regulasi-institusi/' . $filename;
         }
 
         $item->update([
+            'category' => $selectedCategory->slug,
             'image' => $updatedImage,
             'title_id' => $request->title_id,
             'title_en' => $request->title_en,
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
             'source' => $request->source,
-            'category' => $selectedCategory->slug,
         ]);
 
-        return redirect()->route('pasar-indonesia.berita.kategori.show', $selectedCategory->slug)
-            ->with('success', 'Berita Pasar Indonesia berhasil diperbarui.');
+        return redirect()->route('regulasi-institusi.kategori.show', $selectedCategory->slug)
+            ->with('success', 'Berita Regulasi & Institusi berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $item = PasarIndonesiaArticle::where('type', 'berita')->findOrFail($id);
+        $item = PasarIndonesiaRegulasiInstitusiArticle::findOrFail($id);
         $categorySlug = $item->category;
 
         if ($item->image) {
@@ -151,13 +148,13 @@ class PasarIndonesiaBeritaController extends Controller
 
         if (
             is_string($categorySlug)
-            && PasarIndonesiaCategory::query()->where('slug', $categorySlug)->exists()
+            && PasarIndonesiaRegulasiInstitusiCategory::query()->where('slug', $categorySlug)->exists()
         ) {
-            return redirect()->route('pasar-indonesia.berita.kategori.show', $categorySlug)
-                ->with('success', 'Berita Pasar Indonesia berhasil dihapus.');
+            return redirect()->route('regulasi-institusi.kategori.show', $categorySlug)
+                ->with('success', 'Berita Regulasi & Institusi berhasil dihapus.');
         }
 
-        return redirect()->route('pasar-indonesia.berita.index')
-            ->with('success', 'Berita Pasar Indonesia berhasil dihapus.');
+        return redirect()->route('regulasi-institusi.index')
+            ->with('success', 'Berita Regulasi & Institusi berhasil dihapus.');
     }
 }

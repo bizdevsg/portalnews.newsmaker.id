@@ -39,7 +39,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name,email',
+                'authorUser:id,name',
             ])
             ->latest()
             ->paginate(self::PER_PAGE)
@@ -84,7 +84,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name,email',
+                'authorUser:id,name',
             ])
             ->where('main_category_id', $category->id)
             ->latest()
@@ -114,7 +114,7 @@ class NewsmakerArticleController extends Controller
             ->with([
                 'mainCategory:id,name,slug',
                 'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name,email',
+                'authorUser:id,name',
             ])
             ->where('slug', $slug)
             ->first();
@@ -172,7 +172,6 @@ class NewsmakerArticleController extends Controller
             'author_user' => $article->authorUser ? [
                 'id' => $article->authorUser->id,
                 'name' => $article->authorUser->name,
-                'email' => $article->authorUser->email,
             ] : null,
             'source' => $article->source,
             'main_category' => $article->mainCategory ? [

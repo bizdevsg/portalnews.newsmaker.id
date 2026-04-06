@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         @if(session('success'))
-        <div
+        <div data-flash-alert
             class="mb-6 rounded-lg border-l-2 border-green-600 bg-green-100 dark:bg-green-900/50 p-4 text-green-800 dark:text-green-200">
             <div class="flex items-center space-x-2 font-semibold">
                 <i class="fa-solid fa-circle-check"></i>

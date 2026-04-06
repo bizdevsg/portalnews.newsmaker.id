@@ -3,57 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PasarIndonesiaArticle;
+use App\Models\PasarIndonesiaRegulasiInstitusiArticle;
+use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
-class PasarIndonesiaArticleController extends Controller
+class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
 {
     private const DEFAULT_PER_PAGE = 20;
     private const MAX_PER_PAGE = 100;
+    private const DEFAULT_CATEGORIES = [
+        'umum' => 'Umum',
+    ];
 
-    public function berita(Request $request): JsonResponse
-    {
-        return $this->listByType($request, 'berita');
-    }
-
-    public function beritaShow(string $slug): JsonResponse
-    {
-        return $this->showByType($slug, 'berita', 'Berita Pasar Indonesia tidak ditemukan.');
-    }
-
-    public function analisis(Request $request): JsonResponse
-    {
-        return $this->listByType($request, 'analisis');
-    }
-
-    public function analisisShow(string $slug): JsonResponse
-    {
-        return $this->showByType($slug, 'analisis', 'Analisis Pasar Indonesia tidak ditemukan.');
-    }
-
-    private function listByType(Request $request, string $type): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $perPage = $this->resolvePerPage($request->query('per_page'));
         $requestedCategory = $request->query('category');
-        $allowedCategories = PasarIndonesiaArticle::beritaCategoryOptions();
-        $withRelations = ['author:id,name,email'];
-
-        if ($type === 'berita') {
-            $withRelations[] = 'categoryItem:id,name,slug';
-        }
+        $allowedCategories = $this->categoryOptions();
 
         if (
-            $type === 'berita'
-            && is_string($requestedCategory)
+            is_string($requestedCategory)
             && $requestedCategory !== ''
             && !array_key_exists($requestedCategory, $allowedCategories)
         ) {
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Kategori berita Pasar Indonesia tidak valid.',
+                    'message' => 'Kategori Regulasi & Institusi tidak valid.',
                     'available_categories' => array_keys($allowedCategories),
                 ],
                 422,
@@ -62,11 +42,10 @@ class PasarIndonesiaArticleController extends Controller
             );
         }
 
-        $items = PasarIndonesiaArticle::query()
-            ->with($withRelations)
-            ->where('type', $type)
+        $items = PasarIndonesiaRegulasiInstitusiArticle::query()
+            ->with(['author:id,name,email', 'categoryItem:id,name,slug'])
             ->when(
-                $type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '',
+                is_string($requestedCategory) && $requestedCategory !== '',
                 fn ($query) => $query->where('category', $requestedCategory)
             )
             ->latest()
@@ -76,19 +55,19 @@ class PasarIndonesiaArticleController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'type' => $type,
+                'type' => 'regulasi-institusi',
                 'data' => $items->getCollection()
-                    ->map(fn (PasarIndonesiaArticle $item) => $this->transformArticle($item))
+                    ->map(
+                        fn (PasarIndonesiaRegulasiInstitusiArticle $item) => $this->transformArticle($item, $allowedCategories)
+                    )
                     ->values(),
                 'meta' => [
                     'filters' => [
-                        'category' => $type === 'berita' ? $requestedCategory : null,
+                        'category' => $requestedCategory,
                     ],
-                    'available_categories' => $type === 'berita'
-                        ? collect($allowedCategories)->map(
-                            fn (string $label, string $value) => ['value' => $value, 'label' => $label]
-                        )->values()
-                        : [],
+                    'available_categories' => collect($allowedCategories)->map(
+                        fn (string $label, string $value) => ['value' => $value, 'label' => $label]
+                    )->values(),
                     'pagination' => $this->buildPaginationMeta($items),
                 ],
             ],
@@ -98,17 +77,10 @@ class PasarIndonesiaArticleController extends Controller
         );
     }
 
-    private function showByType(string $slug, string $type, string $notFoundMessage): JsonResponse
+    public function show(string $slug): JsonResponse
     {
-        $withRelations = ['author:id,name,email'];
-
-        if ($type === 'berita') {
-            $withRelations[] = 'categoryItem:id,name,slug';
-        }
-
-        $item = PasarIndonesiaArticle::query()
-            ->with($withRelations)
-            ->where('type', $type)
+        $item = PasarIndonesiaRegulasiInstitusiArticle::query()
+            ->with(['author:id,name,email', 'categoryItem:id,name,slug'])
             ->where('slug', $slug)
             ->first();
 
@@ -116,7 +88,7 @@ class PasarIndonesiaArticleController extends Controller
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => $notFoundMessage,
+                    'message' => 'Artikel Regulasi & Institusi tidak ditemukan.',
                 ],
                 404,
                 [],
@@ -127,8 +99,8 @@ class PasarIndonesiaArticleController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'type' => $type,
-                'data' => $this->transformArticle($item),
+                'type' => 'regulasi-institusi',
+                'data' => $this->transformArticle($item, $this->categoryOptions()),
             ],
             200,
             [],
@@ -136,11 +108,11 @@ class PasarIndonesiaArticleController extends Controller
         );
     }
 
-    private function transformArticle(PasarIndonesiaArticle $item): array
+    private function transformArticle(PasarIndonesiaRegulasiInstitusiArticle $item, array $categoryOptions): array
     {
         return [
             'id' => $item->id,
-            'type' => $item->type,
+            'type' => 'regulasi-institusi',
             'slug' => $item->slug,
             'image' => $item->image,
             'image_url' => $item->image ? asset($item->image) : null,
@@ -149,7 +121,7 @@ class PasarIndonesiaArticleController extends Controller
             'content_id' => $item->content_id,
             'content_en' => $item->content_en,
             'category' => $item->category,
-            'category_label' => $item->category_label,
+            'category_label' => $this->resolveCategoryLabel($item, $categoryOptions),
             'source' => $item->source,
             'author' => $item->author ? [
                 'id' => $item->author->id,
@@ -159,6 +131,34 @@ class PasarIndonesiaArticleController extends Controller
             'created_at' => optional($item->created_at)->toISOString(),
             'updated_at' => optional($item->updated_at)->toISOString(),
         ];
+    }
+
+    private function resolveCategoryLabel(PasarIndonesiaRegulasiInstitusiArticle $item, array $categoryOptions): ?string
+    {
+        if ($item->category === null) {
+            return null;
+        }
+
+        if ($item->relationLoaded('categoryItem') && $item->categoryItem) {
+            return $item->categoryItem->name;
+        }
+
+        return $categoryOptions[$item->category]
+            ?? Str::of($item->category)->replace('-', ' ')->title()->toString();
+    }
+
+    private function categoryOptions(): array
+    {
+        if (!Schema::hasTable('pasar_indonesia_regulasi_institusi_categories')) {
+            return self::DEFAULT_CATEGORIES;
+        }
+
+        $categories = PasarIndonesiaRegulasiInstitusiCategory::query()
+            ->orderBy('name')
+            ->pluck('name', 'slug')
+            ->toArray();
+
+        return $categories !== [] ? $categories : self::DEFAULT_CATEGORIES;
     }
 
     private function buildPaginationMeta(LengthAwarePaginator $paginator): array

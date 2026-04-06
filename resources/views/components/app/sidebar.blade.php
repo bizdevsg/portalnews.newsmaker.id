@@ -4,6 +4,8 @@
         :class="sidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'" aria-hidden="true" x-cloak></div>
 
     @php
+        $pasarIndonesiaActive = request()->routeIs('pasar-indonesia.*') || request()->routeIs('regulasi-institusi.*');
+
         $sidebarSections = [
             [
                 'label' => 'Dashboard',
@@ -69,8 +71,14 @@
                         'label' => 'Pasar Indonesia',
                         'route' => 'pasar-indonesia.index',
                         'icon' => 'fa-solid fa-magnifying-glass-chart',
-                        'active' => request()->routeIs('pasar-indonesia.*'),
+                        'active' => $pasarIndonesiaActive,
                     ],
+                    // [
+                    //     'label' => 'Regulasi & Institusi',
+                    //     'route' => 'regulasi-institusi.index',
+                    //     'icon' => 'fa-solid fa-building-columns',
+                    //     'active' => request()->routeIs('regulasi-institusi.*'),
+                    // ],
                 ],
             ],
         ];

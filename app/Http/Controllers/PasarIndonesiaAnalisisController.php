@@ -9,7 +9,13 @@ class PasarIndonesiaAnalisisController extends Controller
 {
     public function index()
     {
-        return redirect()->to(route('pasar-indonesia.index') . '#analisis');
+        $items = PasarIndonesiaArticle::query()
+            ->with('author')
+            ->where('type', 'analisis')
+            ->latest()
+            ->get();
+
+        return view('pasar-indonesia.analisis.index', compact('items'));
     }
 
     public function create()
@@ -47,7 +53,7 @@ class PasarIndonesiaAnalisisController extends Controller
             'source' => $request->source,
         ]);
 
-        return redirect()->to(route('pasar-indonesia.index') . '#analisis')
+        return redirect()->route('pasar-indonesia.analisis.index')
             ->with('success', 'Analisis Pasar Indonesia berhasil ditambahkan.');
     }
 
@@ -56,6 +62,16 @@ class PasarIndonesiaAnalisisController extends Controller
         $item = PasarIndonesiaArticle::where('type', 'analisis')->findOrFail($id);
 
         return view('pasar-indonesia.analisis.edit', compact('item'));
+    }
+
+    public function show($id)
+    {
+        $item = PasarIndonesiaArticle::query()
+            ->with('author')
+            ->where('type', 'analisis')
+            ->findOrFail($id);
+
+        return view('pasar-indonesia.analisis.show', compact('item'));
     }
 
     public function update(Request $request, $id)
@@ -99,7 +115,7 @@ class PasarIndonesiaAnalisisController extends Controller
             'source' => $request->source,
         ]);
 
-        return redirect()->to(route('pasar-indonesia.index') . '#analisis')
+        return redirect()->route('pasar-indonesia.analisis.index')
             ->with('success', 'Analisis Pasar Indonesia berhasil diperbarui.');
     }
 
@@ -116,7 +132,7 @@ class PasarIndonesiaAnalisisController extends Controller
 
         $item->delete();
 
-        return redirect()->to(route('pasar-indonesia.index') . '#analisis')
+        return redirect()->route('pasar-indonesia.analisis.index')
             ->with('success', 'Analisis Pasar Indonesia berhasil dihapus.');
     }
 }

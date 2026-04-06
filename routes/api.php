@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\NewsmakerArticleController;
 use App\Http\Controllers\Api\PasarIndonesiaArticleController;
+use App\Http\Controllers\Api\PasarIndonesiaRegulasiInstitusiArticleController;
 use App\Http\Controllers\Api\PivotController;
 use App\Http\Controllers\Api\PopupBannerController;
 use App\Http\Controllers\Api\TiktokController;
@@ -56,6 +57,9 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
                             ->where('slug', '[A-Za-z0-9-]+');
                         Route::get('/analisis', [PasarIndonesiaArticleController::class, 'analisis']);
                         Route::get('/analisis/{slug}', [PasarIndonesiaArticleController::class, 'analisisShow'])
+                            ->where('slug', '[A-Za-z0-9-]+');
+                        Route::get('/regulasi-institusi', [PasarIndonesiaRegulasiInstitusiArticleController::class, 'index']);
+                        Route::get('/regulasi-institusi/{slug}', [PasarIndonesiaRegulasiInstitusiArticleController::class, 'show'])
                             ->where('slug', '[A-Za-z0-9-]+');
                     }
                 );

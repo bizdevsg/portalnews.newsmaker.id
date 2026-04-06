@@ -66,7 +66,12 @@
                                     @method('DELETE')
                                 </form>
 
-                                <div class="mt-5 grid grid-cols-2 gap-3">
+                                <div class="mt-5 grid grid-cols-3 gap-3">
+                                    <a
+                                        href="{{ route('newsmaker23.berita.show', $article->id) }}"
+                                        class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+                                        Preview
+                                    </a>
                                     <a
                                         href="{{ route('newsmaker23.berita.edit', $article->id) }}"
                                         class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">

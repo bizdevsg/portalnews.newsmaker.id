@@ -92,6 +92,13 @@ class NewsmakerArticleController extends Controller
         return view('newsmaker23.berita.edit', compact('article', 'mainCategories'));
     }
 
+    public function show($id)
+    {
+        $article = NewsmakerArticle::with(['mainCategory', 'authorUser'])->findOrFail($id);
+
+        return view('newsmaker23.berita.show', compact('article'));
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([

@@ -8,11 +8,14 @@ use App\Http\Controllers\EconomicCalendarDetailController;
 use App\Http\Controllers\Newsmaker23Controller;
 use App\Http\Controllers\NewsmakerArticleController;
 use App\Http\Controllers\NewsmakerMainCategoryController;
-use App\Http\Controllers\PivotController;
-use App\Http\Controllers\PopupBannerController;
 use App\Http\Controllers\PasarIndonesiaAnalisisController;
 use App\Http\Controllers\PasarIndonesiaBeritaController;
+use App\Http\Controllers\PasarIndonesiaCategoryController;
 use App\Http\Controllers\PasarIndonesiaController;
+use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiCategoryController;
+use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiController;
+use App\Http\Controllers\PivotController;
+use App\Http\Controllers\PopupBannerController;
 use App\Http\Controllers\TiktokController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -115,6 +118,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::get('/', [NewsmakerArticleController::class, 'index'])->name('index');
             Route::get('/tambah', [NewsmakerArticleController::class, 'create'])->name('create');
             Route::post('/store', [NewsmakerArticleController::class, 'store'])->name('store');
+            Route::get('/{id}/show', [NewsmakerArticleController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [NewsmakerArticleController::class, 'edit'])->name('edit');
             Route::put('/{id}/update', [NewsmakerArticleController::class, 'update'])->name('update');
             Route::delete('/{id}/delete', [NewsmakerArticleController::class, 'destroy'])->name('destroy');
@@ -122,25 +126,58 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
 
     // Pasar Indonesia
-    Route::prefix('pasar-indonesia')->name('pasar-indonesia.')->group(function () {
-        Route::get('/', [PasarIndonesiaController::class, 'index'])->name('index');
+    Route::prefix('pasar-indonesia')->group(function () {
+        Route::prefix('regulasi-institusi')->name('regulasi-institusi.')->group(function () {
+            Route::get('/', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'index'])->name('index');
 
-        Route::prefix('berita')->name('berita.')->group(function () {
-            Route::get('/', [PasarIndonesiaBeritaController::class, 'index'])->name('index');
-            Route::get('/tambah', [PasarIndonesiaBeritaController::class, 'create'])->name('create');
-            Route::post('/store', [PasarIndonesiaBeritaController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [PasarIndonesiaBeritaController::class, 'edit'])->name('edit');
-            Route::put('/{id}/update', [PasarIndonesiaBeritaController::class, 'update'])->name('update');
-            Route::delete('/{id}/delete', [PasarIndonesiaBeritaController::class, 'destroy'])->name('destroy');
+            Route::prefix('kategori')->name('kategori.')->group(function () {
+                Route::get('/tambah', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'create'])->name('create');
+                Route::post('/store', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'store'])->name('store');
+                Route::get('/{slug}', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'show'])->name('show');
+                Route::get('/{id}/edit', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'edit'])->name('edit');
+                Route::put('/{id}/update', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'update'])->name('update');
+                Route::delete('/{id}/delete', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::get('/tambah', [PasarIndonesiaRegulasiInstitusiController::class, 'create'])->name('create');
+            Route::post('/store', [PasarIndonesiaRegulasiInstitusiController::class, 'store'])->name('store');
+            Route::get('/{id}/show', [PasarIndonesiaRegulasiInstitusiController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [PasarIndonesiaRegulasiInstitusiController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [PasarIndonesiaRegulasiInstitusiController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [PasarIndonesiaRegulasiInstitusiController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('analisis')->name('analisis.')->group(function () {
-            Route::get('/', [PasarIndonesiaAnalisisController::class, 'index'])->name('index');
-            Route::get('/tambah', [PasarIndonesiaAnalisisController::class, 'create'])->name('create');
-            Route::post('/store', [PasarIndonesiaAnalisisController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [PasarIndonesiaAnalisisController::class, 'edit'])->name('edit');
-            Route::put('/{id}/update', [PasarIndonesiaAnalisisController::class, 'update'])->name('update');
-            Route::delete('/{id}/delete', [PasarIndonesiaAnalisisController::class, 'destroy'])->name('destroy');
+        Route::name('pasar-indonesia.')->group(function () {
+            Route::get('/', [PasarIndonesiaController::class, 'index'])->name('index');
+
+            Route::prefix('berita')->name('berita.')->group(function () {
+                Route::get('/', [PasarIndonesiaCategoryController::class, 'index'])->name('index');
+
+                Route::prefix('kategori')->name('kategori.')->group(function () {
+                    Route::get('/tambah', [PasarIndonesiaCategoryController::class, 'create'])->name('create');
+                    Route::post('/store', [PasarIndonesiaCategoryController::class, 'store'])->name('store');
+                    Route::get('/{slug}', [PasarIndonesiaCategoryController::class, 'show'])->name('show');
+                    Route::get('/{id}/edit', [PasarIndonesiaCategoryController::class, 'edit'])->name('edit');
+                    Route::put('/{id}/update', [PasarIndonesiaCategoryController::class, 'update'])->name('update');
+                    Route::delete('/{id}/delete', [PasarIndonesiaCategoryController::class, 'destroy'])->name('destroy');
+                });
+                Route::get('/tambah', [PasarIndonesiaBeritaController::class, 'create'])->name('create');
+                Route::post('/store', [PasarIndonesiaBeritaController::class, 'store'])->name('store');
+                Route::get('/{id}/show', [PasarIndonesiaBeritaController::class, 'show'])->name('show');
+                Route::get('/{id}/edit', [PasarIndonesiaBeritaController::class, 'edit'])->name('edit');
+                Route::put('/{id}/update', [PasarIndonesiaBeritaController::class, 'update'])->name('update');
+                Route::delete('/{id}/delete', [PasarIndonesiaBeritaController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('analisis')->name('analisis.')->group(function () {
+                Route::get('/', [PasarIndonesiaAnalisisController::class, 'index'])->name('index');
+                Route::get('/tambah', [PasarIndonesiaAnalisisController::class, 'create'])->name('create');
+                Route::post('/store', [PasarIndonesiaAnalisisController::class, 'store'])->name('store');
+                Route::get('/{id}/show', [PasarIndonesiaAnalisisController::class, 'show'])->name('show');
+                Route::get('/{id}/edit', [PasarIndonesiaAnalisisController::class, 'edit'])->name('edit');
+                Route::put('/{id}/update', [PasarIndonesiaAnalisisController::class, 'update'])->name('update');
+                Route::delete('/{id}/delete', [PasarIndonesiaAnalisisController::class, 'destroy'])->name('destroy');
+            });
         });
     });
 

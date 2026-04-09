@@ -223,8 +223,7 @@
         </div>
 
         {{-- TinyMCE untuk editor teks --}}
-        <script src="https://cdn.tiny.cloud/1/rijrac2uxn06a1q296snq7j1fi420fd29r3lc1o12yzq6fwv/tinymce/7/tinymce.min.js"
-            referrerpolicy="origin"></script>
+       <script src="https://cdn.tiny.cloud/1/xv7eemu094bxfmbh4f4ff4wubpe7jydmpwxj699930in6w7e/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
         <script>
             tinymce.init({
                 selector: '#content',

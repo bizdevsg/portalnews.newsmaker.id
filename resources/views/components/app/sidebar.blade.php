@@ -5,6 +5,7 @@
 
     @php
         $pasarIndonesiaActive = request()->routeIs('pasar-indonesia.*') || request()->routeIs('regulasi-institusi.*');
+        $iklanActive = request()->routeIs('iklan.*');
 
         $sidebarSections = [
             [
@@ -61,6 +62,12 @@
                         'route' => 'popup-banner.index',
                         'icon' => 'fa-solid fa-rectangle-ad',
                         'active' => request()->routeIs('popup-banner.*'),
+                    ],
+                    [
+                        'label' => 'Iklan',
+                        'route' => 'iklan.index',
+                        'icon' => 'fa-solid fa-rectangle-ad',
+                        'active' => $iklanActive,
                     ],
                 ],
             ],
@@ -121,15 +128,15 @@
         };
     @endphp
 
-    <!-- Sidebar -->
-    <div id="sidebar"
-        class="absolute left-0 top-0 z-40 flex h-[100dvh] w-64 pb-4 shrink-0 flex-col overflow-y-auto no-scrollbar border-r border-slate-200 bg-white transition-all duration-200 ease-in-out max-lg:-translate-x-full dark:border-slate-800 dark:bg-slate-900 lg:static lg:left-auto lg:top-auto lg:flex! lg:w-20 lg:translate-x-0 lg:sidebar-expanded:!w-64 2xl:w-64! {{ $variant === 'v2' ? '' : 'shadow-sm' }}"
-        :class="sidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'" @click.outside="sidebarOpen = false"
-        @keydown.escape.window="sidebarOpen = false">
-        <div class="flex h-full flex-col">
-            <!-- Sidebar header -->
-            <div
-                class="mb-6 flex items-center justify-between gap-3 border-b border-slate-200 h-16 dark:border-slate-800">
+	    <!-- Sidebar -->
+	    <div id="sidebar"
+	        class="absolute left-0 top-0 z-40 flex h-[100dvh] w-64 pb-4 shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white transition-all duration-200 ease-in-out max-lg:-translate-x-full dark:border-slate-800 dark:bg-slate-900 lg:static lg:left-auto lg:top-auto lg:flex! lg:w-20 lg:translate-x-0 lg:sidebar-expanded:!w-64 2xl:w-64! {{ $variant === 'v2' ? '' : 'shadow-sm' }}"
+	        :class="sidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'" @click.outside="sidebarOpen = false"
+	        @keydown.escape.window="sidebarOpen = false">
+	        <div class="flex h-full min-h-0 flex-col">
+	            <!-- Sidebar header -->
+	            <div
+	                class="mb-6 flex items-center justify-between gap-3 border-b border-slate-200 h-16 dark:border-slate-800">
                 {{-- <button
                     class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 lg:hidden"
                     @click.stop="sidebarOpen = !sidebarOpen" aria-controls="sidebar" :aria-expanded="sidebarOpen">
@@ -153,11 +160,11 @@
                 </a>
             </div>
 
-            <div class="flex-1 space-y-6 px-3">
-                @foreach ($navigationSections as $section)
-                    <section class="space-y-3">
-                        <div
-                            class="flex items-center gap-2 px-2 lg:justify-center lg:sidebar-expanded:justify-start 2xl:justify-start">
+	            <div class="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-6 px-3 pb-6">
+	                @foreach ($navigationSections as $section)
+	                    <section class="space-y-3">
+	                        <div
+	                            class="flex items-center gap-2 px-2 lg:justify-center lg:sidebar-expanded:justify-start 2xl:justify-start">
                             <span
                                 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 lg:hidden lg:sidebar-expanded:inline 2xl:inline select-none">
                                 {{ $section['label'] }}

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\EconomicCalendarCategory;
 use App\Models\NewsmakerArticle;
 use App\Models\Pivot;
+use App\Models\Iklan;
 use App\Models\PopupBanner;
 use App\Models\Tiktok;
 use App\Models\User;
@@ -25,6 +26,7 @@ class DashboardController extends Controller
         $pivot = Pivot::count();
         $tiktok = Tiktok::count();
         $popupBanner = Schema::hasTable('popup_banners') ? PopupBanner::count() : 0;
+        $iklan = Schema::hasTable('iklans') ? Iklan::count() : 0;
         $userTotal = User::count();
 
         $widget = [
@@ -37,6 +39,7 @@ class DashboardController extends Controller
             'pivot' => $pivot,
             'tiktok' => $tiktok,
             'popup_banner' => $popupBanner,
+            'iklan' => $iklan,
             'user_total' => $userTotal,
         ];
 

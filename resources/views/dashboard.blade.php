@@ -13,6 +13,7 @@
         $pivotCount = (int) ($widget['pivot'] ?? 0);
         $tiktokCount = (int) ($widget['tiktok'] ?? 0);
         $popupBannerCount = (int) ($widget['popup_banner'] ?? 0);
+        $iklanCount = (int) ($widget['iklan'] ?? 0);
         $userTotal = (int) ($widget['user_total'] ?? 0);
         $adminCount = (int) ($widget['admin'] ?? 0);
         $superadminCount = (int) ($widget['superadmin'] ?? 0);
@@ -71,6 +72,15 @@
                 'icon' => 'fa-solid fa-rectangle-ad',
                 'iconClass' => 'bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-500/10 dark:text-fuchsia-300',
                 'href' => route('popup-banner.index'),
+            ],
+            [
+                'section' => 'Newsmaker 23',
+                'title' => 'Iklan',
+                'value' => number_format($iklanCount),
+                'description' => 'Kelola iklan dengan input mirip Popup Banner (termasuk HTML kustom).',
+                'icon' => 'fa-solid fa-rectangle-ad',
+                'iconClass' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300',
+                'href' => route('iklan.index'),
             ],
         ];
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\PasarIndonesiaController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiCategoryController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiController;
 use App\Http\Controllers\PivotController;
+use App\Http\Controllers\IklanController;
 use App\Http\Controllers\PopupBannerController;
 use App\Http\Controllers\TiktokController;
 use App\Http\Controllers\UserController;
@@ -188,6 +189,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/{id}/edit', [PopupBannerController::class, 'edit'])->name('edit');
         Route::put('/{id}/update', [PopupBannerController::class, 'update'])->name('update');
         Route::delete('/{id}/delete', [PopupBannerController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('iklan')->name('iklan.')->group(function () {
+        Route::get('/', [IklanController::class, 'index'])->name('index');
+        Route::get('/tambah', [IklanController::class, 'create'])->name('create');
+        Route::post('/store', [IklanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [IklanController::class, 'edit'])->name('edit');
+        Route::put('/{id}/update', [IklanController::class, 'update'])->name('update');
+        Route::delete('/{id}/delete', [IklanController::class, 'destroy'])->name('destroy');
     });
 
     // User Management Route

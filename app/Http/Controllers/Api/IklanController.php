@@ -7,7 +7,7 @@ use App\Services\ApiPayloadCacheService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 
-class PopupBannerController extends Controller
+class IklanController extends Controller
 {
     public function __construct(
         private readonly ApiPayloadCacheService $cacheService
@@ -16,14 +16,14 @@ class PopupBannerController extends Controller
 
     public function index(): JsonResponse
     {
-        $path = 'cache/popup-banner.json';
+        $path = 'cache/iklan.json';
         $payload = $this->cacheService->getPayload($path);
 
         if ($payload === null) {
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Cache popup banner belum tersedia.',
+                    'message' => 'Cache iklan belum tersedia.',
                 ],
                 503,
                 [],
@@ -31,16 +31,16 @@ class PopupBannerController extends Controller
             );
         }
 
-        $popupBanners = collect($payload['data'] ?? [])
-            ->filter(fn (array $popupBanner) => $this->isCurrentlyVisible($popupBanner))
+        $iklans = collect($payload['data'] ?? [])
+            ->filter(fn (array $iklan) => $this->isCurrentlyVisible($iklan))
             ->values();
 
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $popupBanners,
+                'data' => $iklans,
                 'meta' => [
-                    'total' => $popupBanners->count(),
+                    'total' => $iklans->count(),
                     'generated_at' => $this->cacheService->resolveGeneratedAt($path, $payload),
                 ],
             ],
@@ -50,15 +50,15 @@ class PopupBannerController extends Controller
         );
     }
 
-    private function isCurrentlyVisible(array $popupBanner): bool
+    private function isCurrentlyVisible(array $iklan): bool
     {
-        if (($popupBanner['is_active'] ?? false) !== true) {
+        if (($iklan['is_active'] ?? false) !== true) {
             return false;
         }
 
         $now = CarbonImmutable::now(config('app.timezone'));
-        $startAt = $this->parseDateTime($popupBanner['start_at'] ?? null);
-        $endAt = $this->parseDateTime($popupBanner['end_at'] ?? null);
+        $startAt = $this->parseDateTime($iklan['start_at'] ?? null);
+        $endAt = $this->parseDateTime($iklan['end_at'] ?? null);
 
         if ($startAt !== null && $startAt->greaterThan($now)) {
             return false;
@@ -84,3 +84,4 @@ class PopupBannerController extends Controller
         }
     }
 }
+

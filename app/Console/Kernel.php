@@ -15,6 +15,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('berita:cache-json')->everyTenMinutes()->withoutOverlapping();
         $schedule->command('kalender:cache-json')->everyTenMinutes()->withoutOverlapping();
         $schedule->command('pivot:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('newsmaker:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('pasar-indonesia:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('pasar-indonesia-regulasi:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('tiktok:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('popup-banner:cache-json')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('iklan:cache-json')->everyTenMinutes()->withoutOverlapping();
     }
 
     /**

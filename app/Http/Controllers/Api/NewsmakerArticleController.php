@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\NewsmakerArticle;
-use App\Models\NewsmakerMainCategory;
+use App\Services\ApiPayloadCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -12,20 +11,24 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class NewsmakerArticleController extends Controller
 {
     private const PER_PAGE = 20;
+    private const CACHE_PATH = 'cache/newsmaker.json';
+
+    public function __construct(
+        private readonly ApiPayloadCacheService $cacheService
+    ) {
+    }
 
     public function categories(): JsonResponse
     {
-        $categories = NewsmakerMainCategory::query()
-            ->withCount('articles')
-            ->latest()
-            ->get();
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
 
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $categories->map(
-                    fn (NewsmakerMainCategory $category) => $this->transformCategory($category)
-                )->values(),
+                'data' => collect($payload['categories'] ?? [])->values(),
             ],
             200,
             [],
@@ -35,22 +38,20 @@ class NewsmakerArticleController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $articles = NewsmakerArticle::query()
-            ->with([
-                'mainCategory:id,name,slug',
-                'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name',
-            ])
-            ->latest()
-            ->paginate(self::PER_PAGE)
-            ->appends($request->query());
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
+        $articles = $this->paginateData(
+            collect($payload['articles'] ?? [])->all(),
+            $request
+        );
 
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $articles->getCollection()
-                    ->map(fn (NewsmakerArticle $article) => $this->transformArticle($article))
-                    ->values(),
+                'data' => $articles->getCollection()->values(),
                 'meta' => [
                     'pagination' => $this->buildPaginationMeta($articles),
                 ],
@@ -63,10 +64,30 @@ class NewsmakerArticleController extends Controller
 
     public function byCategory(Request $request, string $slug): JsonResponse
     {
-        $category = NewsmakerMainCategory::query()
-            ->withCount('articles')
-            ->where('slug', $slug)
-            ->first();
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
+        $categories = collect($payload['categories'] ?? []);
+        $articles = collect($payload['articles'] ?? []);
+        $category = $categories->firstWhere('slug', $slug);
+
+        if ($category === null && ctype_digit($slug)) {
+            $article = $articles->firstWhere('id', (int) $slug);
+
+            if ($article !== null) {
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'data' => $article,
+                    ],
+                    200,
+                    [],
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                );
+            }
+        }
 
         if ($category === null) {
             return response()->json(
@@ -80,23 +101,19 @@ class NewsmakerArticleController extends Controller
             );
         }
 
-        $articles = NewsmakerArticle::query()
-            ->with([
-                'mainCategory:id,name,slug',
-                'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name',
-            ])
-            ->where('main_category_id', $category->id)
-            ->latest()
-            ->paginate(self::PER_PAGE)
-            ->appends($request->query());
+        $articles = $this->paginateData(
+            $articles
+                ->filter(fn (array $article) => ($article['main_category']['slug'] ?? null) === $slug)
+                ->values()
+                ->all(),
+            $request
+        );
 
         return response()->json(
             [
                 'status' => 'success',
-                'category' => $this->transformCategory($category),
+                'category' => $category,
                 'data' => $articles->getCollection()
-                    ->map(fn (NewsmakerArticle $article) => $this->transformArticle($article))
                     ->values(),
                 'meta' => [
                     'pagination' => $this->buildPaginationMeta($articles),
@@ -110,14 +127,12 @@ class NewsmakerArticleController extends Controller
 
     public function show(string $slug): JsonResponse
     {
-        $article = NewsmakerArticle::query()
-            ->with([
-                'mainCategory:id,name,slug',
-                'subCategory:id,main_category_id,name,slug',
-                'authorUser:id,name',
-            ])
-            ->where('slug', $slug)
-            ->first();
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
+        $article = collect($payload['articles'] ?? [])->firstWhere('slug', $slug);
 
         if ($article === null) {
             return response()->json(
@@ -134,7 +149,7 @@ class NewsmakerArticleController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $this->transformArticle($article),
+                'data' => $article,
             ],
             200,
             [],
@@ -142,52 +157,31 @@ class NewsmakerArticleController extends Controller
         );
     }
 
-    private function transformCategory(NewsmakerMainCategory $category): array
+    private function paginateData(array $items, Request $request): LengthAwarePaginator
     {
-        return [
-            'id' => $category->id,
-            'name' => $category->name,
-            'slug' => $category->slug,
-            'articles_count' => $category->articles_count ?? 0,
-            'created_at' => optional($category->created_at)->toISOString(),
-            'updated_at' => optional($category->updated_at)->toISOString(),
-        ];
+        $page = max((int) $request->query('page', 1), 1);
+        $items = array_values($items);
+
+        return new LengthAwarePaginator(
+            array_values(array_slice($items, ($page - 1) * self::PER_PAGE, self::PER_PAGE)),
+            count($items),
+            self::PER_PAGE,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
     }
 
-    private function transformArticle(NewsmakerArticle $article): array
+    private function cacheUnavailableResponse(): JsonResponse
     {
-        return [
-            'id' => $article->id,
-            'slug' => $article->slug,
-            'main_category_id' => $article->main_category_id,
-            'sub_category_id' => $article->sub_category_id,
-            'author_id' => $article->author_id,
-            'image' => $article->image,
-            'image_url' => $article->image ? asset($article->image) : null,
-            'title_id' => $article->title_id,
-            'title_en' => $article->title_en,
-            'content_id' => $article->content_id,
-            'content_en' => $article->content_en,
-            'author' => $article->authorUser?->name ?? $article->author,
-            'author_user' => $article->authorUser ? [
-                'id' => $article->authorUser->id,
-                'name' => $article->authorUser->name,
-            ] : null,
-            'source' => $article->source,
-            'main_category' => $article->mainCategory ? [
-                'id' => $article->mainCategory->id,
-                'name' => $article->mainCategory->name,
-                'slug' => $article->mainCategory->slug,
-            ] : null,
-            'sub_category' => $article->subCategory ? [
-                'id' => $article->subCategory->id,
-                'main_category_id' => $article->subCategory->main_category_id,
-                'name' => $article->subCategory->name,
-                'slug' => $article->subCategory->slug,
-            ] : null,
-            'created_at' => optional($article->created_at)->toISOString(),
-            'updated_at' => optional($article->updated_at)->toISOString(),
-        ];
+        return response()->json(
+            ['status' => 'error', 'message' => 'Cache Newsmaker belum tersedia.'],
+            503,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
     }
 
     private function buildPaginationMeta(LengthAwarePaginator $paginator): array

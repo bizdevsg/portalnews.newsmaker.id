@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\NewsmakerArticleController;
 use App\Http\Controllers\Api\PasarIndonesiaArticleController;
 use App\Http\Controllers\Api\PasarIndonesiaRegulasiInstitusiArticleController;
 use App\Http\Controllers\Api\PivotController;
+use App\Http\Controllers\Api\IklanController;
 use App\Http\Controllers\Api\PopupBannerController;
 use App\Http\Controllers\Api\TiktokController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
             function () {
                 Route::get('/kategori', [NewsmakerArticleController::class, 'categories']);
                 Route::get('/berita', [NewsmakerArticleController::class, 'index']);
+                Route::get('/kategori/{slug}/berita', [NewsmakerArticleController::class, 'byCategory']);
                 Route::get('/berita/{slug}', [NewsmakerArticleController::class, 'byCategory']);
                 Route::get('/berita/show/{slug}', [NewsmakerArticleController::class, 'show'])
                     ->where('slug', '[A-Za-z0-9-]+');
@@ -49,9 +51,11 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
 
                 Route::get('/tiktok', [TiktokController::class, 'index']);
                 Route::get('/popup-banner', [PopupBannerController::class, 'index']);
+                Route::get('/iklan', [IklanController::class, 'index']);
 
                 Route::prefix('pasar-indonesia')->group(
                     function () {
+                        Route::get('/kategori', [PasarIndonesiaArticleController::class, 'categories']);
                         Route::get('/berita', [PasarIndonesiaArticleController::class, 'berita']);
                         Route::get('/berita/{slug}', [PasarIndonesiaArticleController::class, 'beritaShow'])
                             ->where('slug', '[A-Za-z0-9-]+');

@@ -3,33 +3,35 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PasarIndonesiaRegulasiInstitusiArticle;
-use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
+use App\Services\ApiPayloadCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
 {
     private const DEFAULT_PER_PAGE = 20;
     private const MAX_PER_PAGE = 100;
-    private const DEFAULT_CATEGORIES = [
-        'umum' => 'Umum',
-    ];
+    private const CACHE_PATH = 'cache/pasar-indonesia-regulasi-institusi.json';
+
+    public function __construct(
+        private readonly ApiPayloadCacheService $cacheService
+    ) {
+    }
 
     public function index(Request $request): JsonResponse
     {
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
         $perPage = $this->resolvePerPage($request->query('per_page'));
         $requestedCategory = $request->query('category');
-        $allowedCategories = $this->categoryOptions();
+        $categories = collect($payload['categories'] ?? []);
+        $allowedCategories = $categories->pluck('name', 'slug')->toArray();
 
-        if (
-            is_string($requestedCategory)
-            && $requestedCategory !== ''
-            && !array_key_exists($requestedCategory, $allowedCategories)
-        ) {
+        if (is_string($requestedCategory) && $requestedCategory !== '' && !array_key_exists($requestedCategory, $allowedCategories)) {
             return response()->json(
                 [
                     'status' => 'error',
@@ -42,31 +44,27 @@ class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
             );
         }
 
-        $items = PasarIndonesiaRegulasiInstitusiArticle::query()
-            ->with(['author:id,name,email', 'categoryItem:id,name,slug'])
-            ->when(
-                is_string($requestedCategory) && $requestedCategory !== '',
-                fn ($query) => $query->where('category', $requestedCategory)
-            )
-            ->latest()
-            ->paginate($perPage)
-            ->appends($request->query());
+        $items = collect($payload['articles'] ?? []);
+
+        if (is_string($requestedCategory) && $requestedCategory !== '') {
+            $items = $items
+                ->filter(fn (array $item) => ($item['category'] ?? null) === $requestedCategory)
+                ->values();
+        }
+
+        $items = $this->paginateData($items->all(), $request, $perPage);
 
         return response()->json(
             [
                 'status' => 'success',
                 'type' => 'regulasi-institusi',
-                'data' => $items->getCollection()
-                    ->map(
-                        fn (PasarIndonesiaRegulasiInstitusiArticle $item) => $this->transformArticle($item, $allowedCategories)
-                    )
-                    ->values(),
+                'data' => $items->getCollection()->values(),
                 'meta' => [
                     'filters' => [
                         'category' => $requestedCategory,
                     ],
-                    'available_categories' => collect($allowedCategories)->map(
-                        fn (string $label, string $value) => ['value' => $value, 'label' => $label]
+                    'available_categories' => $categories->map(
+                        fn (array $category) => ['value' => $category['slug'], 'label' => $category['name']]
                     )->values(),
                     'pagination' => $this->buildPaginationMeta($items),
                 ],
@@ -79,10 +77,12 @@ class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
 
     public function show(string $slug): JsonResponse
     {
-        $item = PasarIndonesiaRegulasiInstitusiArticle::query()
-            ->with(['author:id,name,email', 'categoryItem:id,name,slug'])
-            ->where('slug', $slug)
-            ->first();
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
+        $item = collect($payload['articles'] ?? [])->firstWhere('slug', $slug);
 
         if ($item === null) {
             return response()->json(
@@ -100,7 +100,7 @@ class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
             [
                 'status' => 'success',
                 'type' => 'regulasi-institusi',
-                'data' => $this->transformArticle($item, $this->categoryOptions()),
+                'data' => $item,
             ],
             200,
             [],
@@ -108,57 +108,21 @@ class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
         );
     }
 
-    private function transformArticle(PasarIndonesiaRegulasiInstitusiArticle $item, array $categoryOptions): array
+    private function paginateData(array $items, Request $request, int $perPage): LengthAwarePaginator
     {
-        return [
-            'id' => $item->id,
-            'type' => 'regulasi-institusi',
-            'slug' => $item->slug,
-            'image' => $item->image,
-            'image_url' => $item->image ? asset($item->image) : null,
-            'title_id' => $item->title_id,
-            'title_en' => $item->title_en,
-            'content_id' => $item->content_id,
-            'content_en' => $item->content_en,
-            'category' => $item->category,
-            'category_label' => $this->resolveCategoryLabel($item, $categoryOptions),
-            'source' => $item->source,
-            'author' => $item->author ? [
-                'id' => $item->author->id,
-                'name' => $item->author->name,
-                'email' => $item->author->email,
-            ] : null,
-            'created_at' => optional($item->created_at)->toISOString(),
-            'updated_at' => optional($item->updated_at)->toISOString(),
-        ];
-    }
+        $page = max((int) $request->query('page', 1), 1);
+        $items = array_values($items);
 
-    private function resolveCategoryLabel(PasarIndonesiaRegulasiInstitusiArticle $item, array $categoryOptions): ?string
-    {
-        if ($item->category === null) {
-            return null;
-        }
-
-        if ($item->relationLoaded('categoryItem') && $item->categoryItem) {
-            return $item->categoryItem->name;
-        }
-
-        return $categoryOptions[$item->category]
-            ?? Str::of($item->category)->replace('-', ' ')->title()->toString();
-    }
-
-    private function categoryOptions(): array
-    {
-        if (!Schema::hasTable('pasar_indonesia_regulasi_institusi_categories')) {
-            return self::DEFAULT_CATEGORIES;
-        }
-
-        $categories = PasarIndonesiaRegulasiInstitusiCategory::query()
-            ->orderBy('name')
-            ->pluck('name', 'slug')
-            ->toArray();
-
-        return $categories !== [] ? $categories : self::DEFAULT_CATEGORIES;
+        return new LengthAwarePaginator(
+            array_values(array_slice($items, ($page - 1) * $perPage, $perPage)),
+            count($items),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
     }
 
     private function buildPaginationMeta(LengthAwarePaginator $paginator): array
@@ -183,5 +147,15 @@ class PasarIndonesiaRegulasiInstitusiArticleController extends Controller
         ]);
 
         return $perPage !== false ? $perPage : self::DEFAULT_PER_PAGE;
+    }
+
+    private function cacheUnavailableResponse(): JsonResponse
+    {
+        return response()->json(
+            ['status' => 'error', 'message' => 'Cache Regulasi & Institusi belum tersedia.'],
+            503,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
     }
 }

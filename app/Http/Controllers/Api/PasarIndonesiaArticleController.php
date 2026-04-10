@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PasarIndonesiaArticle;
+use App\Services\ApiPayloadCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -12,6 +12,31 @@ class PasarIndonesiaArticleController extends Controller
 {
     private const DEFAULT_PER_PAGE = 20;
     private const MAX_PER_PAGE = 100;
+    private const CACHE_PATH = 'cache/pasar-indonesia.json';
+
+    public function __construct(
+        private readonly ApiPayloadCacheService $cacheService
+    ) {
+    }
+
+    public function categories(): JsonResponse
+    {
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
+        }
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'type' => 'berita',
+                'data' => collect($payload['categories'] ?? [])->values(),
+            ],
+            200,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+    }
 
     public function berita(Request $request): JsonResponse
     {
@@ -35,21 +60,18 @@ class PasarIndonesiaArticleController extends Controller
 
     private function listByType(Request $request, string $type): JsonResponse
     {
-        $perPage = $this->resolvePerPage($request->query('per_page'));
-        $requestedCategory = $request->query('category');
-        $allowedCategories = PasarIndonesiaArticle::beritaCategoryOptions();
-        $withRelations = ['author:id,name,email'];
-
-        if ($type === 'berita') {
-            $withRelations[] = 'categoryItem:id,name,slug';
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
         }
 
-        if (
-            $type === 'berita'
-            && is_string($requestedCategory)
-            && $requestedCategory !== ''
-            && !array_key_exists($requestedCategory, $allowedCategories)
-        ) {
+        $perPage = $this->resolvePerPage($request->query('per_page'));
+        $requestedCategory = $request->query('category');
+        $categories = collect($payload['categories'] ?? []);
+        $allowedCategories = $categories->pluck('name', 'slug')->toArray();
+        $items = collect($payload[$type] ?? []);
+
+        if ($type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '' && !array_key_exists($requestedCategory, $allowedCategories)) {
             return response()->json(
                 [
                     'status' => 'error',
@@ -62,32 +84,25 @@ class PasarIndonesiaArticleController extends Controller
             );
         }
 
-        $items = PasarIndonesiaArticle::query()
-            ->with($withRelations)
-            ->where('type', $type)
-            ->when(
-                $type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '',
-                fn ($query) => $query->where('category', $requestedCategory)
-            )
-            ->latest()
-            ->paginate($perPage)
-            ->appends($request->query());
+        if ($type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '') {
+            $items = $items
+                ->filter(fn (array $item) => ($item['category'] ?? null) === $requestedCategory)
+                ->values();
+        }
+
+        $items = $this->paginateData($items->all(), $request, $perPage);
 
         return response()->json(
             [
                 'status' => 'success',
                 'type' => $type,
-                'data' => $items->getCollection()
-                    ->map(fn (PasarIndonesiaArticle $item) => $this->transformArticle($item))
-                    ->values(),
+                'data' => $items->getCollection()->values(),
                 'meta' => [
                     'filters' => [
                         'category' => $type === 'berita' ? $requestedCategory : null,
                     ],
                     'available_categories' => $type === 'berita'
-                        ? collect($allowedCategories)->map(
-                            fn (string $label, string $value) => ['value' => $value, 'label' => $label]
-                        )->values()
+                        ? $categories->map(fn (array $category) => ['value' => $category['slug'], 'label' => $category['name']])->values()
                         : [],
                     'pagination' => $this->buildPaginationMeta($items),
                 ],
@@ -100,17 +115,12 @@ class PasarIndonesiaArticleController extends Controller
 
     private function showByType(string $slug, string $type, string $notFoundMessage): JsonResponse
     {
-        $withRelations = ['author:id,name,email'];
-
-        if ($type === 'berita') {
-            $withRelations[] = 'categoryItem:id,name,slug';
+        $payload = $this->cacheService->getPayload(self::CACHE_PATH);
+        if ($payload === null) {
+            return $this->cacheUnavailableResponse();
         }
 
-        $item = PasarIndonesiaArticle::query()
-            ->with($withRelations)
-            ->where('type', $type)
-            ->where('slug', $slug)
-            ->first();
+        $item = collect($payload[$type] ?? [])->firstWhere('slug', $slug);
 
         if ($item === null) {
             return response()->json(
@@ -128,7 +138,7 @@ class PasarIndonesiaArticleController extends Controller
             [
                 'status' => 'success',
                 'type' => $type,
-                'data' => $this->transformArticle($item),
+                'data' => $item,
             ],
             200,
             [],
@@ -136,29 +146,21 @@ class PasarIndonesiaArticleController extends Controller
         );
     }
 
-    private function transformArticle(PasarIndonesiaArticle $item): array
+    private function paginateData(array $items, Request $request, int $perPage): LengthAwarePaginator
     {
-        return [
-            'id' => $item->id,
-            'type' => $item->type,
-            'slug' => $item->slug,
-            'image' => $item->image,
-            'image_url' => $item->image ? asset($item->image) : null,
-            'title_id' => $item->title_id,
-            'title_en' => $item->title_en,
-            'content_id' => $item->content_id,
-            'content_en' => $item->content_en,
-            'category' => $item->category,
-            'category_label' => $item->category_label,
-            'source' => $item->source,
-            'author' => $item->author ? [
-                'id' => $item->author->id,
-                'name' => $item->author->name,
-                'email' => $item->author->email,
-            ] : null,
-            'created_at' => optional($item->created_at)->toISOString(),
-            'updated_at' => optional($item->updated_at)->toISOString(),
-        ];
+        $page = max((int) $request->query('page', 1), 1);
+        $items = array_values($items);
+
+        return new LengthAwarePaginator(
+            array_values(array_slice($items, ($page - 1) * $perPage, $perPage)),
+            count($items),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
     }
 
     private function buildPaginationMeta(LengthAwarePaginator $paginator): array
@@ -183,5 +185,15 @@ class PasarIndonesiaArticleController extends Controller
         ]);
 
         return $perPage !== false ? $perPage : self::DEFAULT_PER_PAGE;
+    }
+
+    private function cacheUnavailableResponse(): JsonResponse
+    {
+        return response()->json(
+            ['status' => 'error', 'message' => 'Cache Pasar Indonesia belum tersedia.'],
+            503,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
     }
 }

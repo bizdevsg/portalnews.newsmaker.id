@@ -156,23 +156,136 @@
         </div>
     </form>
 
-    <script src="https://cdn.tiny.cloud/1/rijrac2uxn06a1q296snq7j1fi420fd29r3lc1o12yzq6fwv/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css">
+    <style>
+        .note-editor.note-frame {
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .note-editor.note-frame:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+        }
+
+        .note-editor .note-toolbar {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.5rem;
+        }
+
+        .note-editor .note-toolbar .note-btn-group {
+            margin: 0 0.25rem 0.25rem 0;
+        }
+
+        .note-editor .note-toolbar .note-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.35rem 0.5rem;
+            line-height: 1;
+        }
+
+        .note-editor .note-toolbar .note-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .note-editor .note-editable {
+            background: #ffffff;
+            color: #111827;
+            padding: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+
+        /* Tailwind preflight resets paragraph margins */
+        .note-editor .note-editable p {
+            margin: 0 0 1em;
+        }
+
+        .note-editor .note-editable p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Tailwind preflight resets list styles */
+        .note-editor .note-editable ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+        }
+
+        .note-editor .note-editable ol {
+            list-style: decimal;
+            padding-left: 1.5rem;
+        }
+
+        .note-editor .note-statusbar {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .dark .note-editor.note-frame {
+            border-color: #334155;
+            background: #0f172a;
+        }
+
+        .dark .note-editor.note-frame:focus-within {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.25);
+        }
+
+        .dark .note-editor .note-toolbar {
+            background: #0b1220;
+            border-bottom-color: #334155;
+        }
+
+        .dark .note-editor .note-toolbar .note-btn {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        .dark .note-editor .note-toolbar .note-btn:hover {
+            background: #111c33;
+        }
+
+        .dark .note-editor .note-editable {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .dark .note-editor .note-statusbar {
+            background: #0b1220;
+            border-top-color: #334155;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('analysisForm');
+            const editorSelector = '#content_id,#content_en';
 
-            if (window.tinymce) {
-                tinymce.init({
-                    selector: '#content_id,#content_en',
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    height: 500
+            if (window.jQuery && jQuery.fn && jQuery.fn.summernote) {
+                jQuery(editorSelector).summernote({
+                    height: 500,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['link', 'picture', 'video', 'table']],
+                        ['view', ['fullscreen', 'codeview', 'help']],
+                    ],
                 });
             }
 
             form?.addEventListener('submit', () => {
-                if (window.tinymce) {
-                    tinymce.triggerSave();
+                if (window.jQuery && jQuery.fn && jQuery.fn.summernote) {
+                    jQuery(editorSelector).each(function() {
+                        const $el = jQuery(this);
+                        $el.val($el.summernote('code'));
+                    });
                 }
             });
         });

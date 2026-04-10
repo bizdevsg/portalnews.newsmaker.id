@@ -3,23 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tiktok;
 use Illuminate\Http\JsonResponse;
+use App\Services\ApiPayloadCacheService;
 
 class TiktokController extends Controller
 {
+    public function __construct(
+        private readonly ApiPayloadCacheService $cacheService
+    ) {
+    }
+
     public function index(): JsonResponse
     {
-        $items = Tiktok::query()
-            ->orderByDesc('created_at')
-            ->get(['id', 'title', 'embed_code', 'backup_video_url', 'created_at', 'updated_at']);
+        $payload = $this->cacheService->getPayload('cache/tiktok.json');
+        if ($payload === null) {
+            return response()->json(
+                ['status' => 'error', 'message' => 'Cache TikTok belum tersedia.'],
+                503,
+                [],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            );
+        }
 
         return response()->json(
-            [
-                'status' => 200,
-                'message' => 'Data TikTok berhasil diambil',
-                'data' => $items,
-            ],
+            $payload,
             200,
             [],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES

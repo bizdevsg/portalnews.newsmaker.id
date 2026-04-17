@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('newsmaker23.main-category.index') }}" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                    <a href="{{ route('newsmaker23.index') }}" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                         Kembali
                     </a>
                     <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-50">

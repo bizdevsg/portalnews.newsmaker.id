@@ -34,10 +34,18 @@
                 'label' => 'Newsmaker 23',
                 'items' => [
                     [
-                        'label' => 'Berita',
+                        'label' => 'Kategori',
                         'route' => 'newsmaker23.index',
                         'icon' => 'fa-solid fa-layer-group',
-                        'active' => request()->routeIs('newsmaker23.*'),
+                        'active' => request()->routeIs('newsmaker23.index')
+                            || request()->routeIs('newsmaker23.main-category.*')
+                            || request()->routeIs('newsmaker23.berita.*'),
+                    ],
+                    [
+                        'label' => 'Video Briefing',
+                        'route' => 'newsmaker23.video-briefing.index',
+                        'icon' => 'fa-solid fa-video',
+                        'active' => request()->routeIs('newsmaker23.video-briefing.*'),
                     ],
                     [
                         'label' => 'Kalender Ekonomi',

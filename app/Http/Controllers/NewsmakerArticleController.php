@@ -21,14 +21,14 @@ class NewsmakerArticleController extends Controller
         $selectedMainId = $request->integer('main_category_id');
 
         if (!$selectedMainId) {
-            return redirect()->route('newsmaker23.main-category.index')
+            return redirect()->route('newsmaker23.index')
                 ->with('info', 'Masuk dulu ke kategori yang dituju untuk menambahkan berita.');
         }
 
         $selectedMainCategory = NewsmakerMainCategory::find($selectedMainId);
 
         if (!$selectedMainCategory) {
-            return redirect()->route('newsmaker23.main-category.index')
+            return redirect()->route('newsmaker23.index')
                 ->with('info', 'Kategori tujuan tidak ditemukan. Pilih kategori lain untuk menambahkan berita.');
         }
 

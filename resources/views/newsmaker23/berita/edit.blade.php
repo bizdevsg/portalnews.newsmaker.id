@@ -1,30 +1,37 @@
 @section('namePage', 'Edit Berita Newsmaker23')
 
 <x-app-layout>
-    <form id="newsForm" action="{{ route('newsmaker23.berita.update', $article->id) }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
+    <form id="newsForm" action="{{ route('newsmaker23.berita.update', $article->id) }}" method="POST"
+        enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
         @csrf
         @method('PUT')
 
-        <section class="overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 px-6 py-8 shadow-2xl ring-1 ring-white/10 sm:px-8 lg:px-10">
+        <section
+            class="overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 px-6 py-8 shadow-2xl ring-1 ring-white/10 sm:px-8 lg:px-10">
             <div class="flex flex-wrap items-start justify-between gap-6">
                 <div class="space-y-4">
-                    <span class="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-100">
+                    <span
+                        class="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-100">
                         Form Berita
                     </span>
                     <div class="space-y-2">
                         <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-300">Edit</p>
-                        <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Perbarui berita dua bahasa</h1>
+                        <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Perbarui berita dua bahasa
+                        </h1>
                         <p class="text-sm leading-6 text-indigo-100 sm:text-base">
-                            Edit kategori, meta artikel, judul, dan isi bilingual untuk menjaga modul Newsmaker23 tetap konsisten.
+                            Edit kategori, meta artikel, judul, dan isi bilingual untuk menjaga modul Newsmaker23 tetap
+                            konsisten.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('newsmaker23.berita.index') }}" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                    <a href="{{ route('newsmaker23.berita.index') }}"
+                        class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                         Kembali
                     </a>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-indigo-50">
+                    <button type="submit"
+                        class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-indigo-50">
                         <i class="fa-solid fa-floppy-disk mr-2"></i>
                         Simpan Perubahan
                     </button>
@@ -33,16 +40,19 @@
         </section>
 
         @if ($errors->any())
-            <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700 shadow-sm dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
+            <div
+                class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700 shadow-sm dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
                 <p class="font-semibold">Masih ada perubahan yang perlu diperbaiki sebelum disimpan.</p>
             </div>
         @endif
 
         <div class="mt-8 space-y-6">
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+            <section
+                class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_0.95fr]">
                     <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Kategori</p>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                            Kategori</p>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Penempatan artikel</h2>
                         <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
                             Pastikan artikel tetap berada di kategori yang tepat setelah diperbarui.
@@ -50,10 +60,13 @@
                     </div>
 
                     <div>
-                        <label for="main_category_id" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        <label for="main_category_id"
+                            class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                             Kategori
                         </label>
-                        <select id="main_category_id" name="main_category_id" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('main_category_id') border-rose-500 @enderror" required>
+                        <select id="main_category_id" name="main_category_id"
+                            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('main_category_id') border-rose-500 @enderror"
+                            required>
                             <option value="">Pilih Kategori</option>
                             @foreach ($mainCategories as $mainCategory)
                                 <option value="{{ $mainCategory->id }}" @selected(old('main_category_id', $article->main_category_id) == $mainCategory->id)>
@@ -68,21 +81,26 @@
                 </div>
             </section>
 
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+            <section
+                class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="space-y-6">
                     <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Meta</p>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                            Meta</p>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Media dan identitas</h2>
                     </div>
 
                     <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
                         <div>
-                            <label for="image" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            <label for="image"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Gambar utama
                             </label>
-                            <input type="file" id="image" name="image" accept="image/*" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition file:mr-4 file:rounded-xl file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('image') border-rose-500 @enderror">
+                            <input type="file" id="image" name="image" accept="image/*"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition file:mr-4 file:rounded-xl file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('image') border-rose-500 @enderror">
                             @if ($article->image)
-                                <img src="{{ asset($article->image) }}" alt="{{ $article->title_id }}" class="mt-4 h-40 w-full rounded-2xl object-cover">
+                                <img src="{{ asset($article->image) }}" alt="{{ $article->title_id }}"
+                                    class="mt-4 h-40 w-full rounded-2xl object-cover">
                             @endif
                             @error('image')
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
@@ -90,84 +108,119 @@
                         </div>
 
                         <div>
-                            <label for="author_display" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            <label for="author_display"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Author
                             </label>
-                            <input type="text" id="author_display" value="{{ $article->authorUser?->name ?? $article->author ?? '-' }}" class="w-full cursor-not-allowed rounded-2xl border border-slate-300 bg-slate-100 px-4 py-3 text-slate-700 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" readonly>
+                            <input type="text" id="author_display"
+                                value="{{ $article->authorUser?->name ?? ($article->author ?? '-') }}"
+                                class="w-full cursor-not-allowed rounded-2xl border border-slate-300 bg-slate-100 px-4 py-3 text-slate-700 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                                readonly>
                             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                                 Author tersimpan berdasarkan user yang membuat berita.
                             </p>
                         </div>
 
                         <div>
-                            <label for="source" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            <label for="source"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Source
                             </label>
-                            <input type="text" id="source" name="source" value="{{ old('source', $article->source) }}" placeholder="Masukkan sumber berita" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('source') border-rose-500 @enderror" required>
+                            <input type="text" id="source" name="source"
+                                value="{{ old('source', $article->source) }}" placeholder="Masukkan sumber berita"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('source') border-rose-500 @enderror"
+                                required>
                             @error('source')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
                             @enderror
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+            <section
+                class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="space-y-6">
                     <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Judul</p>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                            Judul</p>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Dua versi headline</h2>
                     </div>
 
                     <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
                         <div>
-                            <label for="title_id" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            <label for="title_id"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Judul Indonesia
                             </label>
-                            <input type="text" id="title_id" name="title_id" value="{{ old('title_id', $article->title_id) }}" placeholder="Masukkan judul Indonesia" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_id') border-rose-500 @enderror" required>
+                            <input type="text" id="title_id" name="title_id"
+                                value="{{ old('title_id', $article->title_id) }}"
+                                placeholder="Masukkan judul Indonesia"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_id') border-rose-500 @enderror"
+                                required>
                             @error('title_id')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="title_en" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            <label for="title_en"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Judul Inggris
                             </label>
-                            <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $article->title_en) }}" placeholder="Masukkan judul Inggris" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_en') border-rose-500 @enderror" required>
+                            <input type="text" id="title_en" name="title_en"
+                                value="{{ old('title_en', $article->title_en) }}" placeholder="Masukkan judul Inggris"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_en') border-rose-500 @enderror"
+                                required>
                             @error('title_en')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
                             @enderror
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+            <section
+                class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
                 <div class="space-y-6">
                     <div class="space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Konten</p>
-                        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Editor Indonesia dan Inggris</h2>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                            Konten</p>
+                        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Editor Indonesia dan Inggris
+                        </h2>
                     </div>
 
-                    <div class="space-y-6">
-                        <div class="rounded-[24px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
-                            <label for="content_id" class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <div class="space-y-6 flex gap-4">
+                        <div
+                            class="rounded-[24px] w-full border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+                            <label for="content_id"
+                                class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Isi Indonesia
                             </label>
-                            <textarea id="content_id" name="content_id" rows="10" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_id') border-rose-500 @enderror" placeholder="Masukkan isi berita Indonesia...">{{ old('content_id', $article->content_id) }}</textarea>
+                            <textarea id="content_id" name="content_id" rows="10"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_id') border-rose-500 @enderror"
+                                placeholder="Masukkan isi berita Indonesia...">{{ old('content_id', $article->content_id) }}</textarea>
                             @error('content_id')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
                             @enderror
                         </div>
 
-                        <div class="rounded-[24px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
-                            <label for="content_en" class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        <div
+                            class="rounded-[24px] w-full border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+                            <label for="content_en"
+                                class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Isi Inggris
                             </label>
-                            <textarea id="content_en" name="content_en" rows="10" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_en') border-rose-500 @enderror" placeholder="Masukkan isi berita Inggris...">{{ old('content_en', $article->content_en) }}</textarea>
+                            <textarea id="content_en" name="content_en" rows="10"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_en') border-rose-500 @enderror"
+                                placeholder="Masukkan isi berita Inggris...">{{ old('content_en', $article->content_en) }}</textarea>
                             @error('content_en')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
                             @enderror
                         </div>
                     </div>
@@ -175,10 +228,12 @@
             </section>
 
             <div class="flex flex-wrap justify-end gap-3">
-                <a href="{{ route('newsmaker23.berita.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                <a href="{{ route('newsmaker23.berita.index') }}"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                     Kembali
                 </a>
-                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                <button type="submit"
+                    class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
                     Simpan Perubahan
                 </button>
             </div>

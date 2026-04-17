@@ -51,7 +51,9 @@ class NewsmakerArticleController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $articles->getCollection()->values(),
+                'data' => $articles->getCollection()
+                    ->map(fn ($article) => is_array($article) ? $this->withoutSubCategory($article) : $article)
+                    ->values(),
                 'meta' => [
                     'pagination' => $this->buildPaginationMeta($articles),
                 ],
@@ -80,7 +82,7 @@ class NewsmakerArticleController extends Controller
                 return response()->json(
                     [
                         'status' => 'success',
-                        'data' => $article,
+                        'data' => is_array($article) ? $this->withoutSubCategory($article) : $article,
                     ],
                     200,
                     [],
@@ -114,6 +116,7 @@ class NewsmakerArticleController extends Controller
                 'status' => 'success',
                 'category' => $category,
                 'data' => $articles->getCollection()
+                    ->map(fn ($article) => is_array($article) ? $this->withoutSubCategory($article) : $article)
                     ->values(),
                 'meta' => [
                     'pagination' => $this->buildPaginationMeta($articles),
@@ -149,12 +152,19 @@ class NewsmakerArticleController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $article,
+                'data' => is_array($article) ? $this->withoutSubCategory($article) : $article,
             ],
             200,
             [],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
+    }
+
+    private function withoutSubCategory(array $article): array
+    {
+        unset($article['sub_category']);
+
+        return $article;
     }
 
     private function paginateData(array $items, Request $request): LengthAwarePaginator

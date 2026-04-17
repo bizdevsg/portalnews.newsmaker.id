@@ -32,7 +32,6 @@ class CacheNewsmakerJson extends Command
         $articles = NewsmakerArticle::query()
             ->with([
                 'mainCategory:id,name,slug',
-                'subCategory:id,main_category_id,name,slug',
                 'authorUser:id,name',
             ])
             ->latest()
@@ -59,12 +58,6 @@ class CacheNewsmakerJson extends Command
                     'id' => $article->mainCategory->id,
                     'name' => $article->mainCategory->name,
                     'slug' => $article->mainCategory->slug,
-                ] : null,
-                'sub_category' => $article->subCategory ? [
-                    'id' => $article->subCategory->id,
-                    'main_category_id' => $article->subCategory->main_category_id,
-                    'name' => $article->subCategory->name,
-                    'slug' => $article->subCategory->slug,
                 ] : null,
                 'created_at' => optional($article->created_at)->toISOString(),
                 'updated_at' => optional($article->updated_at)->toISOString(),

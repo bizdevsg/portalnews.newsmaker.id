@@ -40,7 +40,7 @@ class NewsmakerMainCategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('newsmaker23.main-category.index')
+        return redirect()->route('newsmaker23.index')
             ->with('success', 'Kategori berita berhasil ditambahkan.');
     }
 
@@ -62,7 +62,7 @@ class NewsmakerMainCategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('newsmaker23.main-category.index')
+        return redirect()->route('newsmaker23.index')
             ->with('success', 'Kategori berita berhasil diperbarui.');
     }
 
@@ -84,7 +84,7 @@ class NewsmakerMainCategoryController extends Controller
         $category->subCategories()->delete();
         $category->delete();
 
-        return redirect()->route('newsmaker23.main-category.index')
+        return redirect()->route('newsmaker23.index')
             ->with('success', 'Kategori berita berhasil dihapus.');
     }
 }

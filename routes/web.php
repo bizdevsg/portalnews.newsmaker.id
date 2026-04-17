@@ -8,6 +8,7 @@ use App\Http\Controllers\EconomicCalendarDetailController;
 use App\Http\Controllers\Newsmaker23Controller;
 use App\Http\Controllers\NewsmakerArticleController;
 use App\Http\Controllers\NewsmakerMainCategoryController;
+use App\Http\Controllers\NewsmakerVideoBriefingController;
 use App\Http\Controllers\PasarIndonesiaAnalisisController;
 use App\Http\Controllers\PasarIndonesiaBeritaController;
 use App\Http\Controllers\PasarIndonesiaCategoryController;
@@ -105,8 +106,17 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::prefix('newsmaker23')->name('newsmaker23.')->group(function () {
         Route::get('/', [Newsmaker23Controller::class, 'index'])->name('index');
 
+        Route::prefix('video-briefing')->name('video-briefing.')->group(function () {
+            Route::get('/', [NewsmakerVideoBriefingController::class, 'index'])->name('index');
+            Route::get('/tambah', [NewsmakerVideoBriefingController::class, 'create'])->name('create');
+            Route::post('/store', [NewsmakerVideoBriefingController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [NewsmakerVideoBriefingController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [NewsmakerVideoBriefingController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [NewsmakerVideoBriefingController::class, 'destroy'])->name('destroy');
+        });
+
         Route::prefix('main-category')->name('main-category.')->group(function () {
-            Route::get('/', [NewsmakerMainCategoryController::class, 'index'])->name('index');
+            Route::get('/', fn () => redirect()->route('newsmaker23.index'))->name('index');
             Route::get('/tambah', [NewsmakerMainCategoryController::class, 'create'])->name('create');
             Route::post('/store', [NewsmakerMainCategoryController::class, 'store'])->name('store');
             Route::get('/{slug}', [NewsmakerMainCategoryController::class, 'show'])->name('show');

@@ -112,7 +112,10 @@ class BeritaController extends Controller
         // Ambil berita berdasarkan ID
         $berita = Berita::findOrFail($id);
 
-        return view('berita.edit', compact('berita', 'kategori'));
+        // Ambil daftar kategori untuk opsi pindah kategori saat edit
+        $categories = Category::orderBy('name')->get();
+
+        return view('berita.edit', compact('berita', 'kategori', 'categories'));
     }
 
     // Mengupdate berita
@@ -133,10 +136,12 @@ class BeritaController extends Controller
             'image4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image5' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image6' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Ambil berita berdasarkan ID
         $berita = Berita::findOrFail($id);
+        $selectedCategory = Category::findOrFail($request->category_id);
 
         // Proses upload gambar jika ada
         for ($i = 1; $i <= 6; $i++) {
@@ -156,9 +161,10 @@ class BeritaController extends Controller
             'title_ewf' => $request->title_ewf,
             'title_bpf' => $request->title_bpf,
             'content' => $request->content,
+            'category_id' => $selectedCategory->id,
         ]);
 
-        return redirect()->route('berita.index', $slug)
+        return redirect()->route('berita.index', $selectedCategory->slug)
             ->with('success', 'Berita berhasil diperbarui!');
     }
 

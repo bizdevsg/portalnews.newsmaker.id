@@ -32,7 +32,23 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="category_id" value="{{ $kategori->id }}">
+                <div class="mb-4">
+                    <label for="category_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Kategori
+                        Berita <span class="text-red-500">*</span></label>
+                    <select id="category_id" name="category_id"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('category_id') is-invalid @enderror"
+                        required>
+                        @foreach ($categories as $item)
+                            <option value="{{ $item->id }}"
+                                {{ (string) old('category_id', $berita->category_id) === (string) $item->id ? 'selected' : '' }}>
+                                {{ $item->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 {{-- Input Judul Berita Default --}}
                 <div class="mb-4">

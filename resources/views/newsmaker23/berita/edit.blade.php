@@ -135,6 +135,20 @@
                                 </p>
                             @enderror
                         </div>
+
+                        <div class="xl:col-span-3">
+                            <input type="hidden" name="notif" value="0">
+                            <label for="notif" class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="notif" name="notif" value="1"
+                                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                    {{ old('notif', $article->notif) ? 'checked' : '' }}>
+                                <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">Kirim Notifikasi
+                                    ke API</span>
+                            </label>
+                            @error('notif')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </section>

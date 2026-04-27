@@ -17,11 +17,16 @@ class PasarIndonesiaRegulasiInstitusiArticle extends Model
         'image',
         'title_id',
         'title_en',
+        'notif',
         'slug',
         'content_id',
         'content_en',
         'author_id',
         'source',
+    ];
+
+    protected $casts = [
+        'notif' => 'boolean',
     ];
 
     protected static function boot()

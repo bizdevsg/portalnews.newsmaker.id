@@ -19,6 +19,7 @@ class Berita extends Model
         'title_kpf',
         'title_ewf',
         'title_bpf',
+        'notif',
         'content',
         'image1',
         'image2',
@@ -29,6 +30,10 @@ class Berita extends Model
         'category_id',
         'user_id',
         'slug',
+    ];
+
+    protected $casts = [
+        'notif' => 'boolean',
     ];
     
     protected $appends = ['images'];

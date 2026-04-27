@@ -46,6 +46,7 @@ class CacheNewsmakerJson extends Command
                 'image_url' => $article->image ? asset($article->image) : null,
                 'title_id' => $article->title_id,
                 'title_en' => $article->title_en,
+                'notif' => (bool) $article->notif,
                 'content_id' => $article->content_id,
                 'content_en' => $article->content_en,
                 'author' => $article->authorUser?->name ?? $article->author,

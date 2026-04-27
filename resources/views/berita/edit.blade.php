@@ -190,6 +190,19 @@
                     @enderror
                 </div>
 
+                <div class="mb-6">
+                    <input type="hidden" name="notif" value="0">
+                    <label for="notif" class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="notif" name="notif" value="1"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            {{ old('notif', $berita->notif) ? 'checked' : '' }}>
+                        <span class="text-gray-700 dark:text-gray-200 font-medium">Kirim Notifikasi ke API</span>
+                    </label>
+                    @error('notif')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Modal Submit --}}
                 <div id="modalSubmit"
                     class="hidden fixed inset-0 bg-gray-900/50 dark:bg-gray-900/75 flex items-center justify-center px-3 z-100">

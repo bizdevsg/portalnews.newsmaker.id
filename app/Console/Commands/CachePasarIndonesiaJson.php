@@ -103,6 +103,7 @@ class CachePasarIndonesiaJson extends Command
             'image_url' => $item->image ? asset($item->image) : null,
             'title_id' => $item->title_id,
             'title_en' => $item->title_en,
+            'notif' => (bool) $item->notif,
             'content_id' => $item->content_id,
             'content_en' => $item->content_en,
             'category' => $item->category,

@@ -24,6 +24,7 @@ class NewsmakerArticle extends Model
         'content_en',
         'author',
         'author_id',
+        'author_initial',
         'source',
     ];
 

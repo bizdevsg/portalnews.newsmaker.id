@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class PasarIndonesiaBeritaController extends Controller
 {
+    private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
     public function create(Request $request)
     {
         $selectedCategoryId = $request->integer('category_id');
@@ -32,6 +34,7 @@ class PasarIndonesiaBeritaController extends Controller
         $request->validate([
             'category_id' => 'required|exists:pasar_indonesia_categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'notif' => 'nullable|boolean',
@@ -59,6 +62,7 @@ class PasarIndonesiaBeritaController extends Controller
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
             'author_id' => $request->user()->id,
+            'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
             'category' => $selectedCategory->slug,
         ]);
@@ -94,6 +98,7 @@ class PasarIndonesiaBeritaController extends Controller
         $request->validate([
             'category_id' => 'required|exists:pasar_indonesia_categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'notif' => 'nullable|boolean',
@@ -131,6 +136,7 @@ class PasarIndonesiaBeritaController extends Controller
             'notif' => $request->boolean('notif'),
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
+            'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
             'category' => $selectedCategory->slug,
         ]);

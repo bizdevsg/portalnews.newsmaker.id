@@ -55,7 +55,7 @@
                         </div>
                         <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
                             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Author</p>
-                            <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $item->author?->name ?? '-' }}</p>
+                            <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $item->author_initial ?? $item->author?->name ?? '-' }}</p>
                         </div>
                         <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
                             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Source</p>

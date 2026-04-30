@@ -49,7 +49,8 @@ class CacheNewsmakerJson extends Command
                 'notif' => (bool) $article->notif,
                 'content_id' => $article->content_id,
                 'content_en' => $article->content_en,
-                'author' => $article->authorUser?->name ?? $article->author,
+                'author' => $article->author_initial ?? $article->author ?? $article->authorUser?->name,
+                'author_initial' => $article->author_initial,
                 'author_user' => $article->authorUser ? [
                     'id' => $article->authorUser->id,
                     'name' => $article->authorUser->name,

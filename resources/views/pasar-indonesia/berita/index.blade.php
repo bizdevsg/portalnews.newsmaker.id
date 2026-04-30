@@ -83,7 +83,7 @@
                                 <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $item->title_en }}</p>
 
                                 <div class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $item->author?->name ?? '-' }}</p>
+                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $item->author_initial ?? $item->author?->name ?? '-' }}</p>
                                     <p><span class="font-semibold text-slate-900 dark:text-slate-100">Source:</span> {{ $item->source }}</p>
                                 </div>
 

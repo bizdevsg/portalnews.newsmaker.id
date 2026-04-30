@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class NewsmakerArticleController extends Controller
 {
+    private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
     public function index()
     {
         $articles = NewsmakerArticle::with(['mainCategory', 'authorUser'])->latest()->get();
@@ -40,6 +42,7 @@ class NewsmakerArticleController extends Controller
         $request->validate([
             'main_category_id' => 'required|exists:newsmaker_main_categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'notif' => 'nullable|boolean',
@@ -66,8 +69,6 @@ class NewsmakerArticleController extends Controller
         $namaFile = time() . '_' . $request->file('image')->getClientOriginalName();
         $request->file('image')->move($uploadPath, $namaFile);
 
-        $author = $request->user();
-
         NewsmakerArticle::create([
             'main_category_id' => $request->main_category_id,
             'sub_category_id' => $subCategory->id,
@@ -77,8 +78,9 @@ class NewsmakerArticleController extends Controller
             'notif' => $request->boolean('notif'),
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
-            'author' => $author?->name ?? 'System',
-            'author_id' => $author?->id,
+            'author' => strtoupper(trim((string) $request->author)),
+            'author_initial' => strtoupper(trim((string) $request->author)),
+            'author_id' => $request->user()?->id,
             'source' => $request->source,
         ]);
 
@@ -106,6 +108,7 @@ class NewsmakerArticleController extends Controller
         $request->validate([
             'main_category_id' => 'required|exists:newsmaker_main_categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'notif' => 'nullable|boolean',
@@ -144,22 +147,6 @@ class NewsmakerArticleController extends Controller
             $updatedImage = 'uploads/newsmaker23/' . $namaFile;
         }
 
-        $currentUser = $request->user();
-        $resolvedAuthorId = $article->author_id ?? $currentUser?->id;
-        $resolvedAuthorName = $article->author;
-
-        if ($resolvedAuthorId !== null) {
-            if ($currentUser && $currentUser->id === $resolvedAuthorId) {
-                $resolvedAuthorName = $currentUser->name;
-            } elseif ($article->authorUser) {
-                $resolvedAuthorName = $article->authorUser->name;
-            }
-        }
-
-        if ($resolvedAuthorName === null || trim((string) $resolvedAuthorName) === '') {
-            $resolvedAuthorName = $currentUser?->name ?? 'System';
-        }
-
         $data = [
             'main_category_id' => $request->main_category_id,
             'sub_category_id' => $subCategory->id,
@@ -168,8 +155,8 @@ class NewsmakerArticleController extends Controller
             'notif' => $request->boolean('notif'),
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
-            'author' => $resolvedAuthorName,
-            'author_id' => $resolvedAuthorId,
+            'author' => strtoupper(trim((string) $request->author)),
+            'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
         ];
 

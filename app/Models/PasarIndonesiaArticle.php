@@ -42,6 +42,7 @@ class PasarIndonesiaArticle extends Model
         'content_id',
         'content_en',
         'author_id',
+        'author_initial',
         'source',
     ];
 

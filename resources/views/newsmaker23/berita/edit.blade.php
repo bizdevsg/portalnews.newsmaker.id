@@ -108,17 +108,28 @@
                         </div>
 
                         <div>
-                            <label for="author_display"
+                            <label for="author"
                                 class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Author
                             </label>
-                            <input type="text" id="author_display"
-                                value="{{ $article->authorUser?->name ?? ($article->author ?? '-') }}"
-                                class="w-full cursor-not-allowed rounded-2xl border border-slate-300 bg-slate-100 px-4 py-3 text-slate-700 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                                readonly>
+                            @php
+                                $authorInitials = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+                                $currentAuthor = old('author', strtoupper((string) ($article->author_initial ?? $article->author ?? '')));
+                            @endphp
+                            <select id="author" name="author"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('author') border-rose-500 @enderror"
+                                required>
+                                <option value="">Pilih inisial author</option>
+                                @foreach ($authorInitials as $initial)
+                                    <option value="{{ $initial }}" @selected($currentAuthor === $initial)>{{ $initial }}</option>
+                                @endforeach
+                            </select>
                             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                Author tersimpan berdasarkan user yang membuat berita.
+                                Pilih salah satu inisial author.
                             </p>
+                            @error('author')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>

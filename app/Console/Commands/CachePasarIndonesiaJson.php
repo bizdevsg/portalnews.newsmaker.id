@@ -118,6 +118,7 @@ class CachePasarIndonesiaJson extends Command
             'subcategory' => $item->category,
             'subcategory_label' => $subcategoryLabel,
             'source' => $item->source,
+            'author_initial' => $item->author_initial,
             'author' => $item->author ? [
                 'id' => $item->author->id,
                 'name' => $item->author->name,

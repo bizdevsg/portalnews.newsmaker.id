@@ -4,12 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class PasarIndonesiaArticle extends Model
 {
     use HasFactory;
+
+    public const MAIN_BERITA_CATEGORIES = [
+        'komoditas' => 'Komoditas',
+        'pasar-saham' => 'Pasar Saham',
+    ];
 
     public const DEFAULT_BERITA_CATEGORIES = [
         'makro-ekonomi' => 'Makro Ekonomi',
@@ -77,7 +82,7 @@ class PasarIndonesiaArticle extends Model
         }
 
         $datePrefix = ($date ?? now())->format('dmY');
-        $baseSlug = $datePrefix . '-' . $titleSlug;
+        $baseSlug = $datePrefix.'-'.$titleSlug;
         $slug = $baseSlug;
         $suffix = 1;
 
@@ -87,7 +92,7 @@ class PasarIndonesiaArticle extends Model
                 ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
                 ->exists()
         ) {
-            $slug = $baseSlug . '-' . $suffix++;
+            $slug = $baseSlug.'-'.$suffix++;
         }
 
         return $slug;
@@ -95,7 +100,7 @@ class PasarIndonesiaArticle extends Model
 
     public static function beritaCategoryOptions(): array
     {
-        if (!Schema::hasTable('pasar_indonesia_categories')) {
+        if (! Schema::hasTable('pasar_indonesia_categories')) {
             return self::DEFAULT_BERITA_CATEGORIES;
         }
 
@@ -105,6 +110,70 @@ class PasarIndonesiaArticle extends Model
             ->toArray();
 
         return $categories !== [] ? $categories : self::DEFAULT_BERITA_CATEGORIES;
+    }
+
+    public static function mainBeritaCategoryOptions(): array
+    {
+        return self::MAIN_BERITA_CATEGORIES;
+    }
+
+    public static function resolveBeritaMainCategory(?string $subcategorySlug, ?string $subcategoryLabel = null): ?array
+    {
+        if ($subcategorySlug === null && $subcategoryLabel === null) {
+            return null;
+        }
+
+        $slug = Str::of((string) $subcategorySlug)
+            ->lower()
+            ->replace('_', '-')
+            ->toString();
+        $label = Str::of((string) $subcategoryLabel)
+            ->lower()
+            ->ascii()
+            ->toString();
+
+        $commoditySubcategories = [
+            'komodita',
+            'komoditas',
+            'gold',
+            'silver',
+            'oil',
+        ];
+
+        $stockMarketSubcategories = [
+            'makro-ekonomi',
+            'makro ekonomi',
+            'pasar-saham',
+            'pasar saham',
+            'saham',
+            'obligasi-sbn',
+            'obligasi & sbn',
+            'rupiah-dan-valas',
+            'rupiah & valas',
+            'korporasi-emiten',
+            'korporasi & emiten',
+            'investasi-strategi',
+            'investasi & strategi',
+        ];
+
+        if (in_array($slug, $commoditySubcategories, true) || in_array($label, $commoditySubcategories, true)) {
+            return [
+                'slug' => 'komoditas',
+                'name' => self::MAIN_BERITA_CATEGORIES['komoditas'],
+            ];
+        }
+
+        if (in_array($slug, $stockMarketSubcategories, true) || in_array($label, $stockMarketSubcategories, true)) {
+            return [
+                'slug' => 'pasar-saham',
+                'name' => self::MAIN_BERITA_CATEGORIES['pasar-saham'],
+            ];
+        }
+
+        return [
+            'slug' => 'pasar-saham',
+            'name' => self::MAIN_BERITA_CATEGORIES['pasar-saham'],
+        ];
     }
 
     public function getCategoryLabelAttribute(): ?string

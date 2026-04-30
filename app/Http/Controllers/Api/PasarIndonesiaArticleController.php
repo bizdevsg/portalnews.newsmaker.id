@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasarIndonesiaArticle;
 use App\Services\ApiPayloadCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -67,8 +68,17 @@ class PasarIndonesiaArticleController extends Controller
 
         $perPage = $this->resolvePerPage($request->query('per_page'));
         $requestedCategory = $request->query('category');
-        $categories = collect($payload['categories'] ?? []);
-        $allowedCategories = $categories->pluck('name', 'slug')->toArray();
+        $requestedSubcategory = $request->query('subcategory');
+        $mainCategories = collect(
+            $payload['main_categories']
+                ?? collect(PasarIndonesiaArticle::mainBeritaCategoryOptions())
+                    ->map(fn (string $name, string $slug) => ['slug' => $slug, 'name' => $name])
+                    ->values()
+                    ->all()
+        );
+        $subcategories = collect($payload['categories'] ?? []);
+        $allowedCategories = $mainCategories->pluck('name', 'slug')->toArray();
+        $allowedSubcategories = $subcategories->pluck('name', 'slug')->toArray();
         $items = collect($payload[$type] ?? []);
 
         if ($type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '' && !array_key_exists($requestedCategory, $allowedCategories)) {
@@ -84,9 +94,28 @@ class PasarIndonesiaArticleController extends Controller
             );
         }
 
+        if ($type === 'berita' && is_string($requestedSubcategory) && $requestedSubcategory !== '' && !array_key_exists($requestedSubcategory, $allowedSubcategories)) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Subkategori berita Pasar Indonesia tidak valid.',
+                    'available_subcategories' => array_keys($allowedSubcategories),
+                ],
+                422,
+                [],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            );
+        }
+
         if ($type === 'berita' && is_string($requestedCategory) && $requestedCategory !== '') {
             $items = $items
                 ->filter(fn (array $item) => ($item['category'] ?? null) === $requestedCategory)
+                ->values();
+        }
+
+        if ($type === 'berita' && is_string($requestedSubcategory) && $requestedSubcategory !== '') {
+            $items = $items
+                ->filter(fn (array $item) => ($item['subcategory'] ?? null) === $requestedSubcategory)
                 ->values();
         }
 
@@ -100,9 +129,13 @@ class PasarIndonesiaArticleController extends Controller
                 'meta' => [
                     'filters' => [
                         'category' => $type === 'berita' ? $requestedCategory : null,
+                        'subcategory' => $type === 'berita' ? $requestedSubcategory : null,
                     ],
                     'available_categories' => $type === 'berita'
-                        ? $categories->map(fn (array $category) => ['value' => $category['slug'], 'label' => $category['name']])->values()
+                        ? $mainCategories->map(fn (array $category) => ['value' => $category['slug'], 'label' => $category['name']])->values()
+                        : [],
+                    'available_subcategories' => $type === 'berita'
+                        ? $subcategories->map(fn (array $category) => ['value' => $category['slug'], 'label' => $category['name']])->values()
                         : [],
                     'pagination' => $this->buildPaginationMeta($items),
                 ],

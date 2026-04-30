@@ -17,6 +17,7 @@ class CachePasarIndonesiaJson extends Command
     public function handle(): int
     {
         $categories = $this->buildCategories();
+        $mainCategories = $this->buildMainCategories($categories);
 
         $berita = PasarIndonesiaArticle::query()
             ->with(['author:id,name,email', 'categoryItem:id,name,slug'])
@@ -37,6 +38,7 @@ class CachePasarIndonesiaJson extends Command
         $payload = [
             'status' => 'success',
             'categories' => $categories,
+            'main_categories' => $mainCategories,
             'berita' => $berita,
             'analisis' => $analisis,
             'generated_at' => now()->toISOString(),
@@ -95,6 +97,11 @@ class CachePasarIndonesiaJson extends Command
 
     private function transformArticle(PasarIndonesiaArticle $item): array
     {
+        $subcategoryLabel = $item->category_label;
+        $mainCategory = $item->type === 'berita'
+            ? PasarIndonesiaArticle::resolveBeritaMainCategory($item->category, $subcategoryLabel)
+            : null;
+
         return [
             'id' => $item->id,
             'type' => $item->type,
@@ -106,8 +113,10 @@ class CachePasarIndonesiaJson extends Command
             'notif' => (bool) $item->notif,
             'content_id' => $item->content_id,
             'content_en' => $item->content_en,
-            'category' => $item->category,
-            'category_label' => $item->category_label,
+            'category' => $mainCategory['slug'] ?? null,
+            'category_label' => $mainCategory['name'] ?? null,
+            'subcategory' => $item->category,
+            'subcategory_label' => $subcategoryLabel,
             'source' => $item->source,
             'author' => $item->author ? [
                 'id' => $item->author->id,
@@ -117,5 +126,28 @@ class CachePasarIndonesiaJson extends Command
             'created_at' => optional($item->created_at)->toISOString(),
             'updated_at' => optional($item->updated_at)->toISOString(),
         ];
+    }
+
+    private function buildMainCategories($categories)
+    {
+        $groupedCounts = collect($categories)
+            ->groupBy(function (array $category) {
+                $mainCategory = PasarIndonesiaArticle::resolveBeritaMainCategory(
+                    $category['slug'] ?? null,
+                    $category['name'] ?? null
+                );
+
+                return $mainCategory['slug'] ?? 'pasar-saham';
+            })
+            ->map(fn ($items) => (int) collect($items)->sum('articles_count'));
+
+        return collect(PasarIndonesiaArticle::mainBeritaCategoryOptions())
+            ->map(fn (string $name, string $slug) => [
+                'id' => $slug,
+                'name' => $name,
+                'slug' => $slug,
+                'articles_count' => (int) ($groupedCounts[$slug] ?? 0),
+            ])
+            ->values();
     }
 }

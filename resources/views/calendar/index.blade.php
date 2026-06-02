@@ -40,8 +40,8 @@
 
         <form action="{{ route('calendar.index') }}" method="GET"
             class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-            <div class="flex flex-col gap-3 md:flex-row">
-                <div class="flex-1">
+            <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_260px_auto]">
+                <div class="min-w-0">
                     <label for="q" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pencarian
                         Category</label>
                     <input type="text" name="q" id="q" value="{{ $search ?? '' }}"
@@ -49,12 +49,26 @@
                         placeholder="Cari category, source, country, impact, atau measures">
                 </div>
 
-                <div class="flex items-end gap-2">
+                <div class="min-w-0">
+                    <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Negara</label>
+                    <select name="country" id="country"
+                        class="mt-2 block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <option value="">Semua Negara</option>
+                        @foreach ($countryOptions as $countryOption)
+                            <option value="{{ $countryOption['value'] }}"
+                                {{ (($selectedCountry ?? null) === $countryOption['value']) ? 'selected' : '' }}>
+                                {{ $countryOption['label'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex items-end gap-2 md:justify-end">
                     <button type="submit"
                         class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900">
                         Cari
                     </button>
-                    @if (!empty($search))
+                    @if (!empty($search) || !empty($selectedCountry))
                         <a href="{{ route('calendar.index') }}"
                             class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                             Reset
@@ -185,8 +199,8 @@
             @empty
                 <div
                     class="sm:col-span-2 xl:col-span-3 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
-                    @if (!empty($search))
-                        Tidak ada category yang cocok dengan pencarian "{{ $search }}".
+                    @if (!empty($search) || !empty($selectedCountry))
+                        Tidak ada category yang cocok dengan filter yang dipilih.
                     @else
                         Belum ada category kalender. Buat header terlebih dahulu, lalu tambahkan data detail.
                     @endif

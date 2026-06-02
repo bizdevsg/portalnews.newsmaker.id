@@ -18,8 +18,10 @@ class EconomicCalendarController extends Controller
     public function index(Request $request)
     {
         $search = trim((string) $request->input('q'));
+        $selectedCountry = $this->normalizeCountryFilter($request->input('country'));
+        $countryOptions = $this->buildCountryOptionsFromCategories();
 
-        $categories = EconomicCalendarCategory::withCount('details')
+        $categoriesQuery = EconomicCalendarCategory::withCount('details')
             ->with('latestDetail')
             ->withMax('details', 'date')
             ->when($search !== '', function ($query) use ($search) {
@@ -35,11 +37,19 @@ class EconomicCalendarController extends Controller
             })
             // ->orderByDesc('details_max_date')
             // ->orderBy('country', 'asc')
-            ->orderBy('figures', 'asc')
+            ->orderBy('figures', 'asc');
+
+        if ($selectedCountry !== null) {
+            $countryVariants = $this->countryFilterVariants($selectedCountry);
+
+            $categoriesQuery->whereIn('country', $countryVariants);
+        }
+
+        $categories = $categoriesQuery
             ->paginate(12)
             ->withQueryString();
 
-        return view('calendar.index', compact('categories', 'search'));
+        return view('calendar.index', compact('categories', 'search', 'selectedCountry', 'countryOptions'));
     }
 
     /**
@@ -71,9 +81,11 @@ class EconomicCalendarController extends Controller
     {
         $data = $payloadService->getPreparedData();
         $search = trim((string) $request->query('q'));
+        $selectedCountry = $this->normalizeCountryFilter($request->query('country'));
 
         $availablePeriods = $payloadService->availablePeriods();
         $groupedData = $data === null ? [] : $payloadService->groupByPeriods($data);
+        $countryOptions = $this->buildCountryOptions($data ?? []);
 
         $defaultPeriod = 'this-week';
         if (! in_array($defaultPeriod, $availablePeriods, true) || empty($groupedData[$defaultPeriod] ?? [])) {
@@ -89,6 +101,12 @@ class EconomicCalendarController extends Controller
         $activePeriod = in_array($requestedPeriod, $availablePeriods, true) ? $requestedPeriod : $defaultPeriod;
 
         $items = array_values($groupedData[$activePeriod] ?? []);
+        if ($selectedCountry !== null) {
+            $items = array_values(array_filter($items, function (array $item) use ($selectedCountry): bool {
+                return $this->normalizeCountryFilter($item['country'] ?? null) === $selectedCountry;
+            }));
+        }
+
         if ($search !== '') {
             $searchNeedle = Str::lower($search);
 
@@ -144,14 +162,18 @@ class EconomicCalendarController extends Controller
         $paginatedItems->appends([
             'period' => $activePeriod,
             'q' => $search,
+            'country' => $selectedCountry,
         ]);
 
         return view('calendar.preview', [
             'groupedData' => $groupedData,
             'meta' => $payloadService->buildPeriodsMeta(),
             'availablePeriods' => $availablePeriods,
+            'countryOptions' => $countryOptions,
             'cacheAvailable' => $data !== null,
             'activePeriod' => $activePeriod,
+            'selectedCountry' => $selectedCountry,
+            'filteredItems' => $items,
             'paginatedItems' => $paginatedItems,
             'search' => $search,
         ]);
@@ -237,5 +259,128 @@ class EconomicCalendarController extends Controller
         $validatedData['isBankHoliday'] = $request->boolean('isBankHoliday');
 
         return $validatedData;
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    private function buildCountryOptions(array $data): array
+    {
+        $countryLabels = $this->countryLabels();
+        $countries = [];
+
+        foreach ($data as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $normalizedCountry = $this->normalizeCountryFilter($item['country'] ?? null);
+            if ($normalizedCountry === null) {
+                continue;
+            }
+
+            $countries[$normalizedCountry] = [
+                'value' => $normalizedCountry,
+                'label' => $countryLabels[$normalizedCountry] ?? $normalizedCountry,
+            ];
+        }
+
+        uasort($countries, static fn (array $first, array $second): int => strcmp($first['label'], $second['label']));
+
+        return array_values($countries);
+    }
+
+    private function normalizeCountryFilter(mixed $country): ?string
+    {
+        $normalized = strtoupper(trim((string) $country));
+
+        if ($normalized === '') {
+            return null;
+        }
+
+        return match ($normalized) {
+            'US', 'USD' => 'US',
+            'EUR' => 'EU',
+            'JPY', 'JPN' => 'JP',
+            'GBP' => 'GB',
+            'AUD' => 'AU',
+            'CAD' => 'CA',
+            'CHF' => 'CH',
+            'CHN', 'CNH' => 'CN',
+            'IDR', 'IDN' => 'ID',
+            'NZD' => 'NZ',
+            default => $normalized,
+        };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function countryLabels(): array
+    {
+        return [
+            'US' => 'United States',
+            'EU' => 'European Union',
+            'JP' => 'Japan',
+            'GB' => 'United Kingdom',
+            'AU' => 'Australia',
+            'CA' => 'Canada',
+            'CH' => 'Switzerland',
+            'CN' => 'China',
+            'NZ' => 'New Zealand',
+            'ID' => 'Indonesia',
+        ];
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    private function buildCountryOptionsFromCategories(): array
+    {
+        $countryLabels = $this->countryLabels();
+        $countries = EconomicCalendarCategory::query()
+            ->select('country')
+            ->distinct()
+            ->orderBy('country')
+            ->pluck('country')
+            ->all();
+
+        $options = [];
+
+        foreach ($countries as $country) {
+            $normalizedCountry = $this->normalizeCountryFilter($country);
+            if ($normalizedCountry === null) {
+                continue;
+            }
+
+            $options[$normalizedCountry] = [
+                'value' => $normalizedCountry,
+                'label' => $countryLabels[$normalizedCountry] ?? $normalizedCountry,
+            ];
+        }
+
+        uasort($options, static fn (array $first, array $second): int => strcmp($first['label'], $second['label']));
+
+        return array_values($options);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function countryFilterVariants(string $normalizedCountry): array
+    {
+        return match ($normalizedCountry) {
+            'US' => ['US', 'USD'],
+            'EU' => ['EU', 'EUR'],
+            'JP' => ['JP', 'JPY', 'JPN'],
+            'GB' => ['GB', 'GBP'],
+            'AU' => ['AU', 'AUD'],
+            'CA' => ['CA', 'CAD'],
+            'CH' => ['CH', 'CHF'],
+            'CN' => ['CN', 'CHN', 'CNH'],
+            'ID' => ['ID', 'IDN', 'IDR'],
+            'NZ' => ['NZ', 'NZD'],
+            default => [$normalizedCountry],
+        };
     }
 }

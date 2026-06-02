@@ -146,7 +146,7 @@
         };
 
         $items = $paginatedItems->items();
-        $activeItems = array_values($groupedData[$activePeriod] ?? []);
+        $activeItems = array_values($filteredItems ?? $groupedData[$activePeriod] ?? []);
         $activeDates = array_values(
             array_filter(
                 array_map(static fn(array $item): ?string => $item['date'] ?? null, $activeItems),
@@ -155,6 +155,7 @@
         );
         $activeStartDate = $activeDates[0] ?? null;
         $activeEndDate = $activeDates !== [] ? $activeDates[array_key_last($activeDates)] : null;
+        $queryWithoutPage = request()->except(['page', 'period']);
     @endphp
 
     <div class="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
@@ -197,7 +198,7 @@
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div class="flex flex-wrap gap-2">
                         @foreach ($availablePeriods as $period)
-                            <a href="{{ route('calendar.preview', ['period' => $period]) }}"
+                            <a href="{{ route('calendar.preview', array_merge($queryWithoutPage, ['period' => $period])) }}"
                                 class="rounded-lg border px-4 py-2 text-sm font-semibold transition sm:px-5 sm:py-2.5 sm:text-base {{ $activePeriod === $period
                                     ? 'bg-blue-600 text-white border-blue-600'
                                     : 'bg-white text-blue-700 border-blue-600 hover:bg-blue-50 dark:bg-slate-900 dark:text-blue-300 dark:border-blue-500 dark:hover:bg-slate-800' }}">
@@ -210,9 +211,22 @@
                         class="w-full xl:max-w-xl xl:min-w-[420px]">
                         <input type="hidden" name="period" value="{{ $activePeriod }}">
                         <div class="flex flex-col gap-3 sm:flex-row">
-                            <input type="text" name="q" id="preview-search" value="{{ $search ?? '' }}"
-                                class="block min-w-0 w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950 dark:text-white"
-                                placeholder="Cari tanggal, impact, atau figures">
+                            <div class="grid min-w-0 flex-1 gap-3 sm:grid-cols-2">
+                                <input type="text" name="q" id="preview-search" value="{{ $search ?? '' }}"
+                                    class="block min-w-0 w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950 dark:text-white"
+                                    placeholder="Cari tanggal, impact, atau figures">
+
+                                <select name="country" id="preview-country"
+                                    class="block min-w-0 w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950 dark:text-white">
+                                    <option value="">Semua Negara</option>
+                                    @foreach ($countryOptions as $countryOption)
+                                        <option value="{{ $countryOption['value'] }}"
+                                            {{ (($selectedCountry ?? null) === $countryOption['value']) ? 'selected' : '' }}>
+                                            {{ $countryOption['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="flex gap-2 sm:items-end">
                                 <button type="submit"
@@ -220,7 +234,7 @@
                                     Cari
                                 </button>
 
-                                @if (!empty($search))
+                                @if (!empty($search) || !empty($selectedCountry))
                                     <a href="{{ route('calendar.preview', ['period' => $activePeriod]) }}"
                                         class="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800 sm:w-auto">
                                         Reset
@@ -235,8 +249,8 @@
                     @if (empty($items))
                         <div
                             class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                            @if (!empty($search))
-                                Tidak ada data yang cocok dengan pencarian "{{ $search }}" untuk
+                            @if (!empty($search) || !empty($selectedCountry))
+                                Tidak ada data yang cocok dengan filter ini untuk
                                 {{ strtolower($periodLabels[$activePeriod] ?? $activePeriod) }}.
                             @else
                                 Tidak ada data untuk {{ strtolower($periodLabels[$activePeriod] ?? $activePeriod) }}.

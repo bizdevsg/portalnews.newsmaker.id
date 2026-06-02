@@ -127,16 +127,59 @@ class CalendarPreviewPageTest extends TestCase
 
         $firstPage->assertOk()
             ->assertSee('Today Data 1')
-            ->assertSee('Today Data 20')
-            ->assertDontSee('Today Data 21');
+            ->assertSee('Today Data 10')
+            ->assertDontSee('Today Data 11');
 
         $secondPage = $this
             ->actingAs(User::factory()->make())
             ->get(route('calendar.preview', ['period' => 'today', 'page' => 2]));
 
         $secondPage->assertOk()
-            ->assertSee('Today Data 21')
-            ->assertSee('Today Data 22')
-            ->assertDontSee('Today Data 1');
+            ->assertSee('Today Data 11')
+            ->assertSee('Today Data 12')
+            ->assertDontSee('Today Data 10');
+    }
+
+    public function test_calendar_preview_page_filters_by_country_dropdown(): void
+    {
+        Carbon::setTestNow('2026-03-26 10:00:00');
+        Storage::fake('local');
+        Storage::disk('local')->put('cache/kalender.json', json_encode([
+            'status' => 'success',
+            'data' => [
+                [
+                    'id' => 1,
+                    'economic_calendar_category_id' => 20,
+                    'date' => '2026-03-26',
+                    'time' => '08:30',
+                    'figures' => 'US Data',
+                    'country' => 'USD',
+                    'impact' => 'High',
+                    'sources' => 'BLS',
+                ],
+                [
+                    'id' => 2,
+                    'economic_calendar_category_id' => 21,
+                    'date' => '2026-03-26',
+                    'time' => '09:00',
+                    'figures' => 'China Data',
+                    'country' => 'CHN',
+                    'impact' => 'Medium',
+                    'sources' => 'NBS',
+                ],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->get(route('calendar.preview', [
+                'period' => 'today',
+                'country' => 'US',
+            ]));
+
+        $response->assertOk()
+            ->assertSee('US Data')
+            ->assertDontSee('China Data')
+            ->assertSee('selected');
     }
 }

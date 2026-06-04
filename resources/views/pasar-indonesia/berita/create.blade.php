@@ -158,6 +158,23 @@
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div class="xl:col-span-3">
+                            <input type="hidden" name="beranda_api" value="0">
+                            <label for="beranda_api" class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="beranda_api" name="beranda_api" value="1"
+                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    {{ old('beranda_api', false) ? 'checked' : '' }}>
+                                <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">Kirim ke API
+                                    Beranda</span>
+                            </label>
+                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                                Centang jika berita ini harus ikut tampil di beranda website lain.
+                            </p>
+                            @error('beranda_api')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </section>

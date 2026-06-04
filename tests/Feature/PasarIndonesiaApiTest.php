@@ -6,6 +6,8 @@ use App\Models\PasarIndonesiaArticle;
 use App\Models\PasarIndonesiaCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PasarIndonesiaApiTest extends TestCase
@@ -109,5 +111,36 @@ class PasarIndonesiaApiTest extends TestCase
                 'slug' => 'saham',
                 'articles_count' => 1,
             ]);
+    }
+
+    public function test_pasar_indonesia_cache_json_includes_beranda_api_flag(): void
+    {
+        Storage::fake('local');
+
+        $author = $this->createAuthor();
+        $category = PasarIndonesiaCategory::query()
+            ->where('slug', 'makro-ekonomi')
+            ->firstOrFail();
+
+        PasarIndonesiaArticle::create([
+            'type' => 'berita',
+            'category' => $category->slug,
+            'image' => 'uploads/pasar-indonesia/berita/makro.jpg',
+            'title_id' => 'Berita Beranda',
+            'title_en' => 'Homepage News',
+            'notif' => true,
+            'beranda_api' => true,
+            'content_id' => 'Isi berita.',
+            'content_en' => 'News content.',
+            'author_id' => $author->id,
+            'source' => 'Desk Beranda',
+        ]);
+
+        Artisan::call('pasar-indonesia:cache-json');
+
+        $payload = json_decode(Storage::disk('local')->get('cache/pasar-indonesia.json'), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame(true, $payload['berita'][0]['beranda_api'] ?? null);
+        $this->assertSame(true, $payload['berita'][0]['notif'] ?? null);
     }
 }

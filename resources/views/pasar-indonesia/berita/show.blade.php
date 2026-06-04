@@ -67,6 +67,12 @@
                                 {{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d F Y H:i') }}
                             </p>
                         </div>
+                        <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">API Beranda</p>
+                            <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                {{ $item->beranda_api ? 'Aktif' : 'Tidak aktif' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </article>

@@ -111,6 +111,7 @@ class CachePasarIndonesiaJson extends Command
             'title_id' => $item->title_id,
             'title_en' => $item->title_en,
             'notif' => (bool) $item->notif,
+            'beranda_api' => (bool) $item->beranda_api,
             'content_id' => $item->content_id,
             'content_en' => $item->content_en,
             'category' => $mainCategory['slug'] ?? null,

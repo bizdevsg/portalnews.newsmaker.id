@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('image');
             $table->string('title_id', 150);
             $table->string('title_en', 150);
+            $table->boolean('notif')->default(false);
+            $table->boolean('beranda_api')->default(false);
             $table->string('slug', 180)->unique();
             $table->text('content_id');
             $table->text('content_en');

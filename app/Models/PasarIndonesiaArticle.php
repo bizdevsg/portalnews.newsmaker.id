@@ -38,6 +38,7 @@ class PasarIndonesiaArticle extends Model
         'title_id',
         'title_en',
         'notif',
+        'beranda_api',
         'slug',
         'content_id',
         'content_en',
@@ -48,6 +49,7 @@ class PasarIndonesiaArticle extends Model
 
     protected $casts = [
         'notif' => 'boolean',
+        'beranda_api' => 'boolean',
     ];
 
     protected static function boot()

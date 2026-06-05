@@ -41,7 +41,7 @@ class CachePasarIndonesiaJson extends Command
             'main_categories' => $mainCategories,
             'berita' => $berita,
             'analisis' => $analisis,
-            'generated_at' => now()->toISOString(),
+            'generated_at' => now(config('app.timezone'))->toIso8601String(),
         ];
 
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -125,8 +125,8 @@ class CachePasarIndonesiaJson extends Command
                 'name' => $item->author->name,
                 'email' => $item->author->email,
             ] : null,
-            'created_at' => optional($item->created_at)->toISOString(),
-            'updated_at' => optional($item->updated_at)->toISOString(),
+            'created_at' => optional($item->created_at)->timezone(config('app.timezone'))?->toIso8601String(),
+            'updated_at' => optional($item->updated_at)->timezone(config('app.timezone'))?->toIso8601String(),
         ];
     }
 

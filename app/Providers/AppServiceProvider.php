@@ -27,6 +27,7 @@ use App\Observers\IklanCacheObserver;
 use App\Observers\PivotObserver;
 use App\Observers\TiktokCacheObserver;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -57,5 +58,7 @@ class AppServiceProvider extends ServiceProvider
         Tiktok::observe(TiktokCacheObserver::class);
         PopupBanner::observe(PopupBannerCacheObserver::class);
         Iklan::observe(IklanCacheObserver::class);
+        URL::forceScheme('https');
+        URL::forceRootUrl(config('app.url'));
     }
 }

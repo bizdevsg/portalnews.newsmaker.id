@@ -22,14 +22,6 @@ class KalenderController extends Controller
      */
     public function index(Request $request, ?string $period = null): JsonResponse
     {
-        $data = $this->payloadService->getPreparedData();
-        if ($data === null) {
-            return response()->json(
-                ['status' => 'error', 'message' => 'Cache kalender belum tersedia.'],
-                503
-            );
-        }
-
         $period = $this->payloadService->normalizePeriod($period);
 
         if ($period !== null && !in_array($period, $this->payloadService->availablePeriods(), true)) {
@@ -40,17 +32,15 @@ class KalenderController extends Controller
             ], 404);
         }
 
-        if ($period !== null) {
-            $data = $this->payloadService->filterByPeriod($data, $period);
-        }
-
+        $data = $this->payloadService->fetchItems($period);
         $data = $this->payloadService->sortForApiByDateAndTime($data);
         $paginator = $this->paginateData($data, $request);
+        $items = $this->payloadService->attachHistoryForItems($paginator->items());
 
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $paginator->items(),
+                'data' => $items,
                 'meta' => array_merge(
                     $this->payloadService->buildMeta($period),
                     [
@@ -66,18 +56,13 @@ class KalenderController extends Controller
 
     public function periods(): JsonResponse
     {
-        $data = $this->payloadService->getPreparedData();
-        if ($data === null) {
-            return response()->json(
-                ['status' => 'error', 'message' => 'Cache kalender belum tersedia.'],
-                503
-            );
-        }
+        $groupedData = [];
 
-        $groupedData = array_map(
-            fn (array $items): array => $this->payloadService->sortForApiByDateAndTime($items),
-            $this->payloadService->groupByPeriods($data)
-        );
+        foreach ($this->payloadService->availablePeriods() as $period) {
+            $items = $this->payloadService->fetchItems($period);
+            $items = $this->payloadService->sortForApiByDateAndTime($items);
+            $groupedData[$period] = $this->payloadService->attachHistoryForItems($items);
+        }
 
         return response()->json(
             [

@@ -13,7 +13,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('berita:cache-json')->everyTenMinutes()->withoutOverlapping();
-        $schedule->command('kalender:cache-json')->everyTenMinutes()->withoutOverlapping();
         $schedule->command('pivot:cache-json')->everyTenMinutes()->withoutOverlapping();
         $schedule->command('newsmaker:cache-json')->everyTenMinutes()->withoutOverlapping();
         $schedule->command('pasar-indonesia:cache-json')->everyTenMinutes()->withoutOverlapping();

@@ -4,43 +4,73 @@ namespace App\Services;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class EconomicCalendarPayloadService
 {
     private const HISTORY_LIMIT = 5;
 
-    public function getCachePayload(string $path = 'cache/kalender.json'): ?array
+    private const LIST_COLUMNS = [
+        'id', 'economic_calendar_category_id', 'date', 'time', 'country', 'impact', 'figures',
+        'previous', 'forecast', 'actual', 'sources', 'measures', 'usual_effect', 'frequency',
+        'next_released', 'notes', 'isBankHoliday', 'bankHolidayNote', 'why_trader_care',
+        'created_at', 'updated_at',
+    ];
+
+    private const HISTORY_COLUMNS = [
+        'id', 'date', 'time', 'previous', 'forecast', 'actual', 'isBankHoliday', 'bankHolidayNote',
+    ];
+
+    /**
+     * Fetch rows straight from the database for the given period (or everything, if null).
+     * Reads go straight to the source of truth instead of a pre-built cache file, so the API
+     * is always consistent with the latest admin-panel edit — no rebuild delay.
+     */
+    public function fetchItems(?string $period): array
     {
-        if (!Storage::disk('local')->exists($path)) {
-            return null;
+        $query = DB::table('economic_calendars')->select(self::LIST_COLUMNS);
+
+        if ($period !== null) {
+            [$startDate, $endDate] = $this->resolveDateRange($period);
+            $query->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()]);
         }
 
-        $json = Storage::disk('local')->get($path);
-        if ($json === null || $json === '') {
-            return null;
-        }
-
-        $payload = json_decode($json, true);
-        if (!is_array($payload)) {
-            return null;
-        }
-
-        return $payload;
+        return $query->orderBy('date')->orderBy('id')
+            ->get()
+            ->map(fn (object $row) => $this->normalizeRow((array) $row))
+            ->all();
     }
 
-    public function getPreparedData(string $path = 'cache/kalender.json'): ?array
+    /**
+     * Attach the last N prior releases per category. Called only on the page actually being
+     * returned (not the whole table), so this stays cheap regardless of table size.
+     */
+    public function attachHistoryForItems(array $items): array
     {
-        $payload = $this->getCachePayload($path);
-        if ($payload === null) {
-            return null;
+        foreach ($items as $index => $item) {
+            $categoryId = $item['economic_calendar_category_id'] ?? null;
+            $date = $item['date'] ?? null;
+
+            if (empty($categoryId) || empty($date)) {
+                $items[$index]['history'] = [];
+
+                continue;
+            }
+
+            $items[$index]['history'] = DB::table('economic_calendars')
+                ->select(self::HISTORY_COLUMNS)
+                ->where('economic_calendar_category_id', $categoryId)
+                ->where('date', '<', $date)
+                ->orderByDesc('date')
+                ->orderByDesc('id')
+                ->limit(self::HISTORY_LIMIT)
+                ->get()
+                ->map(fn (object $row) => $this->makeHistoryPayload((array) $row))
+                ->values()
+                ->all();
         }
 
-        return $this->attachHistory(
-            $this->sortCalendarData(
-                $this->normalizeCalendarData($payload['data'] ?? [])
-            )
-        );
+        return $items;
     }
 
     public function availablePeriods(): array
@@ -52,7 +82,7 @@ class EconomicCalendarPayloadService
     {
         $meta = [
             'timezone' => config('app.timezone'),
-            'generated_at' => $this->resolveGeneratedAt(),
+            'generated_at' => now()->toIso8601String(),
             'available_periods' => $this->availablePeriods(),
         ];
 
@@ -73,7 +103,7 @@ class EconomicCalendarPayloadService
     {
         $meta = [
             'timezone' => config('app.timezone'),
-            'generated_at' => $this->resolveGeneratedAt(),
+            'generated_at' => now()->toIso8601String(),
             'periods' => [],
         ];
 
@@ -133,64 +163,6 @@ class EconomicCalendarPayloadService
         };
     }
 
-    public function filterByPeriod(array $data, string $period): array
-    {
-        [$startDate, $endDate] = $this->resolveDateRange($period);
-
-        return $this->filterByRange($data, $startDate, $endDate);
-    }
-
-    public function filterByRange(array $data, CarbonImmutable $startDate, CarbonImmutable $endDate): array
-    {
-        return array_values(array_filter($data, function (array $item) use ($startDate, $endDate): bool {
-            if (empty($item['date'])) {
-                return false;
-            }
-
-            try {
-                $itemDate = CarbonImmutable::parse((string) $item['date'], config('app.timezone'));
-            } catch (\Throwable) {
-                return false;
-            }
-
-            return $itemDate->betweenIncluded($startDate, $endDate);
-        }));
-    }
-
-    public function groupByPeriods(array $data): array
-    {
-        $groupedData = [];
-
-        foreach ($this->availablePeriods() as $period) {
-            $groupedData[$period] = array_values($this->filterByPeriod($data, $period));
-        }
-
-        return $groupedData;
-    }
-
-    private function resolveGeneratedAt(string $path = 'cache/kalender.json'): string
-    {
-        $payload = $this->getCachePayload($path);
-
-        $payloadGeneratedAt = $payload['generated_at'] ?? $payload['meta']['generated_at'] ?? null;
-        if (is_string($payloadGeneratedAt) && trim($payloadGeneratedAt) !== '') {
-            try {
-                return CarbonImmutable::parse($payloadGeneratedAt, config('app.timezone'))->toIso8601String();
-            } catch (\Throwable) {
-                // Fallback to file timestamp below.
-            }
-        }
-
-        if (Storage::disk('local')->exists($path)) {
-            return CarbonImmutable::createFromTimestamp(
-                Storage::disk('local')->lastModified($path),
-                config('app.timezone')
-            )->toIso8601String();
-        }
-
-        return now()->toIso8601String();
-    }
-
     public function sortForApiByDateAndTime(array $data): array
     {
         usort($data, function (array $first, array $second): int {
@@ -223,112 +195,24 @@ class EconomicCalendarPayloadService
         return $data;
     }
 
-    private function sortCalendarData(array $data): array
+    private function normalizeRow(array $row): array
     {
-        usort($data, function (array $first, array $second): int {
-            $dateComparison = strcmp((string) ($first['date'] ?? ''), (string) ($second['date'] ?? ''));
-            if ($dateComparison !== 0) {
-                return $dateComparison;
-            }
+        $row['isBankHoliday'] = (bool) ($row['isBankHoliday'] ?? false);
 
-            $timeComparison = strcmp((string) ($first['time'] ?? ''), (string) ($second['time'] ?? ''));
-            if ($timeComparison !== 0) {
-                return $timeComparison;
-            }
-
-            return ($first['id'] ?? 0) <=> ($second['id'] ?? 0);
-        });
-
-        return $data;
+        return $row;
     }
 
-    private function normalizeCalendarData(array $data): array
-    {
-        return array_map(function ($item): array {
-            if (!is_array($item)) {
-                return [];
-            }
-
-            if (array_key_exists('date', $item)) {
-                $item['date'] = $this->normalizeDateValue($item['date']);
-            }
-
-            return $item;
-        }, $data);
-    }
-
-    private function normalizeDateValue(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        $stringValue = (string) $value;
-
-        if (preg_match('/^\d{4}-\d{2}-\d{2}/', $stringValue, $matches) === 1) {
-            return $matches[0];
-        }
-
-        try {
-            return CarbonImmutable::parse($stringValue)->toDateString();
-        } catch (\Throwable) {
-            return $stringValue;
-        }
-    }
-
-    private function attachHistory(array $data): array
-    {
-        $groupedHistory = [];
-
-        foreach ($data as $index => $item) {
-            $groupKey = $this->historyGroupKey($item);
-            $currentDate = (string) ($item['date'] ?? '');
-            $previousItems = $groupedHistory[$groupKey] ?? [];
-
-            $historyItems = array_slice(array_values(array_reverse(array_filter($previousItems, function (array $historyItem) use ($currentDate): bool {
-                $historyDate = (string) ($historyItem['date'] ?? '');
-
-                return $currentDate !== '' && $historyDate !== '' && $historyDate < $currentDate;
-            }))), 0, self::HISTORY_LIMIT);
-
-            $data[$index]['history'] = array_values(array_map(
-                fn (array $historyItem): array => $historyItem['payload'],
-                $historyItems
-            ));
-
-            $groupedHistory[$groupKey][] = [
-                'date' => $item['date'] ?? null,
-                'payload' => $this->makeHistoryPayload($item),
-            ];
-        }
-
-        return $data;
-    }
-
-    private function historyGroupKey(array $item): string
-    {
-        if (!empty($item['economic_calendar_category_id'])) {
-            return 'category:' . $item['economic_calendar_category_id'];
-        }
-
-        return implode('|', [
-            strtoupper((string) ($item['country'] ?? '')),
-            strtolower((string) ($item['impact'] ?? '')),
-            trim((string) ($item['figures'] ?? '')),
-        ]);
-    }
-
-    private function makeHistoryPayload(array $item): array
+    private function makeHistoryPayload(array $row): array
     {
         return [
-            'id' => $item['id'] ?? null,
-            'date' => $item['date'] ?? null,
-            'time' => $item['time'] ?? null,
-            'previous' => $item['previous'] ?? null,
-            'forecast' => $item['forecast'] ?? null,
-            'actual' => $item['actual'] ?? null,
-            'isBankHoliday' => $item['isBankHoliday'] ?? false,
-            'bankHolidayNote' => $item['bankHolidayNote'] ?? null,
+            'id' => $row['id'] ?? null,
+            'date' => $row['date'] ?? null,
+            'time' => $row['time'] ?? null,
+            'previous' => $row['previous'] ?? null,
+            'forecast' => $row['forecast'] ?? null,
+            'actual' => $row['actual'] ?? null,
+            'isBankHoliday' => (bool) ($row['isBankHoliday'] ?? false),
+            'bankHolidayNote' => $row['bankHolidayNote'] ?? null,
         ];
     }
 

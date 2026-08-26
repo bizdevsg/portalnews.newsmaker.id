@@ -7,6 +7,7 @@ use App\Services\EconomicCalendarPayloadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -212,6 +213,11 @@ class EconomicCalendarController extends Controller
 
         $calendarCategory->update($validatedData);
         $calendarCategory->details()->update($calendarCategory->syncedDetailAttributes());
+
+        // details()->update() is a mass update, so it doesn't fire model events —
+        // the observer-driven cache refresh from $calendarCategory->update() above
+        // already ran before this line, so it still holds the stale detail values.
+        Artisan::call('kalender:cache-json');
 
         return redirect()
             ->route('calendar.show', $calendarCategory)

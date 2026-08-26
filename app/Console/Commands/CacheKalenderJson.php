@@ -46,7 +46,13 @@ class CacheKalenderJson extends Command
         }
 
         $path = $this->option('path');
-        Storage::disk('local')->put($path, $json);
+        $written = Storage::disk('local')->put($path, $json);
+
+        if (! $written) {
+            $this->error('Failed to write Kalender JSON cache to storage/app/'.$path.' (check file permissions/ownership).');
+
+            return self::FAILURE;
+        }
 
         $this->info('Kalender JSON cache saved to storage/app/' . $path);
         return self::SUCCESS;

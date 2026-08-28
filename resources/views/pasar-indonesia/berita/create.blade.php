@@ -190,21 +190,6 @@
 
                     <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
                         <div>
-                            <label for="title_id"
-                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                Judul Indonesia
-                            </label>
-                            <input type="text" id="title_id" name="title_id" value="{{ old('title_id') }}"
-                                placeholder="Masukkan judul Indonesia"
-                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_id') border-rose-500 @enderror"
-                                required>
-                            @error('title_id')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                        <div>
                             <label for="title_en"
                                 class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Judul Inggris
@@ -214,6 +199,21 @@
                                 class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_en') border-rose-500 @enderror"
                                 required>
                             @error('title_en')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="title_id"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                Judul Indonesia
+                            </label>
+                            <input type="text" id="title_id" name="title_id" value="{{ old('title_id') }}"
+                                placeholder="Masukkan judul Indonesia"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('title_id') border-rose-500 @enderror"
+                                required>
+                            @error('title_id')
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
                                 </p>
                             @enderror
@@ -235,21 +235,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-6">
                         <div
                             class="rounded-[24px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
-                            <label for="content_id"
-                                class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                Isi Indonesia
-                            </label>
-                            <textarea id="content_id" name="content_id" rows="10"
-                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_id') border-rose-500 @enderror"
-                                placeholder="Masukkan isi berita Indonesia...">{{ old('content_id') }}</textarea>
-                            @error('content_id')
-                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                        <div
-                            class="rounded-[24px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
                             <label for="content_en"
                                 class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 Isi Inggris
@@ -258,6 +243,21 @@
                                 class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_en') border-rose-500 @enderror"
                                 placeholder="Masukkan isi berita Inggris...">{{ old('content_en') }}</textarea>
                             @error('content_en')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div
+                            class="rounded-[24px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+                            <label for="content_id"
+                                class="mb-3 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                Isi Indonesia
+                            </label>
+                            <textarea id="content_id" name="content_id" rows="10"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('content_id') border-rose-500 @enderror"
+                                placeholder="Masukkan isi berita Indonesia...">{{ old('content_id') }}</textarea>
+                            @error('content_id')
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
                                 </p>
                             @enderror

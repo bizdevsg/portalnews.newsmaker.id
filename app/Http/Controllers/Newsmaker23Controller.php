@@ -15,8 +15,8 @@ class Newsmaker23Controller extends Controller
     public const FEATURED_CATEGORY_SLUGS = [
         'gold',
         'oil',
-        'hong-kong',
-        'japan',
+        'hang-seng',
+        'nikkei',
         'global-economy',
         'fiscal-monetary',
         'audusd',

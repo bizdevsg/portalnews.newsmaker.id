@@ -65,8 +65,9 @@
             @else
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     @foreach ($categories as $category)
+                        @php($isFeatured = in_array($category->slug, $featuredOrder ?? [], true))
                         <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $category->name }}</p>
+                            <p class="text-sm font-semibold {{ $isFeatured ? 'text-red-600 dark:text-red-500' : 'text-slate-900 dark:text-slate-100' }}">{{ $category->name }}</p>
                             <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $category->articles_count }} berita</p>
 
                             <form id="delete-category-form-{{ $category->id }}" action="{{ route('newsmaker23.main-category.destroy', $category->id) }}" method="POST" class="hidden">

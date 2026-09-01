@@ -17,6 +17,7 @@ class Newsmaker23Controller extends Controller
         'oil',
         'hang-seng',
         'nikkei',
+        'market-update',
         'global-economy',
         'fiscal-monetary',
         'audusd',

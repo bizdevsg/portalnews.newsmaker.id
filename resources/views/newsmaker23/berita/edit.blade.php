@@ -97,11 +97,11 @@
                                 Gambar utama
                             </label>
                             <input type="file" id="image" name="image" accept="image/*"
+                                data-preview="image-preview"
                                 class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition file:mr-4 file:rounded-xl file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('image') border-rose-500 @enderror">
-                            @if ($article->image)
-                                <img src="{{ asset($article->image) }}" alt="{{ $article->title_id }}"
-                                    class="mt-4 h-40 w-full rounded-2xl object-cover">
-                            @endif
+                            <img id="image-preview" @if ($article->image) src="{{ asset($article->image) }}" @endif
+                                alt="{{ $article->title_id }}"
+                                class="mt-4 h-40 w-full rounded-2xl object-cover @unless ($article->image) hidden @endunless">
                             @error('image')
                                 <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                             @enderror
@@ -395,6 +395,27 @@
                         const $el = jQuery(this);
                         $el.val($el.summernote('code'));
                     });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('input[type="file"][data-preview]').forEach((input) => {
+            input.addEventListener('change', (event) => {
+                const file = event.target.files && event.target.files[0];
+                const preview = document.getElementById(event.target.getAttribute('data-preview'));
+
+                if (!preview) {
+                    return;
+                }
+
+                if (file && file.type.startsWith('image/')) {
+                    preview.src = URL.createObjectURL(file);
+                    preview.classList.remove('hidden');
+                } else {
+                    preview.src = '';
+                    preview.classList.add('hidden');
                 }
             });
         });

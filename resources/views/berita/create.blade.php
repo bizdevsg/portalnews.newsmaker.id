@@ -143,7 +143,7 @@
                 <div class="mb-4">
                     <label for="content" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Isi
                         Berita</label>
-                    <textarea id="content" name="content" class="w-full h-48 dark:bg-gray-800"></textarea>
+                    <textarea id="content" name="content" class="w-full h-48 dark:bg-gray-800">{{ old('content') }}</textarea>
 
                     @error('content')
                         <p class=" text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -356,5 +356,7 @@
                 });
             });
         </script>
+
+        @include('partials.image-size-guard')
     </div>
 </x-app-layout>

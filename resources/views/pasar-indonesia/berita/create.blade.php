@@ -437,4 +437,6 @@
             });
         });
     </script>
+
+    @include('partials.image-size-guard')
 </x-app-layout>

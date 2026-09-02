@@ -392,5 +392,7 @@
                 });
             });
         </script>
+
+        @include('partials.image-size-guard')
     </div>
 </x-app-layout>

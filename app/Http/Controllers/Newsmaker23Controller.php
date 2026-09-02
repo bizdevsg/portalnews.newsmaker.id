@@ -20,6 +20,7 @@ class Newsmaker23Controller extends Controller
         'market-update',
         'global-economy',
         'fiscal-monetary',
+        'us-dollar',
         'audusd',
         'eurusd',
         'gbpusd',

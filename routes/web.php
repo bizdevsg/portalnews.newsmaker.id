@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\BreakingNewsCategoryController;
 use App\Http\Controllers\BreakingNewsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
@@ -115,7 +116,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         });
 
         Route::prefix('breaking-news')->name('breaking-news.')->group(function () {
-            Route::get('/', [BreakingNewsController::class, 'index'])->name('index');
+            Route::get('/', [BreakingNewsCategoryController::class, 'index'])->name('index');
+            Route::get('/tambah', [BreakingNewsCategoryController::class, 'create'])->name('create');
+            Route::post('/store', [BreakingNewsCategoryController::class, 'store'])->name('store');
+            Route::get('/{slug}', [BreakingNewsCategoryController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [BreakingNewsCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [BreakingNewsCategoryController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [BreakingNewsCategoryController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('breaking-news-artikel')->name('breaking-news-artikel.')->group(function () {
             Route::get('/tambah', [BreakingNewsController::class, 'create'])->name('create');
             Route::post('/store', [BreakingNewsController::class, 'store'])->name('store');
             Route::get('/{id}/show', [BreakingNewsController::class, 'show'])->name('show');

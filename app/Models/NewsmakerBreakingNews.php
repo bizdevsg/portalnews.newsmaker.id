@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * Berdiri sendiri, tidak terhubung ke NewsmakerMainCategory/NewsmakerArticle.
+ * Dikelompokkan oleh BreakingNewsCategory miliknya sendiri - tidak
+ * terhubung sama sekali ke NewsmakerMainCategory/NewsmakerArticle.
  */
 class NewsmakerBreakingNews extends Model
 {
@@ -16,6 +17,7 @@ class NewsmakerBreakingNews extends Model
     protected $table = 'newsmaker_breaking_news';
 
     protected $fillable = [
+        'breaking_news_category_id',
         'image',
         'title_id',
         'title_en',
@@ -51,6 +53,11 @@ class NewsmakerBreakingNews extends Model
     public function authorUser()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function breakingNewsCategory()
+    {
+        return $this->belongsTo(BreakingNewsCategory::class, 'breaking_news_category_id');
     }
 
     private static function generateUniqueSlug(?string $title, ?int $ignoreId = null, $date = null): string

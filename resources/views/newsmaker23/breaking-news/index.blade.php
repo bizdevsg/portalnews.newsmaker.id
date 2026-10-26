@@ -1,4 +1,4 @@
-@section('namePage', 'Breaking News')
+@section('namePage', 'Kategori Breaking News')
 
 <x-app-layout>
     <div class="w-full px-4 py-8 sm:px-6 lg:px-8">
@@ -8,8 +8,9 @@
                     <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Newsmaker23</p>
                     <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Breaking News</h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Modul berdiri sendiri, terpisah dari kategori biasa - datanya tidak terhubung ke sistem
-                        kategori Newsmaker23.
+                        Modul berdiri sendiri dengan sistem yang sama seperti Kategori biasa: kelola kategori Breaking
+                        News di sini, lalu tambah berita dari halaman detail tiap kategori. Terpisah total dari sistem
+                        kategori Newsmaker23 yang lain.
                     </p>
                 </div>
 
@@ -22,8 +23,7 @@
                     <a
                         href="{{ route('newsmaker23.breaking-news.create') }}"
                         class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
-                        <i class="fa-solid fa-plus mr-2"></i>
-                        Tambah Breaking News
+                        Tambah Kategori
                     </a>
                 </div>
             </div>
@@ -41,52 +41,54 @@
             </div>
         @endif
 
+        @if (session('info'))
+            <div id="infoAlert" class="mt-6 flex items-start justify-between gap-4 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-blue-700 shadow-sm dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-200">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                    <p class="text-sm font-medium leading-6">{{ session('info') }}</p>
+                </div>
+                <button type="button" id="closeInfoAlert" class="inline-flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-blue-100 dark:hover:bg-blue-500/10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        @endif
+
         <section class="mt-6">
-            @if ($items->isEmpty())
+            @if ($categories->isEmpty())
                 <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
                     <img src="{{ asset('assets/hand-drawn-no-data-concept.png') }}" alt="No Data" class="mx-auto h-40 object-contain">
-                    <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">Belum ada Breaking News.</p>
+                    <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">Belum ada kategori Breaking News.</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    @foreach ($items as $item)
-                        <article class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                            <img src="{{ asset($item->image) }}" alt="{{ $item->title_id }}" class="h-48 w-full rounded-t-2xl object-cover">
+                    @foreach ($categories as $category)
+                        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <p class="text-sm font-semibold text-rose-600 dark:text-rose-400">{{ $category->name }}</p>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $category->breaking_news_count }} berita</p>
 
-                            <div class="p-5">
-                                <p class="text-xs font-semibold uppercase text-rose-600 dark:text-rose-400">Breaking News</p>
-                                <h2 class="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">{{ $item->title_id }}</h2>
-                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $item->title_en }}</p>
+                            <form id="delete-category-form-{{ $category->id }}" action="{{ route('newsmaker23.breaking-news.destroy', $category->id) }}" method="POST" class="hidden">
+                                @csrf
+                                @method('DELETE')
+                            </form>
 
-                                <div class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $item->author_initial ?? $item->author ?? $item->authorUser?->name ?? '-' }}</p>
-                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Source:</span> {{ $item->source }}</p>
-                                </div>
-
-                                <form id="delete-form-{{ $item->id }}" action="{{ route('newsmaker23.breaking-news.destroy', $item->id) }}" method="POST" class="hidden">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-
-                                <div class="mt-5 grid grid-cols-3 gap-3">
-                                    <a
-                                        href="{{ route('newsmaker23.breaking-news.show', $item->id) }}"
-                                        class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-                                        Preview
-                                    </a>
-                                    <a
-                                        href="{{ route('newsmaker23.breaking-news.edit', $item->id) }}"
-                                        class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">
-                                        Edit
-                                    </a>
-                                    <button
-                                        type="button"
-                                        class="js-delete-trigger inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700"
-                                        data-delete-form="delete-form-{{ $item->id }}"
-                                        data-delete-title="{{ $item->title_id }}">
-                                        Hapus
-                                    </button>
-                                </div>
+                            <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                <a
+                                    href="{{ route('newsmaker23.breaking-news.show', $category->slug) }}"
+                                    class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 sm:col-span-3">
+                                    Lihat Berita
+                                </a>
+                                <a
+                                    href="{{ route('newsmaker23.breaking-news.edit', $category->id) }}"
+                                    class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 sm:col-span-2">
+                                    Edit
+                                </a>
+                                <button
+                                    type="button"
+                                    class="js-delete-category inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700"
+                                    data-delete-form="delete-category-form-{{ $category->id }}"
+                                    data-delete-name="{{ $category->name }}">
+                                    Hapus
+                                </button>
                             </div>
                         </article>
                     @endforeach
@@ -95,18 +97,18 @@
         </section>
     </div>
 
-    <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 px-4" aria-hidden="true">
+    <div id="deleteCategoryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 px-4" aria-hidden="true">
         <div class="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900 md:w-[28rem]">
-            <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Hapus Breaking News</h2>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Hapus Kategori Breaking News</h2>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                Artikel <span id="deleteItemTitle" class="font-semibold text-slate-900 dark:text-slate-100"></span> akan dihapus.
+                Kategori <span id="deleteCategoryName" class="font-semibold text-slate-900 dark:text-slate-100"></span> akan dihapus beserta artikelnya.
             </p>
 
             <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <button type="button" id="cancelDeleteButton" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+                <button type="button" id="cancelDeleteCategoryButton" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
                     Batal
                 </button>
-                <button type="button" id="confirmDeleteButton" class="inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:opacity-70">
+                <button type="button" id="confirmDeleteCategoryButton" class="inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:opacity-70">
                     Hapus
                 </button>
             </div>
@@ -115,76 +117,87 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const deleteModal = document.getElementById('deleteModal');
-            const deleteItemTitle = document.getElementById('deleteItemTitle');
-            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-            const cancelDeleteButton = document.getElementById('cancelDeleteButton');
-            const closeSuccessAlertButton = document.getElementById('closeSuccessAlert');
+            const deleteModal = document.getElementById('deleteCategoryModal');
+            const deleteName = document.getElementById('deleteCategoryName');
+            const confirmButton = document.getElementById('confirmDeleteCategoryButton');
+            const cancelButton = document.getElementById('cancelDeleteCategoryButton');
             const successAlert = document.getElementById('successAlert');
-            const deleteTriggers = document.querySelectorAll('.js-delete-trigger');
+            const closeSuccessAlert = document.getElementById('closeSuccessAlert');
+            const infoAlert = document.getElementById('infoAlert');
+            const closeInfoAlert = document.getElementById('closeInfoAlert');
+            const deleteButtons = document.querySelectorAll('.js-delete-category');
 
             let activeDeleteForm = null;
 
-            const openDeleteModal = (formId, title) => {
+            const openModal = (formId, name) => {
                 const form = document.getElementById(formId);
-                if (!deleteModal || !deleteItemTitle || !form) {
+                if (!deleteModal || !deleteName || !form) {
                     return;
                 }
 
                 activeDeleteForm = form;
-                deleteItemTitle.textContent = title || '';
-                confirmDeleteButton.disabled = false;
-                confirmDeleteButton.textContent = 'Hapus';
+                deleteName.textContent = name || '';
+                confirmButton.disabled = false;
+                confirmButton.textContent = 'Hapus';
                 deleteModal.classList.remove('hidden');
                 deleteModal.classList.add('flex');
                 document.body.classList.add('overflow-hidden');
             };
 
-            const closeDeleteModal = () => {
+            const closeModal = () => {
                 activeDeleteForm = null;
                 deleteModal?.classList.add('hidden');
                 deleteModal?.classList.remove('flex');
                 document.body.classList.remove('overflow-hidden');
             };
 
-            deleteTriggers.forEach((button) => {
+            deleteButtons.forEach((button) => {
                 button.addEventListener('click', () => {
-                    openDeleteModal(button.dataset.deleteForm, button.dataset.deleteTitle);
+                    openModal(button.dataset.deleteForm, button.dataset.deleteName);
                 });
             });
 
-            confirmDeleteButton?.addEventListener('click', () => {
+            confirmButton?.addEventListener('click', () => {
                 if (!activeDeleteForm) {
-                    closeDeleteModal();
+                    closeModal();
                     return;
                 }
 
-                confirmDeleteButton.disabled = true;
-                confirmDeleteButton.textContent = 'Menghapus...';
+                confirmButton.disabled = true;
+                confirmButton.textContent = 'Menghapus...';
                 activeDeleteForm.submit();
             });
 
-            cancelDeleteButton?.addEventListener('click', closeDeleteModal);
+            cancelButton?.addEventListener('click', closeModal);
 
             deleteModal?.addEventListener('click', (event) => {
                 if (event.target === deleteModal) {
-                    closeDeleteModal();
+                    closeModal();
                 }
             });
 
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape') {
-                    closeDeleteModal();
+                    closeModal();
                 }
             });
 
-            closeSuccessAlertButton?.addEventListener('click', () => {
+            closeSuccessAlert?.addEventListener('click', () => {
                 if (!successAlert) {
                     return;
                 }
 
                 successAlert.style.opacity = '0';
                 setTimeout(() => successAlert.remove(), 300);
+            });
+
+            closeInfoAlert?.addEventListener('click', () => {
+                if (!infoAlert) {
+                    return;
+                }
+
+                infoAlert.style.opacity = '0';
+                setTimeout(() => infoAlert.remove(), 300);
             });
         });
     </script>

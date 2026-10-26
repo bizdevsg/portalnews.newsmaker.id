@@ -368,6 +368,67 @@ Dikelola dari dashboard admin: menu **Newsmaker 23 → Jadwal Live** (`/newsmake
 
 ---
 
+### 3.11 Breaking News (`BreakingNewsController`)
+
+Modul berdiri sendiri (tabel `breaking_news_categories` + `newsmaker_breaking_news`), **tidak** terhubung ke kategori/artikel Newsmaker23 biasa. Semua endpoint di sini **query langsung ke DB** (bukan cache JSON) supaya breaking news selalu up to date.
+
+#### GET `/v1/newsmaker/breaking-news/kategori`
+List semua kategori Breaking News beserta jumlah beritanya.
+
+- Sukses → `200 { "status": "success", "data": [{ "id", "name", "slug", "articles_count" }, ...] }`
+
+#### GET `/v1/newsmaker/breaking-news`
+List semua berita Breaking News (semua kategori), paginated 20/halaman, urut terbaru. **Tidak** menyertakan `content_id`/`content_en` (biar ringan).
+
+Query params: `page` (int, default 1).
+
+- Sukses → `200 { "status": "success", "data": [...], "meta": { "pagination": {...} } }`
+
+#### GET `/v1/newsmaker/breaking-news/{slug_kategori}`
+Sama seperti di atas, tapi difilter ke 1 kategori Breaking News.
+
+- Kategori tidak ketemu → `404 { "status": "error", "message": "Kategori Breaking News tidak ditemukan." }`
+- Sukses → `200 { "status": "success", "category": { "id", "name", "slug" }, "data": [...], "meta": {...} }`
+
+#### GET `/v1/newsmaker/breaking-news/show/{slug_berita}`
+Detail 1 berita Breaking News (regex slug `[A-Za-z0-9-]+`). Menyertakan `content_id`/`content_en`.
+
+- Tidak ketemu → `404 { "status": "error", "message": "Breaking News tidak ditemukan." }`
+- Sukses:
+```json
+{
+  "status": "success",
+  "data": {
+    "id": 5,
+    "slug": "26102026-contoh-judul",
+    "breaking_news_category_id": 7,
+    "author_id": null,
+    "image": "uploads/newsmaker23/breaking-news/xxx.jpg",
+    "image_url": "https://portalnews.newsmaker.id/uploads/newsmaker23/breaking-news/xxx.jpg",
+    "title_id": "Judul Indonesia",
+    "title_en": "English Title",
+    "notif": false,
+    "author": "MRV",
+    "author_initial": "MRV",
+    "author_user": null,
+    "source": "Sumber berita",
+    "start_time": "09:00",
+    "end_time": "15:00",
+    "breaking_news_category": { "id": 7, "name": "Nama Kategori", "slug": "nama-kategori" },
+    "created_at": "...",
+    "updated_at": "...",
+    "content_id": "<p>Isi berita bahasa Indonesia...</p>",
+    "content_en": "<p>News content in English...</p>"
+  }
+}
+```
+
+`start_time`/`end_time` adalah rentang jam relevan berita itu (format `HH:mm`), diisi dari dashboard admin saat tambah/edit berita.
+
+Dikelola dari dashboard admin: menu **Newsmaker 23 → Breaking News** (`/newsmaker23/breaking-news`) - sistemnya sama seperti Kategori biasa (grid kategori → detail kategori → Tambah Berita), hanya datanya terpisah total.
+
+---
+
 ## 4. Ringkasan Semua Endpoint
 
 | # | Method | Endpoint | Controller | Sumber Data |
@@ -394,8 +455,12 @@ Dikelola dari dashboard admin: menu **Newsmaker 23 → Jadwal Live** (`/newsmake
 | 20 | GET | `/v1/newsmaker/pasar-indonesia/regulasi-institusi` | PasarIndonesiaRegulasiInstitusiArticleController | Cache `pasar-indonesia-regulasi-institusi.json` |
 | 21 | GET | `/v1/newsmaker/pasar-indonesia/regulasi-institusi/{slug}` | PasarIndonesiaRegulasiInstitusiArticleController | Cache `pasar-indonesia-regulasi-institusi.json` |
 | 22 | GET | `/v1/newsmaker/live-schedule` | NewsmakerLiveScheduleController | Cache `live-schedule.json` → fallback DB |
+| 23 | GET | `/v1/newsmaker/breaking-news/kategori` | BreakingNewsController | DB (`breaking_news_categories`) |
+| 24 | GET | `/v1/newsmaker/breaking-news` | BreakingNewsController | DB (`newsmaker_breaking_news`) |
+| 25 | GET | `/v1/newsmaker/breaking-news/{slug_kategori}` | BreakingNewsController | DB — filter per kategori |
+| 26 | GET | `/v1/newsmaker/breaking-news/show/{slug_berita}` | BreakingNewsController | DB — detail by slug |
 
-**Total: 22 endpoint** (2 di grup "5 PT" + 20 di grup "Newsmaker 23").
+**Total: 26 endpoint** (2 di grup "5 PT" + 24 di grup "Newsmaker 23").
 
 ---
 

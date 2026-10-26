@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BeritaController;
+use App\Http\Controllers\Api\BreakingNewsController;
 use App\Http\Controllers\Api\IklanController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\NewsmakerArticleController;
@@ -41,6 +42,13 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
                 Route::get('/berita', [NewsmakerArticleController::class, 'index']);
                 Route::get('/berita/{slug}', [NewsmakerArticleController::class, 'byCategory']);
                 Route::get('/berita/show/{slug}', [NewsmakerArticleController::class, 'show'])
+                    ->where('slug', '[A-Za-z0-9-]+');
+
+                Route::get('/breaking-news/kategori', [BreakingNewsController::class, 'categories']);
+                Route::get('/breaking-news', [BreakingNewsController::class, 'index']);
+                Route::get('/breaking-news/show/{slug}', [BreakingNewsController::class, 'show'])
+                    ->where('slug', '[A-Za-z0-9-]+');
+                Route::get('/breaking-news/{slug}', [BreakingNewsController::class, 'byCategory'])
                     ->where('slug', '[A-Za-z0-9-]+');
 
                 Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);

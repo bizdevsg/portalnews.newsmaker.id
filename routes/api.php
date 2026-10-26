@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\IklanController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\NewsmakerArticleController;
+use App\Http\Controllers\Api\NewsmakerLiveScheduleController;
 use App\Http\Controllers\Api\NewsmakerVideoBriefingController;
 use App\Http\Controllers\Api\PasarIndonesiaArticleController;
 use App\Http\Controllers\Api\PasarIndonesiaRegulasiInstitusiArticleController;
@@ -51,6 +52,7 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
 
                 Route::get('/tiktok', [TiktokController::class, 'index']);
                 Route::get('/video-briefing', [NewsmakerVideoBriefingController::class, 'index']);
+                Route::get('/live-schedule', [NewsmakerLiveScheduleController::class, 'index']);
                 Route::get('/popup-banner', [PopupBannerController::class, 'index']);
                 Route::get('/iklan', [IklanController::class, 'index']);
 

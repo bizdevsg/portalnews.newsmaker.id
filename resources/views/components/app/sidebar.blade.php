@@ -48,6 +48,12 @@
                         'active' => request()->routeIs('newsmaker23.video-briefing.*'),
                     ],
                     [
+                        'label' => 'Jadwal Live',
+                        'route' => 'newsmaker23.live-schedule.index',
+                        'icon' => 'fa-solid fa-tower-broadcast',
+                        'active' => request()->routeIs('newsmaker23.live-schedule.*'),
+                    ],
+                    [
                         'label' => 'Kalender Ekonomi',
                         'route' => 'calendar.index',
                         'icon' => 'fa-solid fa-calendar-days',

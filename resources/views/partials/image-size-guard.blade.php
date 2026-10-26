@@ -6,7 +6,9 @@
      dulu sebelum form dikirim, jadi gambar yang sudah dipilih tidak hilang
      gara-gara ada gambar lain yang belum diisi, formatnya salah, atau
      kegedean. Pada form edit, kolom gambar yang dibiarkan kosong berarti
-     memakai gambar lama. --}}
+     memakai gambar lama. Beri atribut `data-optional` pada input yang memang
+     opsional di form tambah (misal thumbnail jadwal live) supaya tidak kena
+     aturan "wajib diisi di form tambah" ini. --}}
 <script>
     (function () {
         const MAX_BYTES = 2 * 1024 * 1024;
@@ -56,7 +58,8 @@
                     const file = input.files && input.files[0];
 
                     if (!file) {
-                        if (input.hasAttribute('required') || !isEditForm) {
+                        const optional = input.hasAttribute('data-optional');
+                        if (!optional && (input.hasAttribute('required') || !isEditForm)) {
                             problems.push([input, 'Gambar ini belum dipilih. Lengkapi dulu — gambar lain yang sudah dipilih tidak akan hilang.']);
                         }
                         return;

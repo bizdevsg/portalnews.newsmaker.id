@@ -299,6 +299,54 @@ Cache belum ada (kedua endpoint) → `503 { "status": "error", "message": "Cache
 
 ---
 
+### 3.10 Jadwal Live (`NewsmakerLiveScheduleController`)
+
+#### GET `/v1/newsmaker/live-schedule`
+Jadwal live mingguan Newsmaker 23, diurutkan otomatis Senin → Minggu (lalu `sort_order`, lalu `start_time`). Sumber data: cache `storage/app/cache/live-schedule.json` (fallback query langsung ke tabel `newsmaker_live_schedules` + tulis ulang cache kalau file cache belum ada).
+
+Query params:
+| Param | Tipe | Default | Keterangan |
+|---|---|---|---|
+| `day` | string | – | Filter 1 hari, mis. `Senin` (case-insensitive, harus salah satu dari `Senin, Selasa, Rabu, Kamis, Jumat, Sabtu, Minggu`) |
+| `all` | bool | `0` | `1` untuk ikut tampilkan jadwal yang `is_active = false` (dipakai dashboard admin, bukan untuk konsumsi publik) |
+
+- Tabel belum ada (migrasi belum jalan) → `503 { "status": "error", "message": "Tabel Jadwal Live belum tersedia. Jalankan migrasi terlebih dahulu." }`
+- Sukses:
+```json
+{
+  "status": "success",
+  "message": "Data Jadwal Live berhasil diambil",
+  "data": [
+    {
+      "id": 1,
+      "title": "Market Update Pagi",
+      "day": "Senin",
+      "start_time": "09:00",
+      "end_time": "09:30",
+      "host": "Nama Host",
+      "platform": "YouTube",
+      "link_url": "https://youtube.com/...",
+      "description": "Ulasan pasar sebelum bursa Asia buka.",
+      "image": "uploads/newsmaker23/live-schedule/xxx.jpg",
+      "image_url": "https://portalnews.newsmaker.id/uploads/newsmaker23/live-schedule/xxx.jpg",
+      "is_active": true,
+      "sort_order": 0,
+      "created_at": "...",
+      "updated_at": "..."
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "days_order": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]
+  },
+  "generated_at": "2026-10-26T00:00:00+00:00"
+}
+```
+
+Dikelola dari dashboard admin: menu **Newsmaker 23 → Jadwal Live** (`/newsmaker23/live-schedule`). Tiap tambah/edit/hapus langsung me-regenerate cache JSON di atas; ada juga scheduler `live-schedule:cache-json` yang jalan tiap 10 menit sebagai jaring pengaman.
+
+---
+
 ## 4. Ringkasan Semua Endpoint
 
 | # | Method | Endpoint | Controller | Sumber Data |
@@ -324,8 +372,9 @@ Cache belum ada (kedua endpoint) → `503 { "status": "error", "message": "Cache
 | 19 | GET | `/v1/newsmaker/pasar-indonesia/analisis/{slug}` | PasarIndonesiaArticleController | Cache `pasar-indonesia.json` |
 | 20 | GET | `/v1/newsmaker/pasar-indonesia/regulasi-institusi` | PasarIndonesiaRegulasiInstitusiArticleController | Cache `pasar-indonesia-regulasi-institusi.json` |
 | 21 | GET | `/v1/newsmaker/pasar-indonesia/regulasi-institusi/{slug}` | PasarIndonesiaRegulasiInstitusiArticleController | Cache `pasar-indonesia-regulasi-institusi.json` |
+| 22 | GET | `/v1/newsmaker/live-schedule` | NewsmakerLiveScheduleController | Cache `live-schedule.json` → fallback DB |
 
-**Total: 21 endpoint** (2 di grup "5 PT" + 19 di grup "Newsmaker 23").
+**Total: 22 endpoint** (2 di grup "5 PT" + 20 di grup "Newsmaker 23").
 
 ---
 

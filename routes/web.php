@@ -7,6 +7,7 @@ use App\Http\Controllers\EconomicCalendarController;
 use App\Http\Controllers\EconomicCalendarDetailController;
 use App\Http\Controllers\Newsmaker23Controller;
 use App\Http\Controllers\NewsmakerArticleController;
+use App\Http\Controllers\NewsmakerLiveScheduleController;
 use App\Http\Controllers\NewsmakerMainCategoryController;
 use App\Http\Controllers\NewsmakerVideoBriefingController;
 use App\Http\Controllers\PasarIndonesiaAnalisisController;
@@ -113,6 +114,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::get('/{id}/edit', [NewsmakerVideoBriefingController::class, 'edit'])->name('edit');
             Route::put('/{id}/update', [NewsmakerVideoBriefingController::class, 'update'])->name('update');
             Route::delete('/{id}/delete', [NewsmakerVideoBriefingController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('live-schedule')->name('live-schedule.')->group(function () {
+            Route::get('/', [NewsmakerLiveScheduleController::class, 'index'])->name('index');
+            Route::get('/tambah', [NewsmakerLiveScheduleController::class, 'create'])->name('create');
+            Route::post('/store', [NewsmakerLiveScheduleController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [NewsmakerLiveScheduleController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [NewsmakerLiveScheduleController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [NewsmakerLiveScheduleController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('main-category')->name('main-category.')->group(function () {

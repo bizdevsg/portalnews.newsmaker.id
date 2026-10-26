@@ -42,6 +42,12 @@
                             || request()->routeIs('newsmaker23.berita.*'),
                     ],
                     [
+                        'label' => 'Breaking News',
+                        'route' => 'newsmaker23.breaking-news.index',
+                        'icon' => 'fa-solid fa-bolt',
+                        'active' => request()->routeIs('newsmaker23.breaking-news.*'),
+                    ],
+                    [
                         'label' => 'Video Briefing',
                         'route' => 'newsmaker23.video-briefing.index',
                         'icon' => 'fa-solid fa-video',

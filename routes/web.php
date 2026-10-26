@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\BreakingNewsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EconomicCalendarController;
@@ -112,6 +113,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::put('/{id}/update', [NewsmakerVideoBriefingController::class, 'update'])->name('update');
             Route::delete('/{id}/delete', [NewsmakerVideoBriefingController::class, 'destroy'])->name('destroy');
         });
+
+        Route::get('/breaking-news', [BreakingNewsController::class, 'index'])->name('breaking-news.index');
 
         Route::prefix('live-schedule')->name('live-schedule.')->group(function () {
             Route::get('/', [NewsmakerLiveScheduleController::class, 'index'])->name('index');

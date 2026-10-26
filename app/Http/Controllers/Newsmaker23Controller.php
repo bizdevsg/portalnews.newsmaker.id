@@ -7,6 +7,16 @@ use App\Models\NewsmakerMainCategory;
 class Newsmaker23Controller extends Controller
 {
     /**
+     * Kategori yang punya halaman khusus sendiri (lihat BreakingNewsController
+     * dkk) - disembunyikan dari grid "Kategori" ini supaya tidak kecampur,
+     * tapi barisnya di `newsmaker_main_categories` tetap ada karena artikel
+     * tetap butuh main_category_id ke sana.
+     */
+    public const HIDDEN_CATEGORY_SLUGS = [
+        BreakingNewsController::SLUG,
+    ];
+
+    /**
      * Kategori yang ditonjolkan di halaman Newsmaker23: tampil paling atas
      * sesuai urutan di bawah ini dan judulnya diberi warna merah pada view.
      * Kategori lain yang tidak ada di daftar ini tetap ditampilkan (tidak
@@ -40,6 +50,7 @@ class Newsmaker23Controller extends Controller
         $categories = NewsmakerMainCategory::withCount('articles')
             ->latest()
             ->get()
+            ->reject(fn (NewsmakerMainCategory $category) => in_array($category->slug, self::HIDDEN_CATEGORY_SLUGS, true))
             ->sortBy(fn (NewsmakerMainCategory $category) => $rank[$category->slug] ?? PHP_INT_MAX)
             ->values();
 

@@ -4,70 +4,111 @@ namespace App\Http\Controllers;
 
 use App\Models\Tiktok;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
+/**
+ * TikTok sekarang singleton: cuma ada 1 video aktif, tidak ada riwayat
+ * upload. Setiap submit form "update" memperlakukan data yang ada sebagai
+ * edit - bukan menambah baris baru - supaya tabel `tiktoks` selalu berisi
+ * maksimal 1 baris.
+ */
 class TiktokController extends Controller
 {
-    protected function rules(): array
+    protected function rules(bool $videoRequired): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'embed_code' => 'required|string',
-            'backup_video_url' => 'nullable|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'video' => ($videoRequired ? 'required' : 'nullable') . '|file|mimes:mp4,mov,webm|max:51200',
         ];
     }
 
     public function index()
     {
-        $tiktoks = Tiktok::query()
-            ->orderByDesc('created_at')
-            ->get();
+        $tiktok = Tiktok::current();
 
-        return view('tiktok.index', compact('tiktoks'));
+        return view('tiktok.index', compact('tiktok'));
     }
 
-    public function create()
+    public function edit()
     {
-        return view('tiktok.create');
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate($this->rules());
-
-        Tiktok::create($validated);
-
-        return redirect()->route('tiktok.index')->with('success', 'Data TikTok berhasil ditambahkan.');
-    }
-
-    public function show($id)
-    {
-        $tiktok = Tiktok::findOrFail($id);
-
-        return view('tiktok.show', compact('tiktok'));
-    }
-
-    public function edit($id)
-    {
-        $tiktok = Tiktok::findOrFail($id);
+        $tiktok = Tiktok::current();
 
         return view('tiktok.edit', compact('tiktok'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $tiktok = Tiktok::findOrFail($id);
-        $validated = $request->validate($this->rules());
+        $tiktok = Tiktok::current();
 
-        $tiktok->update($validated);
+        $validated = $request->validate($this->rules(videoRequired: $tiktok === null));
 
-        return redirect()->route('tiktok.index')->with('success', 'Data TikTok berhasil diperbarui.');
+        $payload = [
+            'title' => $validated['title'] ?? null,
+        ];
+
+        if ($request->hasFile('video')) {
+            $payload['video'] = $this->storeVideo($request, $tiktok?->video);
+        }
+
+        if ($tiktok) {
+            $tiktok->update($payload);
+        } else {
+            Tiktok::create($payload);
+        }
+
+        $this->refreshCache();
+
+        return redirect()
+            ->route('tiktok.index')
+            ->with('success', 'Video TikTok berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy()
     {
-        $tiktok = Tiktok::findOrFail($id);
-        $tiktok->delete();
+        $tiktok = Tiktok::current();
 
-        return redirect()->route('tiktok.index')->with('success', 'Data TikTok berhasil dihapus.');
+        if ($tiktok) {
+            $this->deleteVideo($tiktok->video);
+            $tiktok->delete();
+            $this->refreshCache();
+        }
+
+        return redirect()
+            ->route('tiktok.index')
+            ->with('success', 'Video TikTok berhasil dihapus.');
+    }
+
+    protected function refreshCache(): void
+    {
+        try {
+            Artisan::call('tiktok:cache-json');
+        } catch (\Throwable) {
+            // Cache refresh is best-effort.
+        }
+    }
+
+    protected function storeVideo(Request $request, ?string $existingVideo = null): string
+    {
+        $uploadPath = public_path('uploads/tiktok');
+        if (!File::exists($uploadPath)) {
+            File::makeDirectory($uploadPath, 0755, true);
+        }
+
+        $file = $request->file('video');
+        $originalName = preg_replace('/[^A-Za-z0-9._-]/', '_', $file->getClientOriginalName());
+        $fileName = time() . '_' . uniqid() . '_' . $originalName;
+
+        $file->move($uploadPath, $fileName);
+        $this->deleteVideo($existingVideo);
+
+        return 'uploads/tiktok/' . $fileName;
+    }
+
+    protected function deleteVideo(?string $videoPath): void
+    {
+        if ($videoPath && File::exists(public_path($videoPath))) {
+            File::delete(public_path($videoPath));
+        }
     }
 }

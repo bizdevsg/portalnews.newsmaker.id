@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use App\Services\ApiPayloadCacheService;
+use Illuminate\Http\JsonResponse;
 
 class TiktokController extends Controller
 {
@@ -13,6 +13,11 @@ class TiktokController extends Controller
     ) {
     }
 
+    /**
+     * Singleton: `data` berisi 1 objek video TikTok yang sedang aktif, atau
+     * `null` kalau belum ada video yang diunggah (bukan error - itu status
+     * valid). Hanya `503` kalau cache-nya sendiri belum pernah dibuat.
+     */
     public function index(): JsonResponse
     {
         $payload = $this->cacheService->getPayload('cache/tiktok.json');

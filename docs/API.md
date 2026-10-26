@@ -176,9 +176,30 @@ Data pivot historis, langsung dari cache `storage/app/cache/pivot.json`, dikemba
 ### 3.4 TikTok (`TiktokController`)
 
 #### GET `/v1/newsmaker/tiktok`
-Data embed TikTok dari cache `storage/app/cache/tiktok.json`, dikembalikan apa adanya.
+**Singleton** — hanya ada 1 video TikTok aktif (admin upload file video, bukan embed code). Data dari cache `storage/app/cache/tiktok.json`.
 
 - Cache belum ada → `503 { "status": "error", "message": "Cache TikTok belum tersedia." }`
+- Sukses, ada video:
+```json
+{
+  "status": "success",
+  "message": "Data TikTok berhasil diambil",
+  "data": {
+    "id": 1,
+    "title": "Caption video",
+    "video": "uploads/tiktok/xxx.mp4",
+    "video_url": "https://portalnews.newsmaker.id/uploads/tiktok/xxx.mp4",
+    "created_at": "...",
+    "updated_at": "..."
+  },
+  "generated_at": "..."
+}
+```
+- Sukses, belum ada video yang diunggah → `"data": null` (ini **bukan error**, status tetap `success` dengan HTTP 200).
+
+Dikelola dari dashboard admin: menu **TikTok** (`/tiktok`). Upload video baru langsung menggantikan video sebelumnya — tidak ada riwayat/daftar upload, setiap upload diperlakukan sebagai edit atas baris yang sama.
+
+> **Breaking change (migrasi dari versi sebelumnya):** endpoint ini dulu mengembalikan `data` sebagai **array** berisi beberapa embed TikTok (`embed_code`, `backup_video_url`). Sekarang `data` adalah **objek tunggal** (atau `null`) berisi `video`/`video_url`. Konsumen frontend yang masih mengharapkan array/embed_code perlu disesuaikan.
 
 ---
 
@@ -361,7 +382,7 @@ Dikelola dari dashboard admin: menu **Newsmaker 23 → Jadwal Live** (`/newsmake
 | 8 | GET | `/v1/newsmaker/kalender-ekonomi/periode` | KalenderController | Cache (grouped) |
 | 9 | GET | `/v1/newsmaker/kalender-ekonomi/{period}` | KalenderController | Cache (filtered) |
 | 10 | GET | `/v1/newsmaker/historical-data` | PivotController | Cache `pivot.json` |
-| 11 | GET | `/v1/newsmaker/tiktok` | TiktokController | Cache `tiktok.json` |
+| 11 | GET | `/v1/newsmaker/tiktok` | TiktokController | Cache `tiktok.json` (singleton, 1 video) |
 | 12 | GET | `/v1/newsmaker/video-briefing` | NewsmakerVideoBriefingController | Cache `video-briefing.json` → fallback DB |
 | 13 | GET | `/v1/newsmaker/popup-banner` | PopupBannerController | Cache `popup-banner.json` (filtered aktif) |
 | 14 | GET | `/v1/newsmaker/iklan` | IklanController | Cache `iklan.json` (filtered aktif) |

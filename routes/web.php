@@ -92,15 +92,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/{id}/delete', [PivotController::class, 'destroy'])->name('pivot.destroy');
     });
 
-    // TikTok
+    // TikTok (singleton: 1 video aktif, upload baru = edit video yang ada)
     Route::prefix('tiktok')->group(function () {
         Route::get('/', [TiktokController::class, 'index'])->name('tiktok.index');
-        Route::post('/store', [TiktokController::class, 'store'])->name('tiktok.store');
-        Route::get('/tambah', [TiktokController::class, 'create'])->name('tiktok.create');
-        Route::put('/{id}/update', [TiktokController::class, 'update'])->name('tiktok.update');
-        Route::get('/{id}/edit', [TiktokController::class, 'edit'])->name('tiktok.edit');
-        Route::get('/{id}/show', [TiktokController::class, 'show'])->name('tiktok.show');
-        Route::delete('/{id}/delete', [TiktokController::class, 'destroy'])->name('tiktok.destroy');
+        Route::get('/edit', [TiktokController::class, 'edit'])->name('tiktok.edit');
+        Route::put('/update', [TiktokController::class, 'update'])->name('tiktok.update');
+        Route::delete('/delete', [TiktokController::class, 'destroy'])->name('tiktok.destroy');
     });
 
     // Newsmaker 23

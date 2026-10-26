@@ -14,14 +14,12 @@ class CacheTiktokJson extends Command
 
     public function handle(): int
     {
-        $items = Tiktok::query()
-            ->orderByDesc('created_at')
-            ->get(['id', 'title', 'embed_code', 'backup_video_url', 'created_at', 'updated_at']);
+        $tiktok = Tiktok::current();
 
         $payload = [
-            'status' => 200,
-            'message' => 'Data TikTok berhasil diambil',
-            'data' => $items,
+            'status' => 'success',
+            'message' => $tiktok ? 'Data TikTok berhasil diambil' : 'Belum ada video TikTok yang diunggah.',
+            'data' => $tiktok ? $this->transformTiktok($tiktok) : null,
             'generated_at' => now()->toISOString(),
         ];
 
@@ -35,14 +33,26 @@ class CacheTiktokJson extends Command
         $path = $this->option('path');
         $written = Storage::disk('local')->put($path, $json);
 
-        if (! $written) {
-            $this->error('Failed to write TikTok JSON cache to storage/app/'.$path.' (check file permissions/ownership).');
+        if (!$written) {
+            $this->error('Failed to write TikTok JSON cache to storage/app/' . $path . ' (check file permissions/ownership).');
 
             return self::FAILURE;
         }
 
-        $this->info('TikTok JSON cache saved to storage/app/'.$path);
+        $this->info('TikTok JSON cache saved to storage/app/' . $path);
 
         return self::SUCCESS;
+    }
+
+    private function transformTiktok(Tiktok $tiktok): array
+    {
+        return [
+            'id' => $tiktok->id,
+            'title' => $tiktok->title,
+            'video' => $tiktok->video,
+            'video_url' => $tiktok->video ? asset($tiktok->video) : null,
+            'created_at' => optional($tiktok->created_at)->toISOString(),
+            'updated_at' => optional($tiktok->updated_at)->toISOString(),
+        ];
     }
 }

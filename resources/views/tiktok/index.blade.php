@@ -54,7 +54,7 @@
                 </div>
             @else
                 <div class="grid gap-6 p-5 lg:grid-cols-[minmax(0,420px)_1fr]">
-                    <video controls class="w-full rounded-xl bg-black" preload="metadata">
+                    <video controls class="mx-auto max-h-[70vh] w-auto max-w-full rounded-xl bg-black" preload="metadata">
                         <source src="{{ asset($tiktok->video) }}">
                     </video>
 

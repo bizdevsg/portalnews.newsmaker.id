@@ -37,7 +37,7 @@
             class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Video saat ini</h2>
             @if ($tiktok?->video)
-                <video controls class="mt-4 w-full rounded-xl bg-black" preload="metadata">
+                <video controls class="mx-auto mt-4 max-h-[60vh] w-auto max-w-full rounded-xl bg-black" preload="metadata">
                     <source src="{{ asset($tiktok->video) }}">
                 </video>
                 <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">

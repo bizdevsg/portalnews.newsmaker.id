@@ -47,6 +47,8 @@ class BreakingNewsController extends Controller
             'content_id' => 'required',
             'content_en' => 'required',
             'source' => 'required|max:150',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
 
         $category = BreakingNewsCategory::findOrFail($request->breaking_news_category_id);
@@ -71,6 +73,8 @@ class BreakingNewsController extends Controller
             'author_initial' => strtoupper(trim((string) $request->author)),
             'author_id' => $request->user()?->id,
             'source' => $request->source,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
         ]);
 
         return redirect()->route('newsmaker23.breaking-news.show', $category->slug)
@@ -104,6 +108,8 @@ class BreakingNewsController extends Controller
             'content_id' => 'required',
             'content_en' => 'required',
             'source' => 'required|max:150',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
 
         $item = NewsmakerBreakingNews::findOrFail($id);
@@ -119,6 +125,8 @@ class BreakingNewsController extends Controller
             'author' => strtoupper(trim((string) $request->author)),
             'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
         ];
 
         if ($request->hasFile('image')) {

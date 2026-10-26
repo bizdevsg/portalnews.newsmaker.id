@@ -146,6 +146,36 @@
                             @enderror
                         </div>
 
+                        <div>
+                            <label for="start_time"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                Relevan mulai jam
+                            </label>
+                            <input type="time" id="start_time" name="start_time"
+                                value="{{ old('start_time', $item->start_time ? \Illuminate\Support\Carbon::parse($item->start_time)->format('H:i') : '') }}"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('start_time') border-rose-500 @enderror"
+                                required>
+                            @error('start_time')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="end_time"
+                                class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                Relevan sampai jam
+                            </label>
+                            <input type="time" id="end_time" name="end_time"
+                                value="{{ old('end_time', $item->end_time ? \Illuminate\Support\Carbon::parse($item->end_time)->format('H:i') : '') }}"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('end_time') border-rose-500 @enderror"
+                                required>
+                            @error('end_time')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
                         <div class="xl:col-span-3">
                             <input type="hidden" name="notif" value="0">
                             <label for="notif" class="inline-flex items-center gap-2 cursor-pointer">

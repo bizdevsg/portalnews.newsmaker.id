@@ -28,6 +28,8 @@ class NewsmakerBreakingNews extends Model
         'author_id',
         'author_initial',
         'source',
+        'start_time',
+        'end_time',
         'notif',
     ];
 

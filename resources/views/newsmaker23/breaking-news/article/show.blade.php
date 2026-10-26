@@ -62,6 +62,12 @@
                             <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $item->source }}</p>
                         </div>
                         <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Waktu Relevan</p>
+                            <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                {{ \Illuminate\Support\Carbon::parse($item->start_time)->format('H:i') }} – {{ \Illuminate\Support\Carbon::parse($item->end_time)->format('H:i') }} WIB
+                            </p>
+                        </div>
+                        <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
                             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Dipublikasikan</p>
                             <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                                 {{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d F Y H:i') }}

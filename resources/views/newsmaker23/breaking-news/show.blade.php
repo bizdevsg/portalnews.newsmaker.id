@@ -75,6 +75,7 @@
                                 <div class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
                                     <p><span class="font-semibold text-slate-900 dark:text-slate-100">Author:</span> {{ $item->author_initial ?? $item->author ?? $item->authorUser?->name ?? '-' }}</p>
                                     <p><span class="font-semibold text-slate-900 dark:text-slate-100">Source:</span> {{ $item->source }}</p>
+                                    <p><span class="font-semibold text-slate-900 dark:text-slate-100">Relevan:</span> {{ \Illuminate\Support\Carbon::parse($item->start_time)->format('H:i') }} – {{ \Illuminate\Support\Carbon::parse($item->end_time)->format('H:i') }} WIB</p>
                                 </div>
 
                                 <form id="delete-article-form-{{ $item->id }}" action="{{ route('newsmaker23.breaking-news-artikel.destroy', $item->id) }}" method="POST" class="hidden">

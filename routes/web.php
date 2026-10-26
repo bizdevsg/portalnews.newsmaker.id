@@ -114,7 +114,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::delete('/{id}/delete', [NewsmakerVideoBriefingController::class, 'destroy'])->name('destroy');
         });
 
-        Route::get('/breaking-news', [BreakingNewsController::class, 'index'])->name('breaking-news.index');
+        Route::prefix('breaking-news')->name('breaking-news.')->group(function () {
+            Route::get('/', [BreakingNewsController::class, 'index'])->name('index');
+            Route::get('/tambah', [BreakingNewsController::class, 'create'])->name('create');
+            Route::post('/store', [BreakingNewsController::class, 'store'])->name('store');
+            Route::get('/{id}/show', [BreakingNewsController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [BreakingNewsController::class, 'edit'])->name('edit');
+            Route::put('/{id}/update', [BreakingNewsController::class, 'update'])->name('update');
+            Route::delete('/{id}/delete', [BreakingNewsController::class, 'destroy'])->name('destroy');
+        });
 
         Route::prefix('live-schedule')->name('live-schedule.')->group(function () {
             Route::get('/', [NewsmakerLiveScheduleController::class, 'index'])->name('index');

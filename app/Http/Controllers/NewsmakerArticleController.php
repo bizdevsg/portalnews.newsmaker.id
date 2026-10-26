@@ -11,21 +11,6 @@ class NewsmakerArticleController extends Controller
 {
     private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
 
-    /**
-     * Kategori yang punya halaman khusus sendiri (lihat
-     * Newsmaker23Controller::HIDDEN_CATEGORY_SLUGS) diarahkan balik ke
-     * halaman khususnya setelah simpan/update berita, bukan ke halaman
-     * kategori generik yang sudah disembunyikan dari grid.
-     */
-    private function redirectToCategory(NewsmakerMainCategory $mainCategory)
-    {
-        if ($mainCategory->slug === BreakingNewsController::SLUG) {
-            return redirect()->route('newsmaker23.breaking-news.index');
-        }
-
-        return redirect()->route('newsmaker23.main-category.show', $mainCategory->slug);
-    }
-
     public function index()
     {
         $articles = NewsmakerArticle::with(['mainCategory', 'authorUser'])->latest()->get();
@@ -99,7 +84,7 @@ class NewsmakerArticleController extends Controller
             'source' => $request->source,
         ]);
 
-        return $this->redirectToCategory($mainCategory)
+        return redirect()->route('newsmaker23.main-category.show', $mainCategory->slug)
             ->with('success', 'Berita Newsmaker 23 berhasil ditambahkan.');
     }
 
@@ -181,7 +166,7 @@ class NewsmakerArticleController extends Controller
 
         $article->update($data);
 
-        return $this->redirectToCategory($mainCategory)
+        return redirect()->route('newsmaker23.main-category.show', $mainCategory->slug)
             ->with('success', 'Berita Newsmaker 23 berhasil diperbarui.');
     }
 

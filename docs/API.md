@@ -429,6 +429,48 @@ Dikelola dari dashboard admin: menu **Newsmaker 23 → Breaking News** (`/newsma
 
 ---
 
+### 3.12 Fed Rate Monitor (`FedRateMonitorController`)
+
+Data diinput manual oleh admin (disalin dari investing.com/central-banks/fed-rate-monitor atau CME FedWatch). Tabel: `fed_rate_settings` (singleton, current target rate), `fed_rate_meetings` (tanggal + jam keputusan FOMC per waktu New York, future price), `fed_rate_meeting_rows` (baris probabilitas per rentang target rate).
+
+#### GET `/v1/newsmaker/fed-rate-monitor`
+Mengembalikan current target rate + sampai 8 meeting FOMC yang akan datang (`is_active = true` dan `meeting_date >= hari ini` menurut waktu New York), urut tanggal naik. Tiap meeting menyertakan baris probabilitasnya, urut `target_lower` naik.
+
+- Belum ada pengaturan/meeting sama sekali → `200 { "status": "success", "message": "Belum ada data Fed Rate Monitor.", "data": null, "generated_at": "..." }`
+- Sukses:
+```json
+{
+  "status": "success",
+  "message": "Data Fed Rate Monitor berhasil diambil",
+  "data": {
+    "current_target": { "lower": 3.75, "upper": 4.0 },
+    "updated_at": "2026-10-24T04:35:00.000000Z",
+    "meetings": [
+      {
+        "id": 10,
+        "meeting_date": "2026-10-28",
+        "meeting_time": "14:00",
+        "decision_at": "2026-10-28T18:00:00.000000Z",
+        "future_price": 96.118,
+        "rows": [
+          { "target_lower": 3.75, "target_upper": 4.0, "current_probability": 89.7, "previous_day_probability": 92.0, "previous_week_probability": 83.9 },
+          { "target_lower": 4.0, "target_upper": 4.25, "current_probability": 10.3, "previous_day_probability": 8.0, "previous_week_probability": 16.1 }
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-10-27T01:11:21.202537Z"
+}
+```
+
+Catatan format: semua angka dikirim sebagai number (bukan string), probabilitas dalam persen (`89.7`, bukan `0.897`). `meeting_date` format `YYYY-MM-DD`, `meeting_time` format `HH:mm` (waktu New York), `decision_at`/`updated_at`/`generated_at` ISO8601 UTC. `future_price` dan field probabilitas `previous_day`/`previous_week` tetap dikirim `null` kalau belum diisi admin, bukan dihilangkan.
+
+Respons **di-cache 5 menit** (`Cache::remember`, bukan file JSON seperti modul lain — filter "meeting_date >= hari ini" harus dihitung ulang tiap request) dan **otomatis dibersihkan** setiap admin menyimpan perubahan lewat `FedRateMonitorCacheObserver` (terpasang di 3 model: `FedRateSetting`, `FedRateMeeting`, `FedRateMeetingRow`), jadi perubahan langsung tampil tanpa menunggu 5 menit.
+
+Dikelola dari dashboard admin: menu **Newsmaker 23 → Fed Rate Monitor** (`/fed-rate-monitor`) — daftar meeting FOMC, form tambah/edit dengan repeater baris probabilitas + fitur paste cepat dari tabel investing.com, dan halaman **Pengaturan** (`/fed-rate-monitor/pengaturan`) untuk current target rate.
+
+---
+
 ## 4. Ringkasan Semua Endpoint
 
 | # | Method | Endpoint | Controller | Sumber Data |
@@ -459,8 +501,9 @@ Dikelola dari dashboard admin: menu **Newsmaker 23 → Breaking News** (`/newsma
 | 24 | GET | `/v1/newsmaker/breaking-news` | BreakingNewsController | DB (`newsmaker_breaking_news`) |
 | 25 | GET | `/v1/newsmaker/breaking-news/{slug_kategori}` | BreakingNewsController | DB — filter per kategori |
 | 26 | GET | `/v1/newsmaker/breaking-news/show/{slug_berita}` | BreakingNewsController | DB — detail by slug |
+| 27 | GET | `/v1/newsmaker/fed-rate-monitor` | FedRateMonitorController | `Cache::remember` 5 menit (DB), dibersihkan via observer |
 
-**Total: 26 endpoint** (2 di grup "5 PT" + 24 di grup "Newsmaker 23").
+**Total: 27 endpoint** (2 di grup "5 PT" + 25 di grup "Newsmaker 23").
 
 ---
 

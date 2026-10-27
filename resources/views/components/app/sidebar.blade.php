@@ -89,6 +89,12 @@
                         'icon' => 'fa-solid fa-rectangle-ad',
                         'active' => $iklanActive,
                     ],
+                    [
+                        'label' => 'Fed Rate Monitor',
+                        'route' => 'fed-rate-monitor.index',
+                        'icon' => 'fa-solid fa-percent',
+                        'active' => request()->routeIs('fed-rate-monitor.*'),
+                    ],
                 ],
             ],
             [

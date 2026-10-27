@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Berita;
+use App\Models\FedRateMeeting;
+use App\Models\FedRateMeetingRow;
+use App\Models\FedRateSetting;
 use App\Models\NewsmakerArticle;
 use App\Models\NewsmakerMainCategory;
 use App\Models\NewsmakerSubCategory;
@@ -15,6 +18,7 @@ use App\Models\PopupBanner;
 use App\Models\Iklan;
 use App\Models\Tiktok;
 use App\Observers\BeritaObserver;
+use App\Observers\FedRateMonitorCacheObserver;
 use App\Observers\NewsmakerCacheObserver;
 use App\Observers\PasarIndonesiaCacheObserver;
 use App\Observers\PasarIndonesiaRegulasiCacheObserver;
@@ -52,6 +56,9 @@ class AppServiceProvider extends ServiceProvider
         Tiktok::observe(TiktokCacheObserver::class);
         PopupBanner::observe(PopupBannerCacheObserver::class);
         Iklan::observe(IklanCacheObserver::class);
+        FedRateSetting::observe(FedRateMonitorCacheObserver::class);
+        FedRateMeeting::observe(FedRateMonitorCacheObserver::class);
+        FedRateMeetingRow::observe(FedRateMonitorCacheObserver::class);
         URL::forceScheme('https');
         URL::forceRootUrl(config('app.url'));
     }

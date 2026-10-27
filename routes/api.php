@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\BreakingNewsController;
+use App\Http\Controllers\Api\FedRateMonitorController;
 use App\Http\Controllers\Api\IklanController;
 use App\Http\Controllers\Api\KalenderController;
 use App\Http\Controllers\Api\NewsmakerArticleController;
@@ -50,6 +51,8 @@ Route::prefix('v1')->middleware('bearer-newsmaker')->group(
                     ->where('slug', '[A-Za-z0-9-]+');
                 Route::get('/breaking-news/{slug}', [BreakingNewsController::class, 'byCategory'])
                     ->where('slug', '[A-Za-z0-9-]+');
+
+                Route::get('/fed-rate-monitor', [FedRateMonitorController::class, 'index']);
 
                 Route::get('/kalender-ekonomi', [KalenderController::class, 'index']);
                 Route::get('/kalender-ekonomi/periode', [KalenderController::class, 'periods']);

@@ -19,6 +19,8 @@ use App\Http\Controllers\PasarIndonesiaController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiCategoryController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiController;
 use App\Http\Controllers\PivotController;
+use App\Http\Controllers\FedRateMeetingController;
+use App\Http\Controllers\FedRateSettingController;
 use App\Http\Controllers\IklanController;
 use App\Http\Controllers\PopupBannerController;
 use App\Http\Controllers\TiktokController;
@@ -236,6 +238,17 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/{id}/edit', [IklanController::class, 'edit'])->name('edit');
         Route::put('/{id}/update', [IklanController::class, 'update'])->name('update');
         Route::delete('/{id}/delete', [IklanController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('fed-rate-monitor')->name('fed-rate-monitor.')->group(function () {
+        Route::get('/', [FedRateMeetingController::class, 'index'])->name('index');
+        Route::get('/pengaturan', [FedRateSettingController::class, 'edit'])->name('settings.edit');
+        Route::put('/pengaturan', [FedRateSettingController::class, 'update'])->name('settings.update');
+        Route::get('/tambah', [FedRateMeetingController::class, 'create'])->name('create');
+        Route::post('/store', [FedRateMeetingController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [FedRateMeetingController::class, 'edit'])->name('edit');
+        Route::put('/{id}/update', [FedRateMeetingController::class, 'update'])->name('update');
+        Route::delete('/{id}/delete', [FedRateMeetingController::class, 'destroy'])->name('destroy');
     });
 
     // User Management Route

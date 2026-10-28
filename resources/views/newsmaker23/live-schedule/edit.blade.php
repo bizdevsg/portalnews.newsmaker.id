@@ -136,11 +136,11 @@
                             </div>
 
                             <div>
-                                <label for="platform" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">Platform (opsional)</label>
-                                <input id="platform" name="platform" type="text" value="{{ old('platform', $liveSchedule->platform) }}"
-                                    class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('platform') border-rose-500 @enderror"
-                                    placeholder="YouTube, Instagram, TikTok, ...">
-                                @error('platform')
+                                <label for="tiktok_profile_url" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">Link Profile TikTok (opsional)</label>
+                                <input id="tiktok_profile_url" name="tiktok_profile_url" type="url" value="{{ old('tiktok_profile_url', $liveSchedule->tiktok_profile_url) }}"
+                                    class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('tiktok_profile_url') border-rose-500 @enderror"
+                                    placeholder="https://www.tiktok.com/@username">
+                                @error('tiktok_profile_url')
                                     <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                                 @enderror
                             </div>

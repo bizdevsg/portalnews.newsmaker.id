@@ -345,7 +345,7 @@ Query params:
       "start_time": "09:00",
       "end_time": "09:30",
       "host": "Nama Host",
-      "platform": "YouTube",
+      "tiktok_profile_url": "https://www.tiktok.com/@newsmaker23",
       "link_url": "https://youtube.com/...",
       "description": "Ulasan pasar sebelum bursa Asia buka.",
       "image": "uploads/newsmaker23/live-schedule/xxx.jpg",

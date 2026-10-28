@@ -53,7 +53,7 @@
                                 <th class="px-6 py-4">Hari / Jam</th>
                                 <th class="px-6 py-4">Judul</th>
                                 <th class="px-6 py-4">Host</th>
-                                <th class="px-6 py-4">Platform</th>
+                                <th class="px-6 py-4">Profile TikTok</th>
                                 <th class="px-6 py-4">Status</th>
                                 <th class="w-px px-6 py-4 text-right whitespace-nowrap">Aksi</th>
                             </tr>
@@ -83,13 +83,14 @@
                                         {{ $schedule->host ?: '-' }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-200">
-                                        @if (filled($schedule->link_url))
-                                            <a href="{{ $schedule->link_url }}" target="_blank" rel="noreferrer"
-                                                class="underline transition hover:text-slate-900 dark:hover:text-white">
-                                                {{ $schedule->platform ?: 'Link' }}
+                                        @if (filled($schedule->tiktok_profile_url))
+                                            <a href="{{ $schedule->tiktok_profile_url }}" target="_blank" rel="noreferrer"
+                                                class="inline-flex items-center gap-1.5 underline transition hover:text-slate-900 dark:hover:text-white">
+                                                <i class="fa-brands fa-tiktok"></i>
+                                                Profil TikTok
                                             </a>
                                         @else
-                                            {{ $schedule->platform ?: '-' }}
+                                            -
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">

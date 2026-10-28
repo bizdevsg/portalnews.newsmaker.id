@@ -62,7 +62,7 @@ class CacheLiveScheduleJson extends Command
             'start_time' => $schedule->start_time ? substr((string) $schedule->start_time, 0, 5) : null,
             'end_time' => $schedule->end_time ? substr((string) $schedule->end_time, 0, 5) : null,
             'host' => $schedule->host,
-            'platform' => $schedule->platform,
+            'tiktok_profile_url' => $schedule->tiktok_profile_url,
             'link_url' => $schedule->link_url,
             'description' => $schedule->description,
             'image' => $schedule->image,

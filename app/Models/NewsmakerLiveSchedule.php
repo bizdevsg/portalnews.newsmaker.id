@@ -17,7 +17,7 @@ class NewsmakerLiveSchedule extends Model
         'start_time',
         'end_time',
         'host',
-        'platform',
+        'tiktok_profile_url',
         'link_url',
         'description',
         'image',

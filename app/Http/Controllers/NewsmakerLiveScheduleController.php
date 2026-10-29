@@ -17,7 +17,8 @@ class NewsmakerLiveScheduleController extends Controller
             'title' => 'required|string|max:255',
             'day' => 'required|string|in:' . $days,
             'start_time' => 'required|date_format:H:i',
-            'end_time' => 'nullable|date_format:H:i|after:start_time',
+            // Boleh lebih kecil dari start_time: itu berarti siaran nyebrang ke hari berikutnya (mis. 23:00 - 00:30).
+            'end_time' => 'nullable|date_format:H:i',
             'host' => 'nullable|string|max:255',
             'tiktok_profile_url' => 'nullable|url|max:255',
             'link_url' => 'nullable|url|max:255',

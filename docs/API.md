@@ -325,6 +325,8 @@ Cache belum ada (kedua endpoint) → `503 { "status": "error", "message": "Cache
 #### GET `/v1/newsmaker/live-schedule`
 Jadwal live mingguan Newsmaker 23, diurutkan otomatis Senin → Minggu (lalu `sort_order`, lalu `start_time`). Sumber data: cache `storage/app/cache/live-schedule.json` (fallback query langsung ke tabel `newsmaker_live_schedules` + tulis ulang cache kalau file cache belum ada).
 
+Siaran yang nyebrang tengah malam (`end_time` lebih kecil/sama dengan `start_time`, mis. mulai 23:00 selesai 00:30) otomatis dianggap berakhir di hari berikutnya — tidak perlu input manual. Field `end_day` dan `crosses_midnight` di response memberi tahu persis kapan siaran itu berakhir.
+
 Query params:
 | Param | Tipe | Default | Keterangan |
 |---|---|---|---|
@@ -344,6 +346,8 @@ Query params:
       "day": "Senin",
       "start_time": "09:00",
       "end_time": "09:30",
+      "end_day": "Senin",
+      "crosses_midnight": false,
       "host": "Nama Host",
       "tiktok_profile_url": "https://www.tiktok.com/@newsmaker23",
       "link_url": "https://youtube.com/...",

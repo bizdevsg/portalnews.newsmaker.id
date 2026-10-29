@@ -62,13 +62,23 @@
                             @foreach ($liveSchedules as $schedule)
                                 <tr class="align-top">
                                     <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-700 dark:text-slate-200">
-                                        <p class="font-semibold text-slate-900 dark:text-slate-100">{{ $schedule->day }}</p>
+                                        <p class="font-semibold text-slate-900 dark:text-slate-100">
+                                            {{ $schedule->day }}
+                                            @if ($schedule->crossesMidnight())
+                                                <span class="font-normal text-slate-400">→ {{ $schedule->endDay() }}</span>
+                                            @endif
+                                        </p>
                                         <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                                             {{ \Illuminate\Support\Carbon::parse($schedule->start_time)->format('H:i') }}
                                             @if ($schedule->end_time)
                                                 – {{ \Illuminate\Support\Carbon::parse($schedule->end_time)->format('H:i') }}
                                             @endif
                                             WIB
+                                            @if ($schedule->crossesMidnight())
+                                                <span class="ml-1 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+                                                    lewat tengah malam
+                                                </span>
+                                            @endif
                                         </p>
                                     </td>
                                     <td class="px-6 py-4">

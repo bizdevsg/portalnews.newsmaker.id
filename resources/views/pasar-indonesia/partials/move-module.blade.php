@@ -5,7 +5,6 @@
         'regulasi-institusi' => 'Regulasi & Institusi',
     ];
     $moveTargets = array_diff_key($moveModuleLabels, [$moveFrom => true]);
-    $moveAuthorInitials = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
     $moveBeritaCategoriesList = $moveBeritaCategories ?? collect();
     $moveRegulasiCategoriesList = $moveRegulasiCategories ?? collect();
 @endphp
@@ -54,21 +53,6 @@
                     @endforeach
                 </select>
                 @error('category_id')
-                    <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
-                @enderror
-            </div>
-            <div>
-                <label for="move_author_initial" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Author
-                </label>
-                <select id="move_author_initial" name="author_initial" disabled
-                    class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
-                    <option value="">Pilih inisial author</option>
-                    @foreach ($moveAuthorInitials as $moveInitial)
-                        <option value="{{ $moveInitial }}">{{ $moveInitial }}</option>
-                    @endforeach
-                </select>
-                @error('author_initial')
                     <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                 @enderror
             </div>

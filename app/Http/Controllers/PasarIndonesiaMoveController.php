@@ -15,8 +15,6 @@ class PasarIndonesiaMoveController extends Controller
 {
     private const MODULES = ['berita', 'analisis', 'regulasi-institusi'];
 
-    private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
-
     public function move(Request $request, string $from, $id)
     {
         abort_unless(in_array($from, self::MODULES, true), 404);
@@ -31,15 +29,14 @@ class PasarIndonesiaMoveController extends Controller
             return back()->withErrors(['to_module' => 'Modul tujuan harus berbeda dari modul asal.']);
         }
 
+        // Author (inisial) selalu ikut dari artikel asal - tidak perlu dipilih ulang saat pindah.
         $extra = [];
 
         if ($to === 'berita') {
             $extra = $request->validate([
                 'category_id' => 'required|exists:pasar_indonesia_categories,id',
-                'author_initial' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             ]);
             $extra['category'] = PasarIndonesiaCategory::findOrFail($extra['category_id'])->slug;
-            $extra['author_initial'] = strtoupper(trim($extra['author_initial']));
         } elseif ($to === 'regulasi-institusi') {
             $extra = $request->validate([
                 'category_id' => 'required|exists:pasar_indonesia_regulasi_institusi_categories,id',
@@ -53,13 +50,7 @@ class PasarIndonesiaMoveController extends Controller
             // Berita <-> Analisis berbagi tabel yang sama: cukup ganti kolom type.
             if (in_array($from, ['berita', 'analisis'], true) && in_array($to, ['berita', 'analisis'], true)) {
                 $payload = ['type' => $to];
-
-                if ($to === 'berita') {
-                    $payload['category'] = $extra['category'];
-                    $payload['author_initial'] = $extra['author_initial'];
-                } else {
-                    $payload['category'] = null;
-                }
+                $payload['category'] = $to === 'berita' ? $extra['category'] : null;
 
                 $source->update($payload);
 
@@ -75,6 +66,7 @@ class PasarIndonesiaMoveController extends Controller
                 'content_id' => $source->content_id,
                 'content_en' => $source->content_en,
                 'author_id' => $source->author_id,
+                'author_initial' => $source->author_initial,
                 'source' => $source->source,
             ];
 
@@ -82,18 +74,16 @@ class PasarIndonesiaMoveController extends Controller
                 'berita' => PasarIndonesiaArticle::create(array_merge($common, [
                     'type' => 'berita',
                     'category' => $extra['category'],
-                    'author_initial' => $extra['author_initial'],
                     'beranda_api' => false,
                 ])),
                 'analisis' => PasarIndonesiaArticle::create(array_merge($common, [
                     'type' => 'analisis',
                     'category' => null,
-                    'author_initial' => $source->author_initial,
                     'beranda_api' => false,
                 ])),
-                'regulasi-institusi' => PasarIndonesiaRegulasiInstitusiArticle::create(array_merge($common, [
+                'regulasi-institusi' => PasarIndonesiaRegulasiInstitusiArticle::create($common + [
                     'category' => $extra['category'],
-                ])),
+                ]),
             };
 
             $source->delete();

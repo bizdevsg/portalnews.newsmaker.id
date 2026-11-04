@@ -112,6 +112,7 @@ class CachePasarIndonesiaRegulasiInstitusiJson extends Command
                 ?? $categoryOptions[$item->category]
                 ?? ($item->category ? Str::of($item->category)->replace('-', ' ')->title()->toString() : null),
             'source' => $item->source,
+            'author_initial' => $item->author_initial,
             'author' => $item->author ? [
                 'id' => $item->author->id,
                 'name' => $item->author->name,

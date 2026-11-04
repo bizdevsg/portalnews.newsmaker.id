@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class PasarIndonesiaAnalisisController extends Controller
 {
+    private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
     public function index()
     {
         $items = PasarIndonesiaArticle::query()
@@ -29,6 +31,7 @@ class PasarIndonesiaAnalisisController extends Controller
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'content_id' => 'required',
@@ -52,6 +55,7 @@ class PasarIndonesiaAnalisisController extends Controller
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
             'author_id' => $request->user()->id,
+            'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
         ]);
 
@@ -82,6 +86,7 @@ class PasarIndonesiaAnalisisController extends Controller
     {
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'author' => 'required|string|in:' . implode(',', self::AUTHOR_INITIALS),
             'title_id' => 'required|max:150',
             'title_en' => 'required|max:150',
             'content_id' => 'required',
@@ -116,6 +121,7 @@ class PasarIndonesiaAnalisisController extends Controller
             'title_en' => $request->title_en,
             'content_id' => $request->content_id,
             'content_en' => $request->content_en,
+            'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
         ]);
 

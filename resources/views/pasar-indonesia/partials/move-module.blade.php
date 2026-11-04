@@ -53,6 +53,9 @@
                         <option value="{{ $moveCategory->id }}">{{ $moveCategory->name }}</option>
                     @endforeach
                 </select>
+                @error('category_id')
+                    <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <label for="move_author_initial" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -65,6 +68,9 @@
                         <option value="{{ $moveInitial }}">{{ $moveInitial }}</option>
                     @endforeach
                 </select>
+                @error('author_initial')
+                    <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -80,6 +86,9 @@
                         <option value="{{ $moveCategory->id }}">{{ $moveCategory->name }}</option>
                     @endforeach
                 </select>
+                @error('category_id')
+                    <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 

@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\PasarIndonesiaArticle;
 use App\Models\PasarIndonesiaCategory;
 use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
+use App\Services\PasarIndonesiaArticleMoveService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PasarIndonesiaBeritaController extends Controller
 {
     private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
+    public function __construct(
+        private readonly PasarIndonesiaArticleMoveService $moveService
+    ) {
+    }
 
     public function create(Request $request)
     {
@@ -110,7 +117,15 @@ class PasarIndonesiaBeritaController extends Controller
             'content_id' => 'required',
             'content_en' => 'required',
             'source' => 'required|max:150',
+            'to_module' => ['nullable', 'string', Rule::in(['analisis', 'regulasi-institusi'])],
         ]);
+
+        $moveCategoryId = null;
+        if ($request->filled('to_module') && $request->input('to_module') === 'regulasi-institusi') {
+            $moveCategoryId = $request->validate([
+                'move_category_id' => 'required|exists:pasar_indonesia_regulasi_institusi_categories,id',
+            ])['move_category_id'];
+        }
 
         $selectedCategory = PasarIndonesiaCategory::findOrFail($request->category_id);
         $item = PasarIndonesiaArticle::where('type', 'berita')->findOrFail($id);
@@ -146,6 +161,15 @@ class PasarIndonesiaBeritaController extends Controller
             'source' => $request->source,
             'category' => $selectedCategory->slug,
         ]);
+
+        if ($request->filled('to_module')) {
+            $toModule = $request->input('to_module');
+            $targetId = $this->moveService->move('berita', $toModule, $item, $moveCategoryId);
+
+            return redirect()
+                ->route($this->moveService->editRouteFor($toModule), $targetId)
+                ->with('success', 'Berita berhasil disimpan dan dipindahkan ke modul ' . $this->moveService->moduleLabel($toModule) . '.');
+        }
 
         return redirect()->route('pasar-indonesia.berita.kategori.show', $selectedCategory->slug)
             ->with('success', 'Berita Pasar Indonesia berhasil diperbarui.');

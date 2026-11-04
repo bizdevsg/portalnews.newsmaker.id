@@ -9,20 +9,17 @@
     $moveRegulasiCategoriesList = $moveRegulasiCategories ?? collect();
 @endphp
 
-<section class="rounded-[28px] border border-amber-200 bg-amber-50/60 p-6 shadow-sm dark:border-amber-500/20 dark:bg-amber-500/5 sm:p-8">
+<section id="moveModuleSection" class="rounded-[28px] border border-amber-200 bg-amber-50/60 p-6 shadow-sm dark:border-amber-500/20 dark:bg-amber-500/5 sm:p-8">
     <div class="space-y-2">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Pindah Modul</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Pindah Modul (opsional)</p>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Pindahkan artikel ini ke modul lain</h2>
         <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
-            Aksi ini langsung dieksekusi terpisah dari tombol "Simpan Perubahan" di atas. Artikel akan dibuka otomatis di modul tujuan setelah berhasil dipindahkan.
+            Kosongkan kalau tidak ingin memindahkan. Kalau dipilih, artikel akan dipindahkan saat Anda menekan tombol
+            <strong>"Simpan Perubahan"</strong> di bawah - tidak ada tombol terpisah.
         </p>
     </div>
 
-    <form id="moveModuleForm" action="{{ route('pasar-indonesia.move', ['from' => $moveFrom, 'id' => $moveId]) }}"
-        method="POST" class="mt-6 space-y-5"
-        onsubmit="return confirm('Yakin pindahkan artikel ini ke modul lain? Aksi ini langsung dieksekusi.');">
-        @csrf
-
+    <div class="mt-6 space-y-5">
         @error('to_module')
             <p class="text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
         @enderror
@@ -33,9 +30,9 @@
             </label>
             <select id="to_module" name="to_module"
                 class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
-                <option value="">Pilih modul tujuan</option>
+                <option value="">Tetap di modul ini</option>
                 @foreach ($moveTargets as $moveModuleKey => $moveModuleLabel)
-                    <option value="{{ $moveModuleKey }}">{{ $moveModuleLabel }}</option>
+                    <option value="{{ $moveModuleKey }}" @selected(old('to_module') === $moveModuleKey)>{{ $moveModuleLabel }}</option>
                 @endforeach
             </select>
         </div>
@@ -43,16 +40,16 @@
         <div data-move-block="berita" class="hidden space-y-5 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
             <div>
                 <label for="move_category_berita" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Kategori Berita
+                    Kategori Berita tujuan
                 </label>
-                <select id="move_category_berita" name="category_id" disabled
+                <select id="move_category_berita" name="move_category_id" disabled
                     class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
                     <option value="">Pilih kategori</option>
                     @foreach ($moveBeritaCategoriesList as $moveCategory)
                         <option value="{{ $moveCategory->id }}">{{ $moveCategory->name }}</option>
                     @endforeach
                 </select>
-                @error('category_id')
+                @error('move_category_id')
                     <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                 @enderror
             </div>
@@ -61,41 +58,33 @@
         <div data-move-block="regulasi-institusi" class="hidden space-y-5 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
             <div>
                 <label for="move_category_regulasi" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Kategori Regulasi & Institusi
+                    Kategori Regulasi & Institusi tujuan
                 </label>
-                <select id="move_category_regulasi" name="category_id" disabled
+                <select id="move_category_regulasi" name="move_category_id" disabled
                     class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
                     <option value="">Pilih kategori</option>
                     @foreach ($moveRegulasiCategoriesList as $moveCategory)
                         <option value="{{ $moveCategory->id }}">{{ $moveCategory->name }}</option>
                     @endforeach
                 </select>
-                @error('category_id')
+                @error('move_category_id')
                     <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
                 @enderror
             </div>
         </div>
-
-        <div class="flex justify-end">
-            <button type="submit"
-                class="inline-flex items-center justify-center rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-700">
-                <i class="fa-solid fa-right-left mr-2"></i>
-                Pindahkan Artikel
-            </button>
-        </div>
-    </form>
+    </div>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const select = document.getElementById('to_module');
-        const form = document.getElementById('moveModuleForm');
+        const section = document.getElementById('moveModuleSection');
 
-        if (!select || !form) {
+        if (!select || !section) {
             return;
         }
 
-        const blocks = form.querySelectorAll('[data-move-block]');
+        const blocks = section.querySelectorAll('[data-move-block]');
 
         const syncBlocks = () => {
             const target = select.value;
@@ -116,5 +105,12 @@
 
         select.addEventListener('change', syncBlocks);
         syncBlocks();
+
+        const form = select.closest('form');
+        form?.addEventListener('submit', (event) => {
+            if (select.value && !confirm('Artikel ini akan dipindahkan ke modul lain setelah disimpan. Lanjutkan?')) {
+                event.preventDefault();
+            }
+        });
     });
 </script>

@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\PasarIndonesiaCategory;
 use App\Models\PasarIndonesiaRegulasiInstitusiArticle;
 use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
+use App\Services\PasarIndonesiaArticleMoveService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PasarIndonesiaRegulasiInstitusiController extends Controller
 {
     private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
+    public function __construct(
+        private readonly PasarIndonesiaArticleMoveService $moveService
+    ) {
+    }
 
     public function create(Request $request)
     {
@@ -104,7 +111,15 @@ class PasarIndonesiaRegulasiInstitusiController extends Controller
             'content_id' => 'required',
             'content_en' => 'required',
             'source' => 'required|max:150',
+            'to_module' => ['nullable', 'string', Rule::in(['berita', 'analisis'])],
         ]);
+
+        $moveCategoryId = null;
+        if ($request->filled('to_module') && $request->input('to_module') === 'berita') {
+            $moveCategoryId = $request->validate([
+                'move_category_id' => 'required|exists:pasar_indonesia_categories,id',
+            ])['move_category_id'];
+        }
 
         $selectedCategory = PasarIndonesiaRegulasiInstitusiCategory::findOrFail($request->category_id);
         $item = PasarIndonesiaRegulasiInstitusiArticle::findOrFail($id);
@@ -139,6 +154,15 @@ class PasarIndonesiaRegulasiInstitusiController extends Controller
             'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
         ]);
+
+        if ($request->filled('to_module')) {
+            $toModule = $request->input('to_module');
+            $targetId = $this->moveService->move('regulasi-institusi', $toModule, $item, $moveCategoryId);
+
+            return redirect()
+                ->route($this->moveService->editRouteFor($toModule), $targetId)
+                ->with('success', 'Berita berhasil disimpan dan dipindahkan ke modul ' . $this->moveService->moduleLabel($toModule) . '.');
+        }
 
         return redirect()->route('regulasi-institusi.kategori.show', $selectedCategory->slug)
             ->with('success', 'Berita Regulasi & Institusi berhasil diperbarui.');

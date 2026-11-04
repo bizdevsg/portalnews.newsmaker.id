@@ -7,14 +7,6 @@
             : route('pasar-indonesia.berita.index');
     @endphp
 
-    <div class="w-full px-4 pt-8 sm:px-6 lg:px-8">
-        @include('pasar-indonesia.partials.move-module', [
-            'moveFrom' => 'berita',
-            'moveId' => $item->id,
-            'moveRegulasiCategories' => $regulasiCategories,
-        ])
-    </div>
-
     <form id="newsForm" action="{{ route('pasar-indonesia.berita.update', $item->id) }}" method="POST"
         enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
         @csrf
@@ -51,6 +43,14 @@
                 </div>
             </div>
         </section>
+
+        <div class="mt-6">
+            @include('pasar-indonesia.partials.move-module', [
+                'moveFrom' => 'berita',
+                'moveId' => $item->id,
+                'moveRegulasiCategories' => $regulasiCategories,
+            ])
+        </div>
 
         @if (session('success'))
             <div

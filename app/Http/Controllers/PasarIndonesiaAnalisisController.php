@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\PasarIndonesiaArticle;
 use App\Models\PasarIndonesiaCategory;
 use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
+use App\Services\PasarIndonesiaArticleMoveService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PasarIndonesiaAnalisisController extends Controller
 {
     private const AUTHOR_INITIALS = ['MRV', 'ASD', 'YDS', 'ARL', 'CP', 'ALG', 'SRH', 'SNM'];
+
+    public function __construct(
+        private readonly PasarIndonesiaArticleMoveService $moveService
+    ) {
+    }
 
     public function index()
     {
@@ -92,7 +99,16 @@ class PasarIndonesiaAnalisisController extends Controller
             'content_id' => 'required',
             'content_en' => 'required',
             'source' => 'required|max:150',
+            'to_module' => ['nullable', 'string', Rule::in(['berita', 'regulasi-institusi'])],
         ]);
+
+        $moveCategoryId = null;
+        if ($request->filled('to_module')) {
+            $moveCategoryId = match ($request->input('to_module')) {
+                'berita' => $request->validate(['move_category_id' => 'required|exists:pasar_indonesia_categories,id'])['move_category_id'],
+                'regulasi-institusi' => $request->validate(['move_category_id' => 'required|exists:pasar_indonesia_regulasi_institusi_categories,id'])['move_category_id'],
+            };
+        }
 
         $item = PasarIndonesiaArticle::where('type', 'analisis')->findOrFail($id);
         $updatedImage = $item->image;
@@ -124,6 +140,15 @@ class PasarIndonesiaAnalisisController extends Controller
             'author_initial' => strtoupper(trim((string) $request->author)),
             'source' => $request->source,
         ]);
+
+        if ($request->filled('to_module')) {
+            $toModule = $request->input('to_module');
+            $targetId = $this->moveService->move('analisis', $toModule, $item, $moveCategoryId);
+
+            return redirect()
+                ->route($this->moveService->editRouteFor($toModule), $targetId)
+                ->with('success', 'Analisis berhasil disimpan dan dipindahkan ke modul ' . $this->moveService->moduleLabel($toModule) . '.');
+        }
 
         return redirect()->route('pasar-indonesia.analisis.index')
             ->with('success', 'Analisis Pasar Indonesia berhasil diperbarui.');

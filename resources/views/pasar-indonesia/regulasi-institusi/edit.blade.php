@@ -7,14 +7,6 @@
             : route('regulasi-institusi.index');
     @endphp
 
-    <div class="w-full px-4 pt-8 sm:px-6 lg:px-8">
-        @include('pasar-indonesia.partials.move-module', [
-            'moveFrom' => 'regulasi-institusi',
-            'moveId' => $item->id,
-            'moveBeritaCategories' => $beritaCategories,
-        ])
-    </div>
-
     <form id="newsForm" action="{{ route('regulasi-institusi.update', $item->id) }}" method="POST" enctype="multipart/form-data" class="w-full px-4 py-8 sm:px-6 lg:px-8">
         @csrf
         @method('PUT')
@@ -46,6 +38,14 @@
                 </div>
             </div>
         </section>
+
+        <div class="mt-6">
+            @include('pasar-indonesia.partials.move-module', [
+                'moveFrom' => 'regulasi-institusi',
+                'moveId' => $item->id,
+                'moveBeritaCategories' => $beritaCategories,
+            ])
+        </div>
 
         @if (session('success'))
             <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 shadow-sm dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PasarIndonesiaArticle;
+use App\Models\PasarIndonesiaCategory;
+use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
 use Illuminate\Http\Request;
 
 class PasarIndonesiaAnalisisController extends Controller
@@ -60,8 +62,10 @@ class PasarIndonesiaAnalisisController extends Controller
     public function edit($id)
     {
         $item = PasarIndonesiaArticle::where('type', 'analisis')->findOrFail($id);
+        $beritaCategories = PasarIndonesiaCategory::query()->orderBy('name')->get();
+        $regulasiCategories = PasarIndonesiaRegulasiInstitusiCategory::query()->orderBy('name')->get();
 
-        return view('pasar-indonesia.analisis.edit', compact('item'));
+        return view('pasar-indonesia.analisis.edit', compact('item', 'beritaCategories', 'regulasiCategories'));
     }
 
     public function show($id)

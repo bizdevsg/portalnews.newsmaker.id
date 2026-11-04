@@ -16,6 +16,7 @@ use App\Http\Controllers\PasarIndonesiaAnalisisController;
 use App\Http\Controllers\PasarIndonesiaBeritaController;
 use App\Http\Controllers\PasarIndonesiaCategoryController;
 use App\Http\Controllers\PasarIndonesiaController;
+use App\Http\Controllers\PasarIndonesiaMoveController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiCategoryController;
 use App\Http\Controllers\PasarIndonesiaRegulasiInstitusiController;
 use App\Http\Controllers\PivotController;
@@ -168,6 +169,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // Pasar Indonesia
     Route::prefix('pasar-indonesia')->group(function () {
+        Route::post('/move/{from}/{id}', [PasarIndonesiaMoveController::class, 'move'])->name('pasar-indonesia.move');
+
         Route::prefix('regulasi-institusi')->name('regulasi-institusi.')->group(function () {
             Route::get('/', [PasarIndonesiaRegulasiInstitusiCategoryController::class, 'index'])->name('index');
 

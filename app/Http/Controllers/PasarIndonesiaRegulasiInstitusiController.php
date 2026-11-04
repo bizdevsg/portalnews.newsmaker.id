@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PasarIndonesiaCategory;
 use App\Models\PasarIndonesiaRegulasiInstitusiArticle;
 use App\Models\PasarIndonesiaRegulasiInstitusiCategory;
 use Illuminate\Http\Request;
@@ -73,8 +74,9 @@ class PasarIndonesiaRegulasiInstitusiController extends Controller
             ->findOrFail($id);
 
         $categories = PasarIndonesiaRegulasiInstitusiCategory::query()->orderBy('name')->get();
+        $beritaCategories = PasarIndonesiaCategory::query()->orderBy('name')->get();
 
-        return view('pasar-indonesia.regulasi-institusi.edit', compact('item', 'categories'));
+        return view('pasar-indonesia.regulasi-institusi.edit', compact('item', 'categories', 'beritaCategories'));
     }
 
     public function show($id)

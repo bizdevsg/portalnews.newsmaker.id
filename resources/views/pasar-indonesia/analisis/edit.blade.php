@@ -160,6 +160,15 @@
         </div>
     </form>
 
+    <div class="w-full px-4 sm:px-6 lg:px-8">
+        @include('pasar-indonesia.partials.move-module', [
+            'moveFrom' => 'analisis',
+            'moveId' => $item->id,
+            'moveBeritaCategories' => $beritaCategories,
+            'moveRegulasiCategories' => $regulasiCategories,
+        ])
+    </div>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css">
     <style>
         .note-editor.note-frame {

@@ -14,6 +14,7 @@ class NewsmakerLiveSchedule extends Model
     protected $fillable = [
         'title',
         'day',
+        'day_until',
         'start_time',
         'end_time',
         'host',
@@ -50,5 +51,63 @@ class NewsmakerLiveSchedule extends Model
         $index = array_search($this->day, self::DAYS, true);
 
         return $index === false ? $this->day : self::DAYS[($index + 1) % count(self::DAYS)];
+    }
+
+    /** Apakah jadwal ini pakai rentang hari (mis. Senin s/d Jumat), bukan cuma 1 hari. */
+    public function isDayRange(): bool
+    {
+        return $this->day_until !== null && $this->day_until !== $this->day;
+    }
+
+    /** Label hari untuk ditampilkan: "Senin" saja, atau "Senin - Jumat" kalau pakai rentang. */
+    public function dayRangeLabel(): string
+    {
+        return $this->isDayRange() ? "{$this->day} - {$this->day_until}" : (string) $this->day;
+    }
+
+    /** Semua hari yang tercakup dalam rentang (urut siklik Senin..Minggu), termasuk kalau cuma 1 hari. */
+    public function daysCovered(): array
+    {
+        $startIndex = array_search($this->day, self::DAYS, true);
+
+        if ($startIndex === false) {
+            return [$this->day];
+        }
+
+        if (!$this->isDayRange()) {
+            return [$this->day];
+        }
+
+        $endIndex = array_search($this->day_until, self::DAYS, true);
+
+        if ($endIndex === false) {
+            return [$this->day];
+        }
+
+        $days = [];
+        $i = $startIndex;
+
+        while (true) {
+            $days[] = self::DAYS[$i];
+
+            if ($i === $endIndex) {
+                break;
+            }
+
+            $i = ($i + 1) % count(self::DAYS);
+
+            // Safety net kalau ternyata muter lebih dari 1 putaran penuh (data tidak valid).
+            if (count($days) > count(self::DAYS)) {
+                break;
+            }
+        }
+
+        return $days;
+    }
+
+    /** Apakah hari tertentu termasuk dalam rentang hari jadwal ini. */
+    public function coversDay(string $day): bool
+    {
+        return in_array($day, $this->daysCovered(), true);
     }
 }

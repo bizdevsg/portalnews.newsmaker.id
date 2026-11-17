@@ -48,7 +48,17 @@ class NewsmakerLiveScheduleController extends Controller
 
         if ($request->filled('day')) {
             $day = $request->string('day')->trim()->value();
-            $data = $data->filter(fn ($item) => strcasecmp((string) ($item['day'] ?? ''), $day) === 0)->values();
+            $data = $data->filter(function ($item) use ($day) {
+                $daysCovered = $item['days_covered'] ?? [$item['day'] ?? null];
+
+                foreach ($daysCovered as $covered) {
+                    if (strcasecmp((string) $covered, $day) === 0) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })->values();
         }
 
         return response()->json(
@@ -105,6 +115,9 @@ class NewsmakerLiveScheduleController extends Controller
             'id' => $schedule->id,
             'title' => $schedule->title,
             'day' => $schedule->day,
+            'day_until' => $schedule->day_until,
+            'day_range_label' => $schedule->dayRangeLabel(),
+            'days_covered' => $schedule->daysCovered(),
             'start_time' => $schedule->start_time ? substr((string) $schedule->start_time, 0, 5) : null,
             'end_time' => $schedule->end_time ? substr((string) $schedule->end_time, 0, 5) : null,
             'end_day' => $schedule->endDay(),

@@ -77,7 +77,22 @@
                             @enderror
                         </div>
 
-                        <div></div>
+                        <div>
+                            <label for="day_until" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">Sampai hari (opsional)</label>
+                            <select id="day_until" name="day_until"
+                                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 @error('day_until') border-rose-500 @enderror">
+                                <option value="">Hanya 1 hari</option>
+                                @foreach (\App\Models\NewsmakerLiveSchedule::DAYS as $day)
+                                    <option value="{{ $day }}" @selected(old('day_until') === $day)>{{ $day }}</option>
+                                @endforeach
+                            </select>
+                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                Isi kalau jadwal ini berulang setiap hari dari "Hari" sampai hari ini, mis. Senin sampai Jumat.
+                            </p>
+                            @error('day_until')
+                                <p class="mt-2 text-sm font-medium text-rose-600 dark:text-rose-300">{{ $message }}</p>
+                            @enderror
+                        </div>
 
                         <div>
                             <label for="start_time" class="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">Jam mulai</label>

@@ -327,10 +327,12 @@ Jadwal live mingguan Newsmaker 23, diurutkan otomatis Senin → Minggu (lalu `so
 
 Siaran yang nyebrang tengah malam (`end_time` lebih kecil/sama dengan `start_time`, mis. mulai 23:00 selesai 00:30) otomatis dianggap berakhir di hari berikutnya — tidak perlu input manual. Field `end_day` dan `crosses_midnight` di response memberi tahu persis kapan siaran itu berakhir.
 
+Satu jadwal juga bisa berlaku untuk rentang hari (mis. Senin s/d Jumat), bukan cuma 1 hari, lewat field opsional `day_until` saat input. Field `day_range_label` (mis. `"Senin - Jumat"`) dan `days_covered` (array semua hari yang tercakup) di response merefleksikan ini; kalau `day_until` tidak diisi, keduanya tetap ada tapi cuma mewakili 1 hari.
+
 Query params:
 | Param | Tipe | Default | Keterangan |
 |---|---|---|---|
-| `day` | string | – | Filter 1 hari, mis. `Senin` (case-insensitive, harus salah satu dari `Senin, Selasa, Rabu, Kamis, Jumat, Sabtu, Minggu`) |
+| `day` | string | – | Filter 1 hari, mis. `Senin` (case-insensitive, harus salah satu dari `Senin, Selasa, Rabu, Kamis, Jumat, Sabtu, Minggu`). Jadwal dengan rentang hari (`day_until`) ikut cocok kalau hari yang difilter termasuk dalam rentangnya (dicek lewat `days_covered`), bukan cuma sama dengan `day`. |
 | `all` | bool | `0` | `1` untuk ikut tampilkan jadwal yang `is_active = false` (dipakai dashboard admin, bukan untuk konsumsi publik) |
 
 - Tabel belum ada (migrasi belum jalan) → `503 { "status": "error", "message": "Tabel Jadwal Live belum tersedia. Jalankan migrasi terlebih dahulu." }`
@@ -344,6 +346,9 @@ Query params:
       "id": 1,
       "title": "Market Update Pagi",
       "day": "Senin",
+      "day_until": "Jumat",
+      "day_range_label": "Senin - Jumat",
+      "days_covered": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"],
       "start_time": "09:00",
       "end_time": "09:30",
       "end_day": "Senin",

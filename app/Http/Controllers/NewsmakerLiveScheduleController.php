@@ -16,6 +16,8 @@ class NewsmakerLiveScheduleController extends Controller
         return [
             'title' => 'required|string|max:255',
             'day' => 'required|string|in:' . $days,
+            // Opsional: kalau diisi, jadwal berlaku untuk rentang hari dari `day` sampai `day_until` (siklik Senin..Minggu).
+            'day_until' => 'nullable|string|in:' . $days,
             'start_time' => 'required|date_format:H:i',
             // Boleh lebih kecil dari start_time: itu berarti siaran nyebrang ke hari berikutnya (mis. 23:00 - 00:30).
             'end_time' => 'nullable|date_format:H:i',
@@ -106,6 +108,7 @@ class NewsmakerLiveScheduleController extends Controller
         return [
             'title' => $validated['title'],
             'day' => $validated['day'],
+            'day_until' => $validated['day_until'] ?? null,
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'] ?? null,
             'host' => $validated['host'] ?? null,

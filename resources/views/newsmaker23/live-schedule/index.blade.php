@@ -63,9 +63,11 @@
                                 <tr class="align-top">
                                     <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-700 dark:text-slate-200">
                                         <p class="font-semibold text-slate-900 dark:text-slate-100">
-                                            {{ $schedule->day }}
+                                            {{ $schedule->dayRangeLabel() }}
                                             @if ($schedule->crossesMidnight())
-                                                <span class="font-normal text-slate-400">→ {{ $schedule->endDay() }}</span>
+                                                <span class="font-normal text-slate-400">
+                                                    → {{ $schedule->isDayRange() ? 'hari berikutnya' : $schedule->endDay() }}
+                                                </span>
                                             @endif
                                         </p>
                                         <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">

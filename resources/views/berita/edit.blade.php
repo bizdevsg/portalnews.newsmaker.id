@@ -65,18 +65,6 @@
 
                 {{-- Input Judul untuk Setiap PT --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <!-- SG -->
-                    <div class="mb-4">
-                        <label for="title_sg" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
-                            SG</label>
-                        <input type="text" id="title_sg" name="title_sg"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none @error('title_sg') is-invalid @enderror"
-                            placeholder="Judul untuk SG..." value="{{ old('title_sg', $berita->title_sg) }}">
-                        @error('title_sg')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
                     <!-- RFB -->
                     <div class="mb-4">
                         <label for="title_rfb" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Judul
@@ -130,7 +118,6 @@
                 {{-- Foto untuk 5 website berbeda --}}
                 @php
                     $imageLabels = [
-                        1 => 'Gambar SG:',
                         2 => 'Gambar RFB:',
                         3 => 'Gambar KPF:',
                         4 => 'Gambar EWF:',
@@ -138,7 +125,7 @@
                         6 => 'Gambar Backup:',
                     ];
 
-                    $images = collect(range(1, 6))
+                    $images = collect(range(2, 6))
                         ->mapWithKeys(function ($i) use ($berita, $imageLabels) {
                             return [
                                 "image{$i}" => [

@@ -38,14 +38,12 @@ class BeritaController extends Controller
         // Validasi input
         $request->validate([
             'title' => 'required|max:100',
-            'title_sg' => 'nullable|max:100',
             'title_rfb' => 'nullable|max:100',
             'title_kpf' => 'nullable|max:100',
             'title_ewf' => 'nullable|max:100',
             'title_bpf' => 'nullable|max:100',
             'notif' => 'nullable|boolean',
             'content' => 'required',
-            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'image2' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'image3' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'image4' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -72,7 +70,6 @@ class BeritaController extends Controller
         // Simpan berita ke database
         Berita::create([
             'title' => $request->title,
-            'title_sg' => $request->title_sg,
             'title_rfb' => $request->title_rfb,
             'title_kpf' => $request->title_kpf,
             'title_ewf' => $request->title_ewf,
@@ -81,7 +78,6 @@ class BeritaController extends Controller
             'content' => $request->content,
             'category_id' => $kategori->id,
             'user_id' => $request->user()->id,
-            'image1' => $images['image1'],
             'image2' => $images['image2'],
             'image3' => $images['image3'],
             'image4' => $images['image4'],
@@ -126,14 +122,12 @@ class BeritaController extends Controller
         // Validasi input
         $request->validate([
             'title' => 'required|max:100',
-            'title_sg' => 'nullable|max:100',
             'title_rfb' => 'nullable|max:100',
             'title_kpf' => 'nullable|max:100',
             'title_ewf' => 'nullable|max:100',
             'title_bpf' => 'nullable|max:100',
             'notif' => 'nullable|boolean',
             'content' => 'required',
-            'image1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -156,9 +150,10 @@ class BeritaController extends Controller
         }
 
         // Update berita di database
+        // Catatan: title_sg & image1 (dulu "SG") sengaja tidak disentuh di sini supaya data lama yang masih
+        // punya nilai SG tidak ketimpa jadi null hanya karena field itu sudah dihapus dari form edit.
         $berita->update([
             'title' => $request->title,
-            'title_sg' => $request->title_sg,
             'title_rfb' => $request->title_rfb,
             'title_kpf' => $request->title_kpf,
             'title_ewf' => $request->title_ewf,

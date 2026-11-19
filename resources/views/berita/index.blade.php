@@ -52,9 +52,16 @@
                 @foreach ($beritas as $berita)
                     <div
                         class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 h-full flex flex-col">
-                        {{-- Gambar berita --}}
-                        <img src="{{ asset($berita->image1) }}" alt="{{ $berita->image1 }}"
-                            class="w-full h-40 object-cover">
+                        {{-- Gambar berita (dulu selalu pakai image1/SG; sekarang pakai gambar pertama yang tersedia) --}}
+                        @php $coverImage = $berita->images[0] ?? null; @endphp
+                        @if ($coverImage)
+                            <img src="{{ asset($coverImage) }}" alt="{{ $berita['title'] ?? 'Berita' }}"
+                                class="w-full h-40 object-cover">
+                        @else
+                            <div class="w-full h-40 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500">
+                                <i class="fa-solid fa-image text-3xl"></i>
+                            </div>
+                        @endif
 
                         {{-- Konten berita --}}
                         <div class="p-4 flex-1 flex flex-col bg-gray-100 dark:bg-gray-800">

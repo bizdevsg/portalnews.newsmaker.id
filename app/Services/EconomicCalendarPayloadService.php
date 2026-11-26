@@ -21,18 +21,110 @@ class EconomicCalendarPayloadService
         'id', 'date', 'time', 'previous', 'forecast', 'actual', 'isBankHoliday', 'bankHolidayNote',
     ];
 
+    private const COUNTRY_VARIANTS = [
+        'US' => ['US', 'USD'],
+        'EU' => ['EU', 'EUR'],
+        'JP' => ['JP', 'JPY', 'JPN'],
+        'GB' => ['GB', 'GBP'],
+        'AU' => ['AU', 'AUD'],
+        'CA' => ['CA', 'CAD'],
+        'CH' => ['CH', 'CHF'],
+        'CN' => ['CN', 'CHN', 'CNH'],
+        'ID' => ['ID', 'IDN', 'IDR'],
+        'NZ' => ['NZ', 'NZD'],
+    ];
+
+    /**
+     * Codes exposed by the API, matching the filter buttons in the app design.
+     */
+    private const API_COUNTRY_CODES = [
+        'US' => 'USD',
+        'EU' => 'EUR',
+        'JP' => 'JPN',
+        'GB' => 'GBP',
+        'AU' => 'AUD',
+        'CA' => 'CAD',
+        'CH' => 'CHF',
+        'CN' => 'CHN',
+        'ID' => 'IDR',
+        'NZ' => 'NZD',
+    ];
+
+    /**
+     * Turn any stored or requested spelling into the code the API uses (US => USD).
+     */
+    public static function apiCountryCode(mixed $country): ?string
+    {
+        $canonical = self::normalizeCountry($country);
+
+        return self::API_COUNTRY_CODES[$canonical] ?? $canonical;
+    }
+
+    /**
+     * Turn a country or currency code into its canonical country code (USD => US).
+     */
+    public static function normalizeCountry(mixed $country): ?string
+    {
+        $normalized = strtoupper(trim((string) $country));
+
+        if ($normalized === '') {
+            return null;
+        }
+
+        foreach (self::COUNTRY_VARIANTS as $canonical => $variants) {
+            if (in_array($normalized, $variants, true)) {
+                return $canonical;
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Every spelling that may be stored in the database for a canonical country code.
+     *
+     * @return array<int, string>
+     */
+    public static function countryVariants(string $canonical): array
+    {
+        return self::COUNTRY_VARIANTS[$canonical] ?? [$canonical];
+    }
+
     /**
      * Fetch rows straight from the database for the given period (or everything, if null).
      * Reads go straight to the source of truth instead of a pre-built cache file, so the API
      * is always consistent with the latest admin-panel edit — no rebuild delay.
+     *
+     * Optional filters: impact (list), country (list of codes), date_from, date_to.
      */
-    public function fetchItems(?string $period): array
+    public function fetchItems(?string $period, array $filters = []): array
     {
         $query = DB::table('economic_calendars')->select(self::LIST_COLUMNS);
 
         if ($period !== null) {
             [$startDate, $endDate] = $this->resolveDateRange($period);
             $query->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()]);
+        }
+
+        if (! empty($filters['impact'])) {
+            $query->whereIn('impact', $filters['impact']);
+        }
+
+        if (! empty($filters['country'])) {
+            $query->whereIn('country', array_merge(
+                ...array_map(
+                    fn (string $code) => self::countryVariants(self::normalizeCountry($code)),
+                    $filters['country']
+                )
+            ));
+        }
+
+        if (! empty($filters['date_from'])) {
+            $query->where('date', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->where('date', '<=', $filters['date_to']);
         }
 
         return $query->orderBy('date')->orderBy('id')
@@ -47,30 +139,66 @@ class EconomicCalendarPayloadService
      */
     public function attachHistoryForItems(array $items): array
     {
-        foreach ($items as $index => $item) {
+        $candidates = $this->fetchHistoryCandidates($items);
+
+        return array_map(function (array $item) use ($candidates): array {
             $categoryId = $item['economic_calendar_category_id'] ?? null;
             $date = $item['date'] ?? null;
+            $item['history'] = [];
 
             if (empty($categoryId) || empty($date)) {
-                $items[$index]['history'] = [];
-
-                continue;
+                return $item;
             }
 
-            $items[$index]['history'] = DB::table('economic_calendars')
-                ->select(self::HISTORY_COLUMNS)
-                ->where('economic_calendar_category_id', $categoryId)
-                ->where('date', '<', $date)
-                ->orderByDesc('date')
-                ->orderByDesc('id')
-                ->limit(self::HISTORY_LIMIT)
-                ->get()
-                ->map(fn (object $row) => $this->makeHistoryPayload((array) $row))
-                ->values()
-                ->all();
+            foreach ($candidates[$categoryId] ?? [] as $row) {
+                if ((string) $row['date'] >= (string) $date) {
+                    continue;
+                }
+
+                $item['history'][] = $this->makeHistoryPayload($row);
+
+                if (count($item['history']) === self::HISTORY_LIMIT) {
+                    break;
+                }
+            }
+
+            return $item;
+        }, $items);
+    }
+
+    /**
+     * Load the possible history rows for all items in one query, grouped by category
+     * and ordered newest first, so the query count does not grow with the page size.
+     */
+    private function fetchHistoryCandidates(array $items): array
+    {
+        $withHistory = array_filter(
+            $items,
+            fn (array $item) => ! empty($item['economic_calendar_category_id']) && ! empty($item['date'])
+        );
+
+        if ($withHistory === []) {
+            return [];
         }
 
-        return $items;
+        $rows = DB::table('economic_calendars')
+            ->select(array_merge(self::HISTORY_COLUMNS, ['economic_calendar_category_id']))
+            ->whereIn(
+                'economic_calendar_category_id',
+                array_values(array_unique(array_column($withHistory, 'economic_calendar_category_id')))
+            )
+            ->where('date', '<', max(array_column($withHistory, 'date')))
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
+
+        $grouped = [];
+
+        foreach ($rows as $row) {
+            $grouped[$row->economic_calendar_category_id][] = (array) $row;
+        }
+
+        return $grouped;
     }
 
     public function availablePeriods(): array
@@ -198,6 +326,8 @@ class EconomicCalendarPayloadService
     private function normalizeRow(array $row): array
     {
         $row['isBankHoliday'] = (bool) ($row['isBankHoliday'] ?? false);
+        // Same code as the country filter, whatever spelling the admin typed.
+        $row['country'] = self::apiCountryCode($row['country'] ?? null);
 
         return $row;
     }

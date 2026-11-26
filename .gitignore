@@ -17,3 +17,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Dokumentasi API dan Bruno collection hanya disimpan lokal
+/docs/
+/bruno/

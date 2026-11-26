@@ -40,7 +40,7 @@ class EconomicCalendarController extends Controller
             ->orderBy('figures', 'asc');
 
         if ($selectedCountry !== null) {
-            $countryVariants = $this->countryFilterVariants($selectedCountry);
+            $countryVariants = EconomicCalendarPayloadService::countryVariants($selectedCountry);
 
             $categoriesQuery->whereIn('country', $countryVariants);
         }
@@ -292,25 +292,7 @@ class EconomicCalendarController extends Controller
 
     private function normalizeCountryFilter(mixed $country): ?string
     {
-        $normalized = strtoupper(trim((string) $country));
-
-        if ($normalized === '') {
-            return null;
-        }
-
-        return match ($normalized) {
-            'US', 'USD' => 'US',
-            'EUR' => 'EU',
-            'JPY', 'JPN' => 'JP',
-            'GBP' => 'GB',
-            'AUD' => 'AU',
-            'CAD' => 'CA',
-            'CHF' => 'CH',
-            'CHN', 'CNH' => 'CN',
-            'IDR', 'IDN' => 'ID',
-            'NZD' => 'NZ',
-            default => $normalized,
-        };
+        return EconomicCalendarPayloadService::normalizeCountry($country);
     }
 
     /**
@@ -362,25 +344,5 @@ class EconomicCalendarController extends Controller
         uasort($options, static fn (array $first, array $second): int => strcmp($first['label'], $second['label']));
 
         return array_values($options);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private function countryFilterVariants(string $normalizedCountry): array
-    {
-        return match ($normalizedCountry) {
-            'US' => ['US', 'USD'],
-            'EU' => ['EU', 'EUR'],
-            'JP' => ['JP', 'JPY', 'JPN'],
-            'GB' => ['GB', 'GBP'],
-            'AU' => ['AU', 'AUD'],
-            'CA' => ['CA', 'CAD'],
-            'CH' => ['CH', 'CHF'],
-            'CN' => ['CN', 'CHN', 'CNH'],
-            'ID' => ['ID', 'IDN', 'IDR'],
-            'NZ' => ['NZ', 'NZD'],
-            default => [$normalizedCountry],
-        };
     }
 }
